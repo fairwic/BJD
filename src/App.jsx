@@ -5,6 +5,7 @@ import { ROLES, CATEGORY_CONFIG, MOCK_PRODUCTS } from './data/mock';
 
 // Pages
 import Login from './pages/Login';
+import ForgotPassword from './pages/ForgotPassword';
 import ProductDetail from './pages/ProductDetail';
 import OrderDetail from './pages/OrderDetail';
 import OrderManagement from './pages/OrderManagement';
@@ -182,8 +183,8 @@ const UserShop = () => {
             <button
               onClick={() => setActiveBrandStyle('all')}
               className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${activeBrandStyle === 'all'
-                  ? 'bg-rose-500 text-white'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                ? 'bg-rose-500 text-white'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 }`}
             >
               全部品牌
@@ -191,8 +192,8 @@ const UserShop = () => {
             <button
               onClick={() => setActiveBrandStyle('japanese')}
               className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${activeBrandStyle === 'japanese'
-                  ? 'bg-rose-500 text-white'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                ? 'bg-rose-500 text-white'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 }`}
             >
               🇯🇵 日韩系
@@ -200,8 +201,8 @@ const UserShop = () => {
             <button
               onClick={() => setActiveBrandStyle('chinese')}
               className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${activeBrandStyle === 'chinese'
-                  ? 'bg-rose-500 text-white'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                ? 'bg-rose-500 text-white'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 }`}
             >
               🇨🇳 国产系
@@ -305,7 +306,14 @@ const UserProfile = () => {
               <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full capitalize">{currentUser.role}</span>
             </div>
           </div>
-          <div className="ml-auto text-gray-400"><Settings size={20} /></div>
+          <div className="ml-auto text-gray-400">
+            <UserSwitcher>
+              <div className="flex items-center gap-1 text-xs text-rose-500 bg-rose-50 px-2 py-1 rounded-full">
+                <ArrowRightLeft size={12} />
+                <span>切换身份</span>
+              </div>
+            </UserSwitcher>
+          </div>
         </div>
 
         {/* Order Stats */}
@@ -707,6 +715,7 @@ const MainApp = () => {
   const renderScreen = () => {
     switch (currentRoute.name) {
       case 'Login': return <Login />;
+      case 'ForgotPassword': return <ForgotPassword />;
       case 'ProductDetail': return <ProductDetail />;
       case 'OrderDetail': return <OrderDetail />;
       case 'OrderManagement': return <OrderManagement />;
@@ -753,8 +762,8 @@ const MainApp = () => {
     <div className="max-w-md mx-auto h-screen bg-gray-50 shadow-2xl overflow-hidden relative font-sans text-gray-900 flex flex-col">
       {renderScreen()}
 
-      {/* User Switcher - 只在非登录页显示 */}
-      {currentRoute.name !== 'Login' && <UserSwitcher />}
+      {/* User Switcher - 只在非登录页显示 - 已移动到个人中心 */}
+      {/* {currentRoute.name !== 'Login' && <UserSwitcher />} */}
 
       {/* Notifications Toast */}
       <div className="fixed top-4 left-0 right-0 z-50 flex flex-col items-center gap-2 pointer-events-none">
