@@ -30,12 +30,17 @@ import GroupBuyDetail from './pages/GroupBuyDetail';
 import ShippingManagement from './pages/ShippingManagement';
 import MyContracts from './pages/MyContracts';
 import AddressManagement from './pages/AddressManagement';
+// 新增页面
+import MyDolls from './pages/MyDolls';
+import DollProfile from './pages/DollProfile';
+import AchievementCenter from './pages/AchievementCenter';
+import KnowledgeBase from './pages/KnowledgeBase';
 
 // Components
 import UserSwitcher from './components/UserSwitcher';
 
 // Icons
-import { Home, ShoppingBag, Users, MessageCircle, User, Plus, Sparkles, ClipboardList, CheckCircle2, Truck, Package, Search, Bell, Settings, ChevronRight, Heart, Image as ImageIcon, MoreHorizontal, Share2, MessageSquare, ArrowRightLeft, ShieldCheck, MapPin, FileText } from 'lucide-react';
+import { Home, ShoppingBag, Users, MessageCircle, User, Plus, Sparkles, ClipboardList, CheckCircle2, Truck, Package, Search, Bell, Settings, ChevronRight, Heart, Image as ImageIcon, MoreHorizontal, Share2, MessageSquare, ArrowRightLeft, ShieldCheck, MapPin, FileText, Award, Book } from 'lucide-react';
 
 // --- Main Layout Components (Refactored from original App.jsx) ---
 
@@ -361,6 +366,29 @@ const UserProfile = () => {
 
       {/* 设置菜单 */}
       <div className="mt-3 bg-white rounded-xl divide-y divide-gray-50">
+        {/* ✨ 新增功能区（高亮显示） */}
+        <div onClick={() => push('MyDolls')} className="flex items-center gap-3 p-4 active:bg-gray-50 bg-gradient-to-r from-rose-50/30 to-transparent">
+          <Package size={20} className="text-rose-500" />
+          <span className="text-sm text-gray-800 flex-1 font-medium">我的娃娃</span>
+          <span className="text-xs bg-rose-100 text-rose-600 px-2 py-0.5 rounded-full font-bold">3只</span>
+          <ChevronRight size={16} className="text-gray-300" />
+        </div>
+
+        <div onClick={() => push('AchievementCenter')} className="flex items-center gap-3 p-4 active:bg-gray-50 bg-gradient-to-r from-purple-50/30 to-transparent">
+          <Award size={20} className="text-purple-500" />
+          <span className="text-sm text-gray-800 flex-1 font-medium">成就中心</span>
+          <span className="text-xs bg-purple-100 text-purple-600 px-2 py-0.5 rounded-full font-bold">NEW</span>
+          <ChevronRight size={16} className="text-gray-300" />
+        </div>
+
+        <div onClick={() => push('KnowledgeBase')} className="flex items-center gap-3 p-4 active:bg-gray-50 bg-gradient-to-r from-blue-50/30 to-transparent">
+          <Book size={20} className="text-blue-500" />
+          <span className="text-sm text-gray-800 flex-1 font-medium">BJD知识库</span>
+          <span className="text-xs bg-blue-100 text-blue-600 px-2 py-0.5 rounded-full font-bold">新手必读</span>
+          <ChevronRight size={16} className="text-gray-300" />
+        </div>
+
+        {/* 原有功能区 */}
         <div onClick={() => push('MyContracts')} className="flex items-center gap-3 p-4 active:bg-gray-50">
           <FileText size={20} className="text-gray-400" />
           <span className="text-sm text-gray-700 flex-1">我的合同</span>
@@ -399,13 +427,13 @@ const UserProfile = () => {
           <ChevronRight size={16} className="text-gray-300" />
         </div>
 
-        <div className="flex items-center gap-3 p-4 active:bg-gray-50">
+        <div onClick={() => push('MyLikes')} className="flex items-center gap-3 p-4 active:bg-gray-50">
           <Heart size={20} className="text-gray-400" />
-          <span className="text-sm text-gray-700 flex-1">我的收藏</span>
+          <span className="text-sm text-gray-700 flex-1">我的喜欢</span>
           <ChevronRight size={16} className="text-gray-300" />
         </div>
 
-        <div className="flex items-center gap-3 p-4 active:bg-gray-50">
+        <div onClick={() => push('MyAlbum')} className="flex items-center gap-3 p-4 active:bg-gray-50">
           <ImageIcon size={20} className="text-gray-400" />
           <span className="text-sm text-gray-700 flex-1">我的相册</span>
           <ChevronRight size={16} className="text-gray-300" />
@@ -541,8 +569,21 @@ const Square = () => {
         </button>
       </div>
       <div className="bg-gray-50 min-h-screen">
-        <div className="p-3">
-          <div onClick={() => push('CreatePost')} className="bg-gradient-to-r from-rose-100 to-purple-100 rounded-xl p-3 flex items-center gap-3 cursor-pointer">
+        <div className="p-3 space-y-2">
+          {/* 知识库快捷入口 */}
+          <div onClick={() => push('KnowledgeBase')} className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-3 flex items-center gap-3 cursor-pointer active:scale-98 transition-transform">
+            <div className="bg-white p-2 rounded-full shadow-sm text-blue-500">
+              <Book size={20} />
+            </div>
+            <div className="flex-1">
+              <p className="font-bold text-sm text-gray-800">BJD新手指南</p>
+              <p className="text-xs text-gray-600">入门必读 · 品牌大全 · 避坑攻略</p>
+            </div>
+            <ChevronRight size={16} className="text-gray-400" />
+          </div>
+
+          {/* AI文案助手 */}
+          <div onClick={() => push('CreatePost')} className="bg-gradient-to-r from-rose-100 to-purple-100 rounded-xl p-3 flex items-center gap-3 cursor-pointer active:scale-98 transition-transform">
             <div className="bg-white p-2 rounded-full shadow-sm text-rose-500">
               <Sparkles size={20} />
             </div>
@@ -740,6 +781,11 @@ const MainApp = () => {
       case 'ShippingManagement': return <ShippingManagement />;
       case 'MyContracts': return <MyContracts />;
       case 'AddressManagement': return <AddressManagement />;
+      // 新增路由
+      case 'MyDolls': return <MyDolls />;
+      case 'DollProfile': return <DollProfile />;
+      case 'AchievementCenter': return <AchievementCenter />;
+      case 'KnowledgeBase': return <KnowledgeBase />;
       case 'Home':
       default:
         // Tab View
