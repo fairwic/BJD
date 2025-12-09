@@ -257,7 +257,7 @@ const UserShop = () => {
           <div className="grid grid-cols-2 gap-3">
             {filteredProducts.length > 0 ? (
               filteredProducts.map(p => (
-                <ProductCard key={p.id} item={p} onClick={() => {/* TODO: 跳转到商品详情 */ }} />
+                <ProductCard key={p.id} item={p} onClick={() => push('ProductDetail', { id: p.id })} />
               ))
             ) : (
               <div className="col-span-2 py-10 text-center text-gray-400">

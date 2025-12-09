@@ -1,12 +1,21 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { USERS, ROLES, MOCK_ORDERS, MOCK_GROUP_BUYS, ORDER_STATUS } from '../data/mock';
+import { USERS, ROLES, MOCK_ORDERS, MOCK_GROUP_BUYS, MOCK_PRODUCTS, ORDER_STATUS } from '../data/mock';
 
 const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
     const [currentUser, setCurrentUser] = useState(USERS[0]); // Default to first user
     const [orders, setOrders] = useState(MOCK_ORDERS);
-    const [groupBuys, setGroupBuys] = useState(MOCK_GROUP_BUYS);
+    // Combine Merchant Products and Group Buys into a single "Product" source for simplicity in this demo
+    const [groupBuys, setGroupBuys] = useState([...MOCK_GROUP_BUYS, ...MOCK_PRODUCTS.map(p => ({
+        ...p,
+        // Add fields expected by ProductDetail if missing in MOCK_PRODUCTS
+        leader: p.shop,
+        status: '现货/Spot',
+        deposit: p.price, // Spot items full price as deposit equivalent for demo logic
+        skus: [{ id: 'default', name: '默认规格', price: p.price }],
+        description: '这是一个精美的现货商品，下单后极速发货。'
+    }))]);
     const [notifications, setNotifications] = useState([]);
 
     // Login / Switch User

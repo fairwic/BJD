@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { useRouter } from '../router/RouteStack';
-import { ChevronLeft, Share2, Heart, ShoppingBag, ShieldCheck, Clock } from 'lucide-react';
+import { ChevronLeft, Share2, Heart, ShoppingBag, ShieldCheck, Clock, Gift, Unlock, Lock, Trophy } from 'lucide-react';
 
 const ProductDetail = () => {
     const { currentRoute, pop, push } = useRouter();
@@ -13,9 +13,16 @@ const ProductDetail = () => {
 
     if (!product) return <div>Product not found</div>;
 
+    const isSpot = product.type === 'spot';
+
     const handlePayDeposit = () => {
         if (!selectedSku) {
             alert('请选择规格');
+            return;
+        }
+
+        if (isSpot) {
+            alert('模拟功能：已加入购物车/跳转支付');
             return;
         }
 
@@ -33,7 +40,7 @@ const ProductDetail = () => {
     };
 
     return (
-        <div className="min-h-screen bg-white pb-24">
+        <div className="h-full overflow-y-auto bg-white pb-24 scrollbar-hide">
             {/* Header */}
             <div className="sticky top-0 z-10 flex justify-between items-center p-4 bg-white/80 backdrop-blur">
                 <button onClick={pop} className="p-2 bg-gray-100 rounded-full hover:bg-gray-200">
@@ -58,7 +65,7 @@ const ProductDetail = () => {
                     <h1 className="text-xl font-bold text-gray-900 flex-1 mr-4">{product.title}</h1>
                     <div className="text-right">
                         <p className="text-rose-500 font-bold text-2xl">¥{product.price}</p>
-                        <p className="text-xs text-gray-400">定金 ¥{product.deposit}</p>
+                        <p className="text-xs text-gray-400">{isSpot ? '现货速发' : `定金 ¥${product.deposit}`}</p>
                     </div>
                 </div>
 
@@ -75,6 +82,73 @@ const ProductDetail = () => {
                         进店逛逛
                     </button>
                 </div>
+
+                {/* Unlock Map (Gamification) - ONLY for Group Buys */}
+                {!isSpot && (
+                    <div className="bg-gradient-to-br from-indigo-900 to-violet-900 rounded-2xl p-5 text-white mt-4 mb-4 relative overflow-hidden">
+                        <div className="absolute top-0 right-0 p-4 opacity-10">
+                            <Trophy size={100} />
+                        </div>
+
+                        <div className="flex justify-between items-center mb-6 relative z-10">
+                            <div>
+                                <h3 className="font-bold text-lg flex items-center gap-2">
+                                    <Gift className="text-amber-400" />
+                                    阶梯解锁奖励
+                                </h3>
+                                <p className="text-white/60 text-xs mt-1">当前团购份数: <span className="text-amber-400 font-bold text-lg">382</span> / 500</p>
+                            </div>
+                            <div className="text-right">
+                                <span className="bg-white/20 px-2 py-1 rounded text-xs">解锁进度 76%</span>
+                            </div>
+                        </div>
+
+                        <div className="relative z-10">
+                            {/* Progress Bar Background */}
+                            <div className="h-2 bg-black/30 rounded-full mb-8 relative">
+                                {/* Active Progress */}
+                                <div className="absolute top-0 left-0 h-full bg-gradient-to-r from-amber-400 to-orange-500 rounded-full transition-all duration-1000" style={{ width: '76%' }} />
+
+                                {/* Checkpoints */}
+                                {[
+                                    { count: 100, label: '成团', unlocked: true },
+                                    { count: 300, label: '特典眼珠', unlocked: true },
+                                    { count: 500, label: '特殊肤色', unlocked: false },
+                                ].map((stage, idx) => (
+                                    <div
+                                        key={idx}
+                                        className="absolute top-1/2 -translate-y-1/2 flex flex-col items-center"
+                                        style={{ left: `${(stage.count / 500) * 100}%` }}
+                                    >
+                                        <div className={`w-8 h-8 rounded-full flex items-center justify-center border-2 z-10 ${stage.unlocked
+                                            ? 'bg-amber-400 border-amber-400 text-indigo-900'
+                                            : 'bg-indigo-900 border-gray-600 text-gray-500'
+                                            }`}>
+                                            {stage.unlocked ? <Unlock size={14} strokeWidth={3} /> : <Lock size={14} />}
+                                        </div>
+                                        <span className={`text-[10px] mt-2 font-medium whitespace-nowrap ${stage.unlocked ? 'text-amber-400' : 'text-gray-400'
+                                            }`}>
+                                            {stage.label}
+                                        </span>
+                                    </div>
+                                ))}
+                            </div>
+
+                            <div className="bg-white/10 rounded-lg p-3 flex items-center gap-3 border border-white/10">
+                                <div className="bg-indigo-800 p-2 rounded-lg">
+                                    <Lock size={20} className="text-gray-400" />
+                                </div>
+                                <div className="flex-1">
+                                    <div className="text-sm font-bold text-gray-200">下一阶段: 特殊肤色开放</div>
+                                    <div className="text-xs text-gray-400">还差 118 单解锁，快邀请好友吧！</div>
+                                </div>
+                                <button className="bg-amber-500 text-indigo-900 text-xs font-bold px-3 py-1.5 rounded-full">
+                                    去邀请
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
 
                 {/* Description */}
                 <div className="bg-gray-50 rounded-xl p-4 mb-6">
@@ -109,7 +183,7 @@ const ProductDetail = () => {
                     </div>
                     <div className="flex flex-col items-center gap-1 text-center">
                         <Clock size={20} className="text-blue-500" />
-                        <span className="text-xs text-gray-500">工期保障</span>
+                        <span className="text-xs text-gray-500">{isSpot ? '极速发货' : '工期保障'}</span>
                     </div>
                     <div className="flex flex-col items-center gap-1 text-center">
                         <ShoppingBag size={20} className="text-purple-500" />
@@ -129,7 +203,9 @@ const ProductDetail = () => {
                     disabled={!selectedSku}
                     className="flex-1 bg-gray-900 text-white font-bold py-3 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-800 transition-colors"
                 >
-                    {selectedSku ? `支付定金 ¥${product.deposit}` : '请选择规格'}
+                    {selectedSku
+                        ? (isSpot ? `立即购买 ¥${product.price}` : `支付定金 ¥${product.deposit}`)
+                        : '请选择规格'}
                 </button>
             </div>
         </div>
