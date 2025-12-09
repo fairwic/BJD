@@ -2,6 +2,7 @@ import React from 'react';
 import { useApp } from '../context/AppContext';
 import { useRouter } from '../router/RouteStack';
 import { ChevronLeft, DollarSign, Users, Package, AlertCircle } from 'lucide-react';
+import TrustTimeline from '../components/TrustTimeline';
 
 const GroupBuyDetail = () => {
     const { pop, currentRoute, updateProgress } = useRouter();
@@ -24,6 +25,15 @@ const GroupBuyDetail = () => {
         if (!skuStats[o.skuName]) skuStats[o.skuName] = 0;
         skuStats[o.skuName]++;
     });
+
+    const timelineStages = [
+        { type: 'modeling', name: '原型制作', date: '2023-10-01', photos: ['bg-gray-200'] },
+        { type: 'mold', name: '翻模', date: '2023-11-15', photos: ['bg-orange-100'] },
+        { type: 'casting', name: '树脂灌注', date: '2023-12-01', photos: [] },
+        { type: 'polishing', name: '打磨', date: null, photos: [] },
+        { type: 'makeup', name: '上妆', date: null, photos: [] },
+        { type: 'shipping', name: '发货', date: null, photos: [] }
+    ];
 
     const handleStageUpdate = (newStage, progress) => {
         // Mock update via updateProgress context action if available, or just alert
@@ -84,6 +94,12 @@ const GroupBuyDetail = () => {
                     </div>
                     <p className="text-2xl font-bold text-orange-500">{unpaidFinals}</p>
                 </div>
+            </div>
+
+            {/* Visual Timeline */}
+            <div className="bg-white mt-2 p-4">
+                <h3 className="font-bold text-gray-800 mb-2">生产进度监控</h3>
+                <TrustTimeline stages={timelineStages} currentStageIndex={2} />
             </div>
 
             {/* SKU Breakdown */}

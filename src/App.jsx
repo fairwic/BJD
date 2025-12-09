@@ -35,12 +35,14 @@ import MyDolls from './pages/MyDolls';
 import DollProfile from './pages/DollProfile';
 import AchievementCenter from './pages/AchievementCenter';
 import KnowledgeBase from './pages/KnowledgeBase';
+import SkinMatchStudio from './pages/SkinMatchStudio';
+import WishPool from './pages/WishPool';
 
 // Components
 import UserSwitcher from './components/UserSwitcher';
 
 // Icons
-import { Home, ShoppingBag, Users, MessageCircle, User, Plus, Sparkles, ClipboardList, CheckCircle2, Truck, Package, Search, Bell, Settings, ChevronRight, Heart, Image as ImageIcon, MoreHorizontal, Share2, MessageSquare, ArrowRightLeft, ShieldCheck, MapPin, FileText, Award, Book } from 'lucide-react';
+import { Home, ShoppingBag, Users, MessageCircle, User, Plus, Sparkles, ClipboardList, CheckCircle2, Truck, Package, Search, Bell, Settings, ChevronRight, Heart, Image as ImageIcon, MoreHorizontal, Share2, MessageSquare, ArrowRightLeft, ShieldCheck, MapPin, FileText, Award, Book, Flame } from 'lucide-react';
 
 // --- Main Layout Components (Refactored from original App.jsx) ---
 
@@ -292,6 +294,15 @@ const UserShop = () => {
           </div>
         )}
       </div>
+
+      {/* Wish Pool FAB */}
+      <button
+        onClick={() => push('WishPool')}
+        className="fixed bottom-24 right-4 bg-gradient-to-r from-violet-600 to-indigo-600 text-white p-3 rounded-full shadow-lg shadow-indigo-200 active:scale-95 transition-transform z-40 flex items-center gap-2"
+      >
+        <Sparkles size={20} />
+        <span className="text-xs font-bold pr-1">许愿</span>
+      </button>
     </div>
   );
 };
@@ -465,6 +476,10 @@ const LeaderDashboard = () => {
         <div className="bg-blue-50 p-4 rounded-xl flex flex-col items-center justify-center gap-2 text-blue-600 active:scale-95 transition-transform">
           <Truck size={32} />
           <span className="font-bold">发货管理</span>
+        </div>
+        <div onClick={() => push('WishPool')} className="bg-amber-50 p-4 rounded-xl flex flex-col items-center justify-center gap-2 text-amber-600 active:scale-95 transition-transform">
+          <Sparkles size={32} />
+          <span className="font-bold">许愿池选品</span>
         </div>
       </div>
     </div>
@@ -786,6 +801,10 @@ const MainApp = () => {
       case 'DollProfile': return <DollProfile />;
       case 'AchievementCenter': return <AchievementCenter />;
       case 'KnowledgeBase': return <KnowledgeBase />;
+      case 'AchievementCenter': return <AchievementCenter />;
+      case 'KnowledgeBase': return <KnowledgeBase />;
+      case 'SkinMatchStudio': return <SkinMatchStudio />;
+      case 'WishPool': return <WishPool />;
       case 'Home':
       default:
         // Tab View
