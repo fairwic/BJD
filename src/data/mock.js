@@ -36,14 +36,94 @@ export const CATEGORY_CONFIG = {
 };
 
 export const MOCK_PRODUCTS = [
-    { id: 1, title: '【现货】三分BJD 洛丽塔宫廷风洋装 "蔷薇少女"', price: 328, image: 'bg-pink-100', shop: '爱丽丝的衣橱', tags: ['三分', '洋装'], size: '1/3', category: 'outfit', type: 'spot' },
-    { id: 2, title: '【限时】四分通用 休闲卫衣套装 多色可选', price: 89, image: 'bg-blue-100', shop: '爱丽丝的衣橱', tags: ['四分', '休闲'], size: '1/4', category: 'outfit', type: 'spot' },
-    { id: 3, title: '【假发】6-7寸高温丝 手作造型款 银灰色', price: 120, image: 'bg-gray-200', shop: '爱丽丝的衣橱', tags: ['假发', '通用'], size: '1/3', category: 'wig', type: 'spot' },
-    { id: 4, title: '【整娃】AS天使工房 74cm叔体 官方正版', price: 2800, image: 'bg-stone-200', shop: 'AS官方店', tags: ['叔', '整娃'], size: 'uncle', category: 'full', type: 'spot' },
-    { id: 5, title: '【眼珠】14mm 树脂眼 追视效果极佳 星空款', price: 68, image: 'bg-indigo-200', shop: '瞳孔深处', tags: ['通用', '眼珠'], size: 'all', category: 'eyes', type: 'spot' },
-    { id: 6, title: '【鞋子】三分女 黑色小皮鞋 百搭款', price: 45, image: 'bg-neutral-200', shop: '足下生风', tags: ['三分', '鞋子'], size: '1/3', category: 'shoes', type: 'spot' },
-    { id: 7, title: '【道具】复古手提箱 适合三分/叔', price: 158, image: 'bg-amber-100', shop: '道具屋', tags: ['通用', '道具'], size: 'all', category: 'props', type: 'spot' },
-    { id: 8, title: '【素体】四分特体 胖胖体 可动性强', price: 800, image: 'bg-orange-100', shop: '自制太太', tags: ['四分', '素体'], size: '1/4', category: 'body', type: 'spot' },
+    {
+        id: 1,
+        title: '1套 BJD 娃娃，带有富有表达力的蓝色眼睛和黑色直发，带刘海',
+        price: 59,
+        image: 'https://img.kwcdn.com/product/open/b9aed2e34c41492885b740fd8b520bb1-goods.jpeg?imageView2/2/w/500/q/70/format/avif',
+        shop: 'Temu精选',
+        tags: ['6分', '整娃', '热销'],
+        size: '1/6',
+        category: 'full',
+        type: 'spot'
+    },
+    {
+        id: 2,
+        title: '12.6英寸1/6比例BJD/MJD可动人偶 - 12关节球窝关节可动玩偶',
+        price: 148,
+        image: 'https://img.kwcdn.com/product/open/d965e0cf5b4942b283b90a888cd2595c-goods.jpeg?imageView2/2/w/500/q/70/format/avif',
+        shop: 'BJD梦工厂',
+        tags: ['6分', '素体', '可动'],
+        size: '1/6',
+        category: 'full',
+        type: 'spot'
+    },
+    {
+        id: 3,
+        title: '节日装饰手办玩偶 - 关节可活动，无需电源，适合家居装饰',
+        price: 95,
+        image: 'https://img.kwcdn.com/product/fancy/c2f4da76-873a-442c-9841-b0113827dfe2.jpg?imageView2/2/w/500/q/70/format/avif',
+        shop: '萌系收藏',
+        tags: ['摆件', '礼物'],
+        size: '1/8',
+        category: 'full',
+        type: 'spot'
+    },
+    {
+        id: 4,
+        title: '12.6in 1/6收藏玩偶,超模娃娃时尚12关节可动人偶,清晰真实的妆容',
+        price: 179,
+        image: 'https://img.kwcdn.com/product/open/f9e9459767484e9fb0c6a30507b65f35-goods.jpeg?imageView2/2/w/500/q/70/format/avif',
+        shop: '时尚超模',
+        tags: ['6分', '超模', '妆面'],
+        size: '1/6',
+        category: 'full',
+        type: 'spot'
+    },
+    {
+        id: 5,
+        title: '1/12比例古风BJD娃娃，适配OB11骨架，12关节可动全身造型',
+        price: 145,
+        image: 'https://img.kwcdn.com/product/fancy/52fafb00-eafc-4ccd-a96c-c2bca5d83c50.jpg?imageView2/2/w/500/q/70/format/avif',
+        shop: '古风雅韵',
+        tags: ['OB11', '12分', '古风'],
+        size: '1/12',
+        category: 'full',
+        type: 'spot'
+    },
+    {
+        id: 6,
+        title: '1/8比例BJD娃娃扎克 - 可动动漫动作人偶',
+        price: 208,
+        image: 'https://img.kwcdn.com/product/fancy/7cdd95e8-22f8-472b-917a-f7f2409cfceb.jpg?imageView2/2/w/500/q/70/format/avif',
+        shop: 'Q版专卖',
+        tags: ['8分', 'Q版'],
+        size: '1/8',
+        category: 'full',
+        type: 'spot'
+    },
+    {
+        id: 7,
+        title: '【假发】6-7寸高温丝 手作造型款 银灰色',
+        price: 120,
+        image: 'bg-gray-200',
+        shop: '爱丽丝的衣橱',
+        tags: ['假发', '通用'],
+        size: '1/3',
+        category: 'wig',
+        type: 'spot'
+    },
+    {
+        id: 8,
+        title: '【眼珠】14mm 树脂眼 追视效果极佳 星空款',
+        price: 68,
+        image: 'bg-indigo-200',
+        shop: '瞳孔深处',
+        tags: ['通用', '眼珠'],
+        size: 'all',
+        category: 'eyes',
+        type: 'spot'
+    }
 ];
 
 export const MOCK_GROUP_BUYS = [

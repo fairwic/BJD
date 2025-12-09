@@ -6,9 +6,13 @@ import { Search, ShoppingBag, Heart, MessageSquare, Sparkles, Star, Flame, Zap }
 
 const ProductCard = ({ item, onClick, isMasonry }) => (
     <div onClick={onClick} className={`bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 group active:scale-95 transition-transform break-inside-avoid mb-3 ${isMasonry ? '' : ''}`}>
-        <div className={`w-full ${item.image} relative h-auto`}>
-            {/* Aspect Ratio Simulator using padding-bottom if images were real, here we use different heights for mock bg */}
-            <div className={`${item.category === 'full' ? 'h-64' : 'h-40'} w-full`}></div>
+        <div className={`w-full relative h-auto`}>
+            {/* Image Rendering: Support both CSS classes (mock) and URL (real) */}
+            {item.image.startsWith('http') ? (
+                <img src={item.image} alt={item.title} className="w-full h-auto object-cover" />
+            ) : (
+                <div className={`${item.category === 'full' ? 'h-64' : 'h-40'} w-full ${item.image}`}></div>
+            )}
             <span className="absolute top-2 left-2 bg-black/60 text-white text-[10px] px-2 py-0.5 rounded-full backdrop-blur-md">
                 {item.tags[0]}
             </span>
@@ -43,21 +47,57 @@ const UserShop = () => {
     const { groupBuys } = useApp();
     const [activeSubTab, setActiveSubTab] = useState('merchant'); // 'merchant' or 'leader'
     const [activeCategory, setActiveCategory] = useState('all');
+    const [searchQuery, setSearchQuery] = useState('');
 
-    // 筛选逻辑
+    // 搜索过滤辅助函数
+    const matchesSearch = (item) => {
+        if (!searchQuery) return true;
+        const q = searchQuery.toLowerCase();
+        // 搜索字段: 标题、店铺/团长、尺寸、标签、状态
+        return (
+            item.title?.toLowerCase().includes(q) ||
+            item.shop?.toLowerCase().includes(q) ||
+            item.leader?.toLowerCase().includes(q) ||
+            item.size?.toLowerCase().includes(q) ||
+            item.tags?.some(t => t.toLowerCase().includes(q)) ||
+            item.status?.toLowerCase().includes(q)
+        );
+    };
+
+    // 现货列表筛选
     const filteredProducts = MOCK_PRODUCTS.filter(p => {
         const matchCategory = activeCategory === 'all' || p.category === activeCategory;
-        return matchCategory;
+        const matchSearch = matchesSearch(p);
+        return matchCategory && matchSearch;
+    });
+
+    // 团购列表筛选
+    const filteredGroupBuys = groupBuys.filter(g => {
+        // Group buys might not have 'category' field in mock, assuming they show up in 'all' or ignore category for now unless added
+        // For simplicity, let's strictly apply search query to group buys
+        return matchesSearch(g);
     });
 
     return (
-        <div className="pb-20 h-full flex flex-col bg-gray-50">
+        <div className="pb-24 bg-gray-50 min-h-full">
             {/* Header: Immersive & Search */}
-            <div className="bg-white px-4 pt-12 pb-4 sticky top-0 z-20 shadow-sm">
+            <div className="bg-white px-4 pt-4 pb-4 sticky top-0 z-20 shadow-sm">
                 <div className="flex items-center gap-3">
-                    <div className="flex-1 bg-gray-100 rounded-full flex items-center px-4 py-2 text-gray-400 gap-2">
-                        <Search size={16} />
-                        <span className="text-sm">搜索你心仪的崽...</span>
+                    <div className="flex-1 bg-gray-100 rounded-full flex items-center px-4 py-2 text-gray-400 gap-2 focus-within:ring-2 focus-within:ring-rose-500/20 transition-all">
+                        <Search size={16} className={searchQuery ? "text-gray-800" : "text-gray-400"} />
+                        <input
+                            type="text"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            placeholder="搜 MK 尺寸 / 龙魂 / 6分 ..."
+                            className="bg-transparent border-none outline-none text-sm text-gray-800 w-full placeholder:text-gray-400"
+                        />
+                        {searchQuery && (
+                            <button onClick={() => setSearchQuery('')} className="bg-gray-200 rounded-full p-0.5">
+                                <span className="sr-only">Clear</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
+                            </button>
+                        )}
                     </div>
                     <button onClick={() => push('WishPool')} className="p-2 text-gray-600 relative">
                         <Sparkles size={24} className="text-amber-500" />
@@ -65,8 +105,26 @@ const UserShop = () => {
                     </button>
                 </div>
 
-                {/* Visual Categories (Story Style) */}
-                <div className="flex gap-4 mt-4 overflow-x-auto scrollbar-hide pb-2">
+                {/* Quick Search Tags - ONLY shows when search is empty or focused to help user */}
+                <div className="flex gap-2 mt-3 overflow-x-auto scrollbar-hide">
+                    {['🔥 热门', '3分', '4分', '6分', '特体', '龙魂', 'AS', '娃衣', '眼珠'].map(tag => (
+                        <button
+                            key={tag}
+                            onClick={() => setSearchQuery(tag.replace('🔥 ', ''))}
+                            className="px-3 py-1 bg-gray-50 text-gray-500 text-xs rounded-full whitespace-nowrap hover:bg-rose-50 hover:text-rose-500 transition-colors border border-gray-100"
+                        >
+                            {tag}
+                        </button>
+                    ))}
+                </div>
+            </div>
+
+            {/* Visual Categories (Story Style) - Moved out of header or kept? Kept but separate from sticky header if we want it to scroll? 
+               Actually, sticky header usually contains search. Categories can scroll away.
+               Let's keep Categories just below header, NOT sticky, to save screen space.
+            */}
+            <div className="px-4 py-4 bg-white mb-2">
+                <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
                     {[
                         { id: 'all', label: '推荐', icon: Star, color: 'bg-rose-100 text-rose-500' },
                         { id: 'full', label: '整娃', icon: Sparkles, color: 'bg-indigo-100 text-indigo-500' },
@@ -89,7 +147,7 @@ const UserShop = () => {
                 </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-3">
+            <div className="p-3">
                 {/* Hero Banner (Only on 'all' category) */}
                 {activeCategory === 'all' && (
                     <div className="mb-6 relative overflow-hidden rounded-2xl h-48 bg-gray-900 group cursor-pointer" onClick={() => push('ProductDetail', { id: 101 })}>
@@ -138,7 +196,7 @@ const UserShop = () => {
                     </div>
                 ) : (
                     <div className="space-y-4 pb-10">
-                        {groupBuys.map(g => (
+                        {filteredGroupBuys.map(g => (
                             <div key={g.id} onClick={() => push('ProductDetail', { id: g.id })} className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden active:scale-95 transition-transform">
                                 <div className={`h-48 w-full ${g.image} relative`}>
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
