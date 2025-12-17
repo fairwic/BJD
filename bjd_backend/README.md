@@ -1,138 +1,141 @@
 # 🦀 Axum DDD Backend Scaffold
 
-> **企业级 Rust 后端脚手架** — 基于 Axum 0.8 + 领域驱动设计，为构建高性能、可维护的微服务而生。
+> **Enterprise-grade Rust Backend Scaffold** — Based on Axum 0.8 + Domain-Driven Design, built for high-performance, maintainable microservices.
 
 [![Rust](https://img.shields.io/badge/Rust-1.83%2B-orange?logo=rust)](https://www.rust-lang.org/)
 [![Axum](https://img.shields.io/badge/Axum-0.8-blue)](https://github.com/tokio-rs/axum)
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 
-**为什么选择这个脚手架？**
+[English] | [中文](docs/README_CN.md)
 
-🚀 **生产级架构** — 不是玩具项目，而是经过严谨设计的企业级架构  
-⚡ **极致性能** — Rust + Tokio 异步运行时，轻松处理百万 QPS  
-🧠 **领域驱动** — 业务逻辑与技术细节完美隔离，代码可维护 10 年  
-📦 **开箱即用** — 数据库、缓存、日志、错误处理全部配置完成  
+**Why choose this scaffold?**
+
+🚀 **Production-Grade Architecture** — Not a toy project, but a rigorously designed enterprise architecture.
+⚡ **Extreme Performance** — Rust + Tokio asynchronous runtime, easily handling millions of QPS.
+🧠 **Domain-Driven** — Perfect isolation of business logic and technical details, code maintainable for 10 years.
+📦 **Out of the Box** — Database, cache, logging, and error handling are all configured.
 
 ---
 
-## ✨ 核心亮点
+## ✨ Core Highlights
 
-### 🏗️ 清晰的六边形架构
+### 🏗️ Clear Hexagonal Architecture
+
 ```
 ┌─────────────────────────────────────┐
-│       API (Handlers, Router)        │  ← HTTP 入口
+│       API (Handlers, Router)        │  ← HTTP Entry
 ├─────────────────────────────────────┤
-│    Application (Services, DTOs)     │  ← 业务编排
+│    Application (Services, DTOs)     │  ← Business Orchestration
 ├─────────────────────────────────────┤
-│     Domain (Entities, Traits)       │  ← 纯业务逻辑 (不依赖任何框架)
+│     Domain (Entities, Traits)       │  ← Pure Business Logic (No Framework Dependencies)
 ├─────────────────────────────────────┤
-│ Infrastructure (Postgres, Redis)    │  ← 可替换的技术实现
+│ Infrastructure (Postgres, Redis)    │  ← Replaceable Technical Implementation
 └─────────────────────────────────────┘
 ```
 
-### 💪 硬核技术优势
+### 💪 Hardcore Technical Advantages
 
-| 特性 | 为什么牛 |
-|------|----------|
-| **多 Crate Workspace** | 改一个模块不用全量编译，CI 快 3 倍 |
-| **依赖倒置 (DIP)** | 换数据库只需实现新 Trait，业务代码 0 改动 |
-| **编译时 SQL 检查** | SQLx 编译期验证 SQL，部署后 0 数据库 bug |
-| **零成本抽象** | 泛型 + Trait，性能和手写一样，代码优雅 10 倍 |
-| **结构化错误处理** | 统一错误类型，API 返回永远可预测 |
-| **Redis 缓存内置** | Cache-Aside 模式，读性能提升 100x |
-| **分布式就绪** | 无状态设计，水平扩展随便搞 |
+| Feature | Why it's cool |
+|---------|---------------|
+| **Multi-Crate Workspace** | Modifying one module doesn't require full recompilation, CI is 3x faster |
+| **Dependency Inversion (DIP)** | Switch databases by just implementing a new Trait, 0 changes to business code |
+| **Compile-time SQL Checks** | SQLx validates SQL at compile time, 0 database bugs after deployment |
+| **Zero-Cost Abstraction** | Generics + Traits, performance equal to handwritten code, code is 10x more elegant |
+| **Structured Error Handling** | Unified error types, API returns are always predictable |
+| **Built-in Redis Cache** | Cache-Aside pattern, read performance improved 100x |
+| **Distributed Ready** | Stateless design, horizontal scaling is easy |
 
-### 📊 性能对比
+### 📊 Performance Comparison
 
-| 框架 | 语言 | QPS (简单接口) | 内存占用 |
-|------|------|----------------|----------|
-| **Axum (本项目)** | Rust | 500,000+ | ~10MB |
+| Framework | Language | QPS (Simple API) | Memory Usage |
+|-----------|----------|------------------|--------------|
+| **Axum (This Project)** | Rust | 500,000+ | ~10MB |
 | Express | Node.js | 20,000 | ~80MB |
 | Gin | Go | 200,000 | ~15MB |
 | Spring Boot | Java | 30,000 | ~200MB |
 
-> *基于 wrk 压测，4 核 8G 服务器，仅供参考*
+> *Based on wrk stress test, 4 core 8G server, for reference only*
 
 ---
 
-## 📦 技术栈
+## 📦 Tech Stack
 
-- **Web 框架**: Axum 0.8 (Tokio 生态最强)
-- **数据库**: PostgreSQL + SQLx (编译时检查)
-- **缓存**: Redis via fred (最快的 Rust Redis 客户端)
-- **日志**: tracing (生产级结构化日志)
-- **配置**: config (多环境 + 环境变量覆盖)
-- **验证**: validator (声明式参数校验)
-- **错误**: thiserror + anyhow (类型安全错误处理)
+- **Web Framework**: Axum 0.8 (Strongest in Tokio ecosystem)
+- **Database**: PostgreSQL + SQLx (Compile-time checks)
+- **Cache**: Redis via fred (Fastest Rust Redis client)
+- **Logging**: tracing (Production-grade structured logging)
+- **Configuration**: config (Multi-environment + Environment variable override)
+- **Validation**: validator (Declarative parameter validation)
+- **Error Handling**: thiserror + anyhow (Type-safe error handling)
 
 ---
 
-## 📁 项目结构
+## 📁 Project Structure
 
 ```
 ├── crates/
-│   ├── api/            # HTTP 层 - 瘦控制器，只做转发
-│   ├── application/    # 应用层 - 业务编排，事务边界
-│   ├── domain/         # 领域层 - 纯 Rust！不依赖任何框架
-│   ├── infrastructure/ # 基础设施 - 数据库、缓存实现
-│   └── common/         # 通用 - 错误、响应格式
+│   ├── api/            # HTTP Layer - Thin controllers, only forwarding
+│   ├── application/    # Application Layer - Business orchestration, transaction boundaries
+│   ├── domain/         # Domain Layer - Pure Rust! No framework dependencies
+│   ├── infrastructure/ # Infrastructure - Database, cache implementations
+│   └── common/         # Common - Errors, response formats
 ├── bins/
-│   └── server/         # 入口 - 依赖注入，一键启动
-├── config/             # 配置 - development/production
-└── migrations/         # 迁移 - 版本化数据库变更
+│   └── server/         # Entry - Dependency injection, one-click start
+├── config/             # Configuration - development/production
+└── migrations/         # Migrations - Versioned database changes
 ```
 
-### 🎯 依赖规则 (铁律)
+### 🎯 Dependency Rules (Iron Laws)
 
 ```
-domain     → 只依赖标准库，永远不改
-application → 依赖 domain，编排业务
-infrastructure → 实现 domain 的 Trait
-api        → 调用 application，不碰 domain
+domain     → Depends only on std, never changes
+application → Depends on domain, orchestrates business
+infrastructure → Implements domain Traits
+api        → Calls application, never touches domain
 ```
 
-**违反这个规则 = PR 不过！**
+**Violating this rule = PR Rejected!**
 
 ---
 
-## 🚀 5 分钟上手
+## 🚀 5 Minutes to Start
 
-### 1. 克隆 & 配置
+### 1. Clone & Config
 
 ```bash
 git clone <repo>
 cd axum-scaffold
 
-# 配置数据库和 Redis
+# Configure Database and Redis
 vim config/default.toml
 ```
 
-### 2. 数据库迁移
+### 2. Database Migration
 
 ```bash
 cargo install sqlx-cli --no-default-features --features postgres
 sqlx migrate run
 ```
 
-### 3. 启动！
+### 3. Start!
 
 ```bash
 cargo run -p axum-server
 
-# 输出:
+# Output:
 # 🚀 Starting Server...
 # ✅ Database connection established
 # ✅ Redis connection established
 # 🌐 Server running on http://0.0.0.0:3000
 ```
 
-### 4. 测试
+### 4. Test
 
 ```bash
-# 健康检查
+# Health Check
 curl http://localhost:3000/health
 
-# 创建用户
+# Create User
 curl -X POST http://localhost:3000/api/v1/users \
   -H "Content-Type: application/json" \
   -d '{"username": "test", "email": "test@example.com"}'
@@ -140,41 +143,41 @@ curl -X POST http://localhost:3000/api/v1/users \
 
 ---
 
-## 📖 开发规范 (必读!)
+## 📖 Development Spec (Must Read!)
 
-> 花 30 分钟读完，少踩 30 个坑
+> Spend 30 minutes reading this to avoid 30 pitfalls
 
 👉 **[docs/backend_spec.md](docs/backend_spec.md)**
 
-包含:
-- ✅ 分层架构深度解析
-- ✅ 代码示例 (复制粘贴即可用)
-- ✅ 错误处理最佳实践
-- ✅ Redis 缓存集成指南
-- ✅ 性能优化 Checklist
-- ✅ 测试策略
+Includes:
+- ✅ Deep dive into Layered Architecture
+- ✅ Code Examples (Copy & Paste ready)
+- ✅ Error Handling Best Practices
+- ✅ Redis Cache Integration Guide
+- ✅ Performance Optimization Checklist
+- ✅ Testing Strategy
 
 ---
 
-## 🔧 开发命令
+## 🔧 Development Commands
 
 ```bash
-cargo run -p axum-server    # 开发运行
-cargo check                 # 快速检查
-cargo test                  # 运行测试
-cargo fmt                   # 格式化
+cargo run -p axum-server    # Dev Run
+cargo check                 # Quick Check
+cargo test                  # Run Tests
+cargo fmt                   # Format
 cargo clippy                # Lint
-cargo build --release       # 生产构建
+cargo build --release       # Production Build
 ```
 
 ---
 
-## 🤝 贡献
+## 🤝 Contributing
 
-欢迎 PR！请确保:
-1. 遵循 [开发规范](docs/backend_spec.md)
-2. 所有测试通过
-3. clippy 无警告
+PRs welcome! Please ensure:
+1. Follow [Development Spec](docs/backend_spec.md)
+2. All tests pass
+3. No clippy warnings
 
 ---
 
