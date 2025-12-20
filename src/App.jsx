@@ -41,12 +41,17 @@ import WishPool from './pages/WishPool';
 import CreateSpotProduct from './pages/CreateSpotProduct';
 import SpotProductManagement from './pages/SpotProductManagement';
 import SearchPage from './pages/SearchPage';
+import ArtistHub from './pages/ArtistHub';
+import ArtistProfile from './pages/ArtistProfile';
+import MerchantApply from './pages/MerchantApply';
+import LeaderApply from './pages/LeaderApply';
+import ArtistApply from './pages/ArtistApply';
 
 // Components
 import UserSwitcher from './components/UserSwitcher';
 
 // Icons
-import { Home, ShoppingBag, Users, MessageCircle, User, Plus, Sparkles, ClipboardList, CheckCircle2, Truck, Package, Search, Bell, Settings, ChevronRight, Heart, Image as ImageIcon, MoreHorizontal, Share2, MessageSquare, ArrowRightLeft, ShieldCheck, MapPin, FileText, Award, Book, Flame } from 'lucide-react';
+import { Home, ShoppingBag, Users, MessageCircle, User, Plus, Sparkles, ClipboardList, CheckCircle2, Truck, Package, Search, Bell, Settings, ChevronRight, Heart, Image as ImageIcon, MoreHorizontal, Share2, MessageSquare, ArrowRightLeft, ShieldCheck, MapPin, FileText, Award, Book, Flame, Palette } from 'lucide-react';
 
 // --- Main Layout Components (Refactored from original App.jsx) ---
 
@@ -54,6 +59,7 @@ const TabBar = ({ activeTab, setActiveTab, role }) => {
   const tabs = [
     { id: 'shop', label: '养娃', icon: ShoppingBag, roles: [ROLES.USER] },
     { id: 'home', label: '工作台', icon: ClipboardList, roles: [ROLES.LEADER, ROLES.MERCHANT] },
+    { id: 'artist', label: '妆师', icon: Palette, roles: [ROLES.USER] },
     { id: 'square', label: '广场', icon: Users, roles: [ROLES.USER, ROLES.LEADER] },
     { id: 'messages', label: '消息', icon: MessageCircle, roles: [ROLES.USER, ROLES.LEADER, ROLES.MERCHANT] },
     { id: 'me', label: '我的', icon: User, roles: [ROLES.USER, ROLES.LEADER, ROLES.MERCHANT] },
@@ -147,6 +153,51 @@ const UserProfile = () => {
           {orders.filter(o => o.userId === currentUser.id).length === 0 && (
             <p className="text-center text-gray-400 text-sm py-4">暂无订单</p>
           )}
+        </div>
+      </div>
+
+      {/* ✨ 入驻入口区域 */}
+      <div className="mt-3 bg-white p-4">
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="font-bold text-sm">开启创作者之旅</h3>
+          <span className="text-xs text-gray-400">轻松入驻 · 开始赚钱</span>
+        </div>
+        <div className="grid grid-cols-3 gap-3">
+          {/* 成为商家 - 卖现货 */}
+          <div
+            onClick={() => push('MerchantApply')}
+            className="bg-gradient-to-br from-orange-50 to-amber-100 rounded-xl p-3 flex flex-col items-center gap-2 cursor-pointer active:scale-95 transition-transform border border-orange-100"
+          >
+            <div className="w-10 h-10 bg-gradient-to-br from-orange-400 to-amber-500 rounded-full flex items-center justify-center text-white shadow-lg shadow-orange-200">
+              <ShoppingBag size={18} />
+            </div>
+            <span className="text-xs font-bold text-gray-800">成为商家</span>
+            <span className="text-[10px] text-gray-500">卖现货</span>
+          </div>
+
+          {/* 成为团长 - 开团商品 */}
+          <div
+            onClick={() => push('LeaderApply')}
+            className="bg-gradient-to-br from-purple-50 to-indigo-100 rounded-xl p-3 flex flex-col items-center gap-2 cursor-pointer active:scale-95 transition-transform border border-purple-100"
+          >
+            <div className="w-10 h-10 bg-gradient-to-br from-purple-400 to-indigo-500 rounded-full flex items-center justify-center text-white shadow-lg shadow-purple-200">
+              <Sparkles size={18} />
+            </div>
+            <span className="text-xs font-bold text-gray-800">成为团长</span>
+            <span className="text-[10px] text-gray-500">开团商品</span>
+          </div>
+
+          {/* 成为妆师/毛娘 */}
+          <div
+            onClick={() => push('ArtistApply')}
+            className="bg-gradient-to-br from-rose-50 to-pink-100 rounded-xl p-3 flex flex-col items-center gap-2 cursor-pointer active:scale-95 transition-transform border border-rose-100"
+          >
+            <div className="w-10 h-10 bg-gradient-to-br from-rose-400 to-pink-500 rounded-full flex items-center justify-center text-white shadow-lg shadow-rose-200">
+              <Palette size={18} />
+            </div>
+            <span className="text-xs font-bold text-gray-800">成为妆师</span>
+            <span className="text-[10px] text-gray-500">妆师/毛娘</span>
+          </div>
         </div>
       </div>
 
@@ -591,6 +642,11 @@ const MainApp = () => {
       case 'CreateSpotProduct': return <CreateSpotProduct />;
       case 'SpotProductManagement': return <SpotProductManagement />;
       case 'SearchPage': return <SearchPage />;
+      case 'ArtistHub': return <ArtistHub />;
+      case 'ArtistProfile': return <ArtistProfile />;
+      case 'MerchantApply': return <MerchantApply />;
+      case 'LeaderApply': return <LeaderApply />;
+      case 'ArtistApply': return <ArtistApply />;
       case 'Home':
       default:
         // Tab View
@@ -599,6 +655,7 @@ const MainApp = () => {
             <div className="flex-1 overflow-y-auto scrollbar-hide">
               {activeTab === 'shop' && <UserShop />}
               {activeTab === 'home' && <LeaderDashboard />}
+              {activeTab === 'artist' && <ArtistHub />}
               {activeTab === 'me' && <UserProfile />}
               {activeTab === 'square' && <Square />}
               {activeTab === 'messages' && <Messages />}

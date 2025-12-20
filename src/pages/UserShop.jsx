@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { useRouter } from '../router/RouteStack';
-import { CATEGORY_CONFIG, MOCK_PRODUCTS } from '../data/mock';
+import { CATEGORY_CONFIG, MOCK_PRODUCTS, MOCK_BANNERS } from '../data/mock';
+import Carousel from '../components/Carousel';
 import { Search, ShoppingBag, Heart, MessageSquare, Sparkles, Star, Flame, Zap } from 'lucide-react';
 
 const ProductCard = ({ item, onClick, isMasonry }) => (
@@ -139,24 +140,33 @@ const UserShop = () => {
             </div>
 
             <div className="p-3">
-                {/* Hero Banner (Only on 'all' category) */}
+                {/* 轮播图 (Only on 'all' category) */}
                 {activeCategory === 'all' && (
-                    <div className="mb-6 relative overflow-hidden rounded-2xl h-48 bg-gray-900 group cursor-pointer" onClick={() => push('ProductDetail', { id: 101 })}>
-                        <div className="absolute inset-0 bg-gradient-to-r from-purple-900 to-indigo-900 opacity-90" />
-                        <div className="absolute top-0 right-0 p-6 opacity-20">
-                            <Flame size={120} className="text-rose-500" />
-                        </div>
-                        <div className="relative z-10 p-5 h-full flex flex-col justify-center text-white">
-                            <div className="bg-rose-500 w-fit px-2 py-1 rounded text-[10px] font-bold mb-2 animate-pulse">🔥 本周热团</div>
-                            <h2 className="text-2xl font-bold mb-1">鹿神·特体二样</h2>
-                            <p className="text-white/60 text-xs mb-4 line-clamp-1">神性与野性的完美结合，关节可动性大幅提升...</p>
-                            <div className="flex items-center gap-2 mt-auto">
-                                <div className="flex -space-x-2">
-                                    {[1, 2, 3, 4].map(i => <div key={i} className="w-6 h-6 rounded-full bg-gray-400 border-2 border-indigo-900" />)}
-                                </div>
-                                <span className="text-xs text-indigo-200">382人已上车</span>
-                            </div>
-                        </div>
+                    <div className="mb-4">
+                        <Carousel
+                            items={MOCK_BANNERS}
+                            autoPlay={true}
+                            interval={4000}
+                            onItemClick={(item) => {
+                                // 根据轮播类型跳转到不同页面
+                                switch (item.type) {
+                                    case 'group_buy':
+                                    case 'spot':
+                                        push('ProductDetail', { id: item.targetId });
+                                        break;
+                                    case 'artist':
+                                        push('ArtistProfile', { artistId: item.targetId });
+                                        break;
+                                    case 'activity':
+                                        if (item.targetUrl) {
+                                            push(item.targetUrl);
+                                        }
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }}
+                        />
                     </div>
                 )}
 

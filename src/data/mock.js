@@ -193,3 +193,58 @@ export const MOCK_ORDERS = [
         leader: '知名团长A',
     }
 ];
+
+// 轮播图数据
+export const MOCK_BANNERS = [
+    {
+        id: 1,
+        type: 'group_buy',
+        title: '🔥 鹿神特体二样',
+        subtitle: '382人已上车，征集即将截止',
+        targetId: 101,
+        gradient: 'from-purple-600 to-indigo-700',
+        badge: '本周热团',
+        image: null, // 可选：背景图片URL
+    },
+    {
+        id: 2,
+        type: 'spot',
+        title: '精选六分娃',
+        subtitle: '新品现货，即拍即发',
+        targetId: 1,
+        gradient: 'from-rose-500 to-pink-600',
+        badge: '现货',
+        image: 'https://img.kwcdn.com/product/open/b9aed2e34c41492885b740fd8b520bb1-goods.jpeg',
+    },
+    {
+        id: 3,
+        type: 'artist',
+        title: '✨ 云墨妆坊',
+        subtitle: '古风清冷系妆面大师，本月预约8折',
+        targetId: 'artist_001',
+        gradient: 'from-amber-500 to-orange-600',
+        badge: '推荐妆师',
+        image: null,
+    },
+    {
+        id: 4,
+        type: 'activity',
+        title: '🎄 圣诞活动',
+        subtitle: '分享晒娃照，赢取限定眼珠！',
+        targetId: null,
+        targetUrl: 'WishPool', // 跳转到许愿池页面
+        gradient: 'from-green-500 to-emerald-600',
+        badge: '限时活动',
+        image: null,
+    },
+    {
+        id: 5,
+        type: 'group_buy',
+        title: '小小兔大货出货',
+        subtitle: '尾款补款通知，请尽快处理',
+        targetId: 102,
+        gradient: 'from-blue-500 to-cyan-600',
+        badge: '补款中',
+        image: null,
+    },
+];
