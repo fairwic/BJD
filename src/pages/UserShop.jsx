@@ -84,20 +84,14 @@ const UserShop = () => {
             <div className="bg-white px-4 pt-4 pb-4 sticky top-0 z-20 shadow-sm">
                 <div className="flex items-center gap-3">
                     <div className="flex-1 bg-gray-100 rounded-full flex items-center px-4 py-2 text-gray-400 gap-2 focus-within:ring-2 focus-within:ring-rose-500/20 transition-all">
-                        <Search size={16} className={searchQuery ? "text-gray-800" : "text-gray-400"} />
-                        <input
-                            type="text"
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            placeholder="搜 MK 尺寸 / 龙魂 / 6分 ..."
-                            className="bg-transparent border-none outline-none text-sm text-gray-800 w-full placeholder:text-gray-400"
-                        />
-                        {searchQuery && (
-                            <button onClick={() => setSearchQuery('')} className="bg-gray-200 rounded-full p-0.5">
-                                <span className="sr-only">Clear</span>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
-                            </button>
-                        )}
+                        <Search size={16} className="text-gray-400" />
+                        {/* 点击跳转到搜索页面 */}
+                        <div
+                            onClick={() => push('SearchPage')}
+                            className="flex-1 text-sm text-gray-400 cursor-pointer"
+                        >
+                            搜 MK 尺寸 / 龙魂 / 6分 ...
+                        </div>
                     </div>
                     <button onClick={() => push('WishPool')} className="p-2 text-gray-600 relative">
                         <Sparkles size={24} className="text-amber-500" />
@@ -105,12 +99,12 @@ const UserShop = () => {
                     </button>
                 </div>
 
-                {/* Quick Search Tags - ONLY shows when search is empty or focused to help user */}
+                {/* Quick Search Tags */}
                 <div className="flex gap-2 mt-3 overflow-x-auto scrollbar-hide">
                     {['🔥 热门', '3分', '4分', '6分', '特体', '龙魂', 'AS', '娃衣', '眼珠'].map(tag => (
                         <button
                             key={tag}
-                            onClick={() => setSearchQuery(tag.replace('🔥 ', ''))}
+                            onClick={() => push('SearchPage')}
                             className="px-3 py-1 bg-gray-50 text-gray-500 text-xs rounded-full whitespace-nowrap hover:bg-rose-50 hover:text-rose-500 transition-colors border border-gray-100"
                         >
                             {tag}
@@ -119,10 +113,7 @@ const UserShop = () => {
                 </div>
             </div>
 
-            {/* Visual Categories (Story Style) - Moved out of header or kept? Kept but separate from sticky header if we want it to scroll? 
-               Actually, sticky header usually contains search. Categories can scroll away.
-               Let's keep Categories just below header, NOT sticky, to save screen space.
-            */}
+            {/* Visual Categories (Story Style) */}
             <div className="px-4 py-4 bg-white mb-2">
                 <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
                     {[
@@ -229,7 +220,7 @@ const UserShop = () => {
                 <Sparkles size={18} className="animate-pulse" />
                 <span className="font-bold text-sm">许愿池</span>
             </button>
-        </div>
+        </div >
     );
 };
 

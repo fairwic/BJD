@@ -40,6 +40,7 @@ import UserShop from './pages/UserShop';
 import WishPool from './pages/WishPool';
 import CreateSpotProduct from './pages/CreateSpotProduct';
 import SpotProductManagement from './pages/SpotProductManagement';
+import SearchPage from './pages/SearchPage';
 
 // Components
 import UserSwitcher from './components/UserSwitcher';
@@ -589,6 +590,7 @@ const MainApp = () => {
       case 'WishPool': return <WishPool />;
       case 'CreateSpotProduct': return <CreateSpotProduct />;
       case 'SpotProductManagement': return <SpotProductManagement />;
+      case 'SearchPage': return <SearchPage />;
       case 'Home':
       default:
         // Tab View
