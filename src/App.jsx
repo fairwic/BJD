@@ -38,6 +38,8 @@ import KnowledgeBase from './pages/KnowledgeBase';
 import SkinMatchStudio from './pages/SkinMatchStudio';
 import UserShop from './pages/UserShop';
 import WishPool from './pages/WishPool';
+import CreateSpotProduct from './pages/CreateSpotProduct';
+import SpotProductManagement from './pages/SpotProductManagement';
 
 // Components
 import UserSwitcher from './components/UserSwitcher';
@@ -249,12 +251,20 @@ const LeaderDashboard = () => {
           <Truck size={32} />
           <span className="font-bold">发货管理</span>
         </div>
+        <div onClick={() => push('SpotProductManagement')} className="bg-orange-50 p-4 rounded-xl flex flex-col items-center justify-center gap-2 text-orange-600 active:scale-95 transition-transform">
+          <Package size={32} />
+          <span className="font-bold">现货管理</span>
+        </div>
+        <div onClick={() => push('CreateSpotProduct')} className="bg-green-50 p-4 rounded-xl flex flex-col items-center justify-center gap-2 text-green-600 active:scale-95 transition-transform">
+          <Plus size={32} />
+          <span className="font-bold">发布现货</span>
+        </div>
         <div onClick={() => push('WishPool')} className="bg-amber-50 p-4 rounded-xl flex flex-col items-center justify-center gap-2 text-amber-600 active:scale-95 transition-transform">
           <Sparkles size={32} />
           <span className="font-bold">许愿池选品</span>
         </div>
       </div>
-    </div>
+    </div >
   );
 };
 
@@ -577,6 +587,8 @@ const MainApp = () => {
       case 'KnowledgeBase': return <KnowledgeBase />;
       case 'SkinMatchStudio': return <SkinMatchStudio />;
       case 'WishPool': return <WishPool />;
+      case 'CreateSpotProduct': return <CreateSpotProduct />;
+      case 'SpotProductManagement': return <SpotProductManagement />;
       case 'Home':
       default:
         // Tab View
