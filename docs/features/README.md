@@ -17,7 +17,10 @@
 | [09_许愿池.md](./09_许愿池.md) | 许愿功能 | WishPool | P2 |
 | [10_游戏化.md](./10_游戏化.md) | 成就系统 | AchievementCenter | P2 |
 | [11_知识库.md](./11_知识库.md) | 知识与工具 | KnowledgeBase, SkinMatchStudio | P2 |
+| [12_入驻体系.md](./12_入驻体系.md) | 创作者入驻 | MerchantApply, LeaderApply, ArtistApply | **P0** |
+| [13_妆师模块.md](./13_妆师模块.md) | 妆师服务 | ArtistHub, ArtistProfile | **P0** |
+| [14_搜索与首页.md](./14_搜索与首页.md) | 搜索与运营 | SearchPage, Carousel组件, 首页轮播图 | **P0** |
 
 ## 版本信息
-- **版本号**：v2.1.0
+- **版本号**：v2.2.0
 - **最后更新**：2024-12-20
