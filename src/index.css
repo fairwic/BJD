@@ -1,3 +1,36 @@
 @tailwind base;
 @tailwind components;
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Outfit:wght@300;400;600;800&family=Potta+One&display=swap');
+
+@tailwind base;
+@tailwind components;
 @tailwind utilities;
+
+@layer base {
+    body {
+        @apply font-sans bg-slate-50 text-slate-800 antialiased;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        @apply font-display tracking-wide;
+    }
+}
+
+@layer components {
+    .btn-primary {
+        @apply bg-primary-400 hover:bg-primary-500 text-white font-bold py-2 px-4 rounded-xl shadow-[0_4px_0_rgb(14, 165, 233)] active:shadow-none active:translate-y-[4px] transition-all;
+    }
+
+    .btn-secondary {
+        @apply bg-secondary-400 hover:bg-secondary-500 text-white font-bold py-2 px-4 rounded-xl shadow-[0_4px_0_rgb(244, 63, 94)] active:shadow-none active:translate-y-[4px] transition-all;
+    }
+
+    .card-hover {
+        @apply hover:-translate-y-1 hover:shadow-lg transition-transform duration-300;
+    }
+}
