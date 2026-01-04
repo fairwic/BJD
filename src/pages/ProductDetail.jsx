@@ -15,24 +15,48 @@ const ProductDetail = () => {
 
     // ... existing code ...
     const MY_ITEMS = [
-        { id: 1001, title: "万叶 同款色纸", image: "bg-green-100", condition: "全新无损" },
-        { id: 1002, title: "流浪者 粘土人", image: "bg-indigo-100", condition: "仅拆摆" },
+        { id: 1001, title: "万叶 同款色纸", image: "/images/stand.png", condition: "全新无损" },
+        { id: 1002, title: "流浪者 粘土人", image: "/images/plush.png", condition: "仅拆摆" },
     ];
     const SECOND_HAND_ITEMS = [
         {
-            id: 101,
+            id: 101, // Goods
             title: "【出】原神 散兵 模玩熊特典 色纸",
             price: 45.0,
             originalPrice: 60.0,
-            image: "bg-blue-100",
+            image: "/images/stand.png",
             seller: { name: "吃土少女A", avatar: "bg-pink-200", credit: "极好" },
             description: "全新未拆，默认初伤。走闲鱼验货宝，包邮。",
-            images: ["bg-blue-100", "bg-blue-200"],
+            images: ["/images/stand.png", "/images/badge.png"],
             skus: [{ id: 1, name: "现货" }],
             tags: ["原神", "散兵", "全新"],
             condition: "全新"
         },
-        // Fallback or more items...
+        {
+            id: 201, // BJD
+            title: "【AS华熙】自养4分男娃 普肌 单头/整娃",
+            price: 850.0,
+            originalPrice: 1200.0,
+            image: "/images/bjd.png",
+            seller: { name: "养娃大户", avatar: "bg-amber-200", credit: "极好" },
+            description: "自养AS华熙，普肌，无妆。身体状态良好，关节紧实。带出生证、官箱。",
+            images: ["/images/bjd.png", "/images/bjd.png"],
+            skus: [{ id: 1, name: "整娃" }],
+            tags: ["AS", "华熙", "4分", "BJD"],
+            condition: "85新"
+        },
+        {
+            id: 301, // Service
+            title: "【妆面接单】BJD/二次元面妆 仿官妆 自由妆",
+            price: "200起", // Text price
+            originalPrice: null,
+            image: "/images/commission.png",
+            seller: { name: "云墨妆坊", avatar: "bg-rose-300", credit: "认证妆师" },
+            description: "接BJD各尺寸妆面，二次元风格为主。擅长仿官妆、自由妆。工期约2周。",
+            images: ["/images/commission.png"],
+            tags: ["妆面", "BJD", "接单"],
+            condition: "服务"
+        }
     ];
 
     const BARTER_ITEMS = [
@@ -40,7 +64,7 @@ const ProductDetail = () => {
             id: 501,
             title: "原神 散兵 模玩熊特典 色纸", // Have
             want: "万叶 同款色纸", // Want
-            image: "bg-blue-100",
+            image: "/images/badge.png",
             user: { name: "吃土求回血", avatar: "bg-orange-200" },
             description: "想换万叶的！只换不售！",
             tags: ["全新", "可补差价"],
@@ -50,7 +74,8 @@ const ProductDetail = () => {
 
     // --- Data Resolution ---
     let product;
-    let isSecondHand = type === 'secondhand';
+    let isService = type === 'service';
+    let isSecondHand = type === 'secondhand' || isService; // Reuse logic for now, but distinguish via flag
     let isBarter = type === 'barter';
     let isGroupBuy = !isSecondHand && !isBarter;
 
@@ -67,6 +92,8 @@ const ProductDetail = () => {
     const handleAction = () => {
         if (isBarter) {
             setShowBarterModal(true);
+        } else if (isService) {
+            alert('模拟: 跳转约稿沟通/支付定金');
         } else if (isSecondHand) {
             alert('模拟: 跳转闲鱼支付');
         } else {
@@ -106,7 +133,12 @@ const ProductDetail = () => {
             </div>
 
             {/* Image Section */}
-            <div className={`w-full aspect-square ${product.image} relative`}>
+            <div className="w-full aspect-square relative bg-gray-100">
+                 <img 
+                    src={product.image} 
+                    alt={product.title} 
+                    className="w-full h-full object-cover"
+                />
                 {isSecondHand && (
                     <div className="absolute bottom-4 left-4 bg-orange-500 text-white px-3 py-1 rounded-full text-sm font-medium backdrop-blur-md shadow-lg">
                         {product.condition}
@@ -130,8 +162,12 @@ const ProductDetail = () => {
                             <span className="text-accent font-bold text-lg">求交换</span>
                         ) : (
                             <>
-                                <p className="text-rose-500 font-bold text-2xl">¥{product.price}</p>
-                                <p className="text-xs text-gray-400">{isSecondHand ? `原价 ¥${product.originalPrice}` : `定金 ¥${product.deposit}`}</p>
+                                <p className="text-rose-500 font-bold text-2xl">
+                                    {typeof product.price === 'number' ? `¥${product.price}` : product.price}
+                                </p>
+                                <p className="text-xs text-gray-400">
+                                    {isService ? '参考价' : (isSecondHand ? (product.originalPrice ? `原价 ¥${product.originalPrice}` : '') : `定金 ¥${product.deposit}`)}
+                                </p>
                             </>
                         )}
                     </div>
@@ -231,7 +267,7 @@ const ProductDetail = () => {
                             }`}
                     >
                         {isSecondHand
-                            ? "我想要"
+                            ? (isService ? "立即预约" : "我想要")
                             : (selectedSku
                                 ? (product.type === 'spot' ? `立即购买 ¥${product.price}` : `支付定金 ¥${product.deposit}`)
                                 : '请选择规格')
@@ -274,7 +310,9 @@ const ProductDetail = () => {
                                                 : "border-gray-100 bg-gray-50 hover:bg-gray-100"
                                         }`}
                                     >
-                                        <div className={`w-12 h-12 rounded-lg ${item.image} shrink-0`} />
+                                        <div className="w-12 h-12 rounded-lg shrink-0 overflow-hidden bg-white">
+                                             <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
+                                        </div>
                                         <div className="flex-1 min-w-0">
                                             <div className="font-bold text-sm text-gray-800 truncate">{item.title}</div>
                                             <div className="text-xs text-gray-500 mt-0.5">{item.condition}</div>

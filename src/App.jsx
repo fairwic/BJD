@@ -53,6 +53,7 @@ import SecondHandMarket from "./pages/SecondHandMarket";
 import CreateSecondHandListing from "./pages/CreateSecondHandListing";
 import BarterSquare from "./pages/BarterSquare";
 import CreateBarterRequest from "./pages/CreateBarterRequest";
+import MyCollections from "./pages/MyCollections";
 
 // Extracted Components
 import UserProfile from "./pages/UserProfile";
@@ -153,7 +154,8 @@ const MainApp = () => {
       case "ArtistHub":
         return <ArtistHub />;
       case "CreateRequirement":
-        return <CreateRequirement />;
+        // Redirect legacy route to unified publisher
+        return <CreateSecondHandListing />;
       case "RequirementDetail":
         return <RequirementDetail />;
       case "ArtistProfile":
@@ -173,7 +175,10 @@ const MainApp = () => {
       case "BarterSquare":
         return <BarterSquare />;
       case "CreateBarterRequest":
-        return <CreateBarterRequest />;
+        // Redirect legacy route to unified publisher
+        return <CreateSecondHandListing />;
+      case "MyCollections":
+        return <MyCollections />;
 
       case "Home":
       default:
@@ -183,7 +188,7 @@ const MainApp = () => {
             <div className="flex-1 overflow-y-auto scrollbar-hide">
               {activeTab === "shop" && <SecondHandMarket />}
               {activeTab === "home" && <LeaderDashboard />}
-              {activeTab === "exchange" && <BarterSquare />}
+              {/* {activeTab === "exchange" && <BarterSquare />} Deprecated - Merged into Market */}
               {activeTab === "me" && <UserProfile />}
               {activeTab === "square" && <Square />}
               {activeTab === "messages" && <Messages />}

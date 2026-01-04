@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useApp } from "../context/AppContext";
 import { useRouter } from "../router/RouteStack";
 import {
@@ -19,7 +19,7 @@ const CATEGORIES = [
 ];
 
 const CreateRequirement = () => {
-  const { pop } = useRouter();
+  const { pop, currentRoute } = useRouter();
   const { createRequirement } = useApp();
   const [title, setTitle] = useState("");
   const [desc, setDesc] = useState("");
@@ -27,6 +27,16 @@ const CreateRequirement = () => {
   const [budget, setBudget] = useState("");
   const [isUrgent, setIsUrgent] = useState(false);
   const [images, setImages] = useState([]);
+
+  // Handle Initial Data
+  useEffect(() => {
+    if (currentRoute.params?.initialData) {
+      const data = currentRoute.params.initialData;
+      if (data.title) setTitle(data.title);
+      if (data.description) setDesc(data.description);
+      if (data.category) setCategory(data.category);
+    }
+  }, [currentRoute.params]);
 
   const handleImageUpload = (e) => {
     const files = Array.from(e.target.files);

@@ -171,12 +171,12 @@ const UserProfile = () => {
             <div className="mt-3 bg-white rounded-xl divide-y divide-gray-50">
                 {/* ✨ 新增功能区（高亮显示） */}
                 <div
-                    onClick={() => push("MyDolls")}
+                    onClick={() => push("MyCollections")}
                     className="flex items-center gap-3 p-4 active:bg-gray-50 bg-gradient-to-r from-secondary-50/30 to-transparent"
                 >
                     <Package size={20} className="text-secondary-500" />
                     <span className="text-sm text-gray-800 flex-1 font-medium">
-                        我的娃娃
+                        收藏中心
                     </span>
                     <span className="text-xs bg-secondary-100 text-secondary-600 px-2 py-0.5 rounded-full font-bold">
                         3只

@@ -18,7 +18,7 @@ const TabBar = ({ activeTab, setActiveTab, role }) => {
             icon: ClipboardList,
             roles: [ROLES.LEADER, ROLES.MERCHANT],
         },
-        { id: "exchange", label: "交换", icon: RefreshCw, roles: [ROLES.USER] },
+        // Exchange tab removed - merged into Market
         {
             id: "square",
             label: "广场",
