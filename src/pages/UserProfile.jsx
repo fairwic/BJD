@@ -147,6 +147,28 @@ const UserProfile = () => {
             <div className="px-4 space-y-3 mt-4">
                 {/* 常用工具 */}
                 <div className="bg-white rounded-xl divide-y divide-gray-50 overflow-hidden">
+                    {/* Content Management Group */}
+                    <div
+                        onClick={() => push("MyPosts")}
+                        className="flex items-center gap-3 p-4 active:bg-gray-50"
+                    >
+                         <div className="w-8 h-8 rounded-full bg-rose-50 flex items-center justify-center text-rose-500">
+                            <Sparkles size={16} />
+                        </div>
+                        <span className="text-sm text-gray-800 flex-1 font-bold">我的动态</span>
+                        <ChevronRight size={16} className="text-gray-300" />
+                    </div>
+                     <div
+                        onClick={() => push("MyListings")}
+                        className="flex items-center gap-3 p-4 active:bg-gray-50"
+                    >
+                        <div className="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center text-green-500">
+                            <ShoppingBag size={16} />
+                        </div>
+                        <span className="text-sm text-gray-800 flex-1 font-bold">我的闲置</span>
+                        <ChevronRight size={16} className="text-gray-300" />
+                    </div>
+
                     {/* Collections */}
                     <div
                         onClick={() => push("MyCollections")}

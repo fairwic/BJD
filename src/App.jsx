@@ -55,6 +55,8 @@ import CreateSecondHandListing from "./pages/CreateSecondHandListing";
 import BarterSquare from "./pages/BarterSquare";
 import CreateBarterRequest from "./pages/CreateBarterRequest";
 import MyCollections from "./pages/MyCollections";
+import MyPosts from "./pages/MyPosts";
+import MyListings from "./pages/MyListings";
 
 // Extracted Components
 import UserProfile from "./pages/UserProfile";
@@ -169,7 +171,7 @@ const MainApp = () => {
         return <LeaderApply />;
       case "ArtistApply":
         return <ArtistApply />;
-
+      
       // New Routes
       case "SecondHandMarket":
         return <SecondHandMarket />;
@@ -182,6 +184,10 @@ const MainApp = () => {
         return <CreateSecondHandListing />;
       case "MyCollections":
         return <MyCollections />;
+      case "MyPosts":
+        return <MyPosts />;
+      case "MyListings":
+        return <MyListings />;
 
       case "Home":
       default:

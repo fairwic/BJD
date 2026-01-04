@@ -35,10 +35,10 @@ const Square = () => {
             id: 201,
             type: 'normal',
             user: "养娃大户",
-            avatar: "bg-red-200",
+            avatar: "https://api.dicebear.com/9.x/avataaars/svg?seed=Alice&backgroundColor=b6e3f4",
             content:
                 "终于等到我的小可爱回家了！这种肤色真的绝美,自然光下通透感满分。 #BJD #私养图",
-            image: "bg-orange-100",
+            image: "/images/mock/post-bjd-1.png",
             likes: 124,
             comments: 32,
             isLiked: false,
@@ -46,16 +46,16 @@ const Square = () => {
             tags: ["资深玩家"],
             isVerified: true,
             timeAgo: "2小时前",
-            dollModel: "Volks SDGr Alice", // Tribal connection data
+            dollModel: "Volks SDGr Alice",
         },
         {
             id: 204,
             type: 'pk',
             user: "选择困难症",
-            avatar: "bg-yellow-200",
+            avatar: "https://api.dicebear.com/9.x/avataaars/svg?seed=Bob&backgroundColor=ffdfbf",
             content: "家人们，新接的崽配哪个假发更好看？左边是温柔风，右边是御姐风，纠结ing...",
-            leftImage: "bg-pink-100",
-            rightImage: "bg-purple-100",
+            leftImage: "/images/mock/post-wig-pink.png",
+            rightImage: "/images/mock/post-wig-purple.png",
             leftLabel: "温柔粉",
             rightLabel: "御姐紫",
             likes: 45,
@@ -67,13 +67,29 @@ const Square = () => {
             timeAgo: "30分钟前",
         },
         {
+            id: 209,
+            type: 'normal',
+            user: "二次元观测站",
+            avatar: "https://api.dicebear.com/9.x/avataaars/svg?seed=Felix&backgroundColor=c0aede",
+            content:
+                "今天的漫展返图！看到很多娃娘带着自家孩子来面基，这个角落的布景太适合拍照了！📸 #漫展 #二次元 #BJD",
+            image: "/images/mock/post-anime-con.png",
+            likes: 421,
+            comments: 66,
+            isLiked: true,
+            distance: "50m",
+            tags: ["漫展Live", "二次元"],
+            isVerified: true,
+            timeAgo: "刚刚",
+        },
+        {
             id: 205,
             type: 'compare',
             user: "神手妆师",
-            avatar: "bg-teal-200",
+            avatar: "https://api.dicebear.com/9.x/avataaars/svg?seed=Daisy&backgroundColor=b6e3f4",
             content: "今日改妆作业交付。从原来的素头到现在的样子，赋予了灵魂。 #BJD妆面 #改妆",
-            beforeImage: "bg-gray-200",
-            afterImage: "bg-rose-100",
+            beforeImage: "/images/mock/post-bjd-before.png",
+            afterImage: "/images/mock/post-bjd-after.png",
             likes: 312,
             comments: 56,
             isLiked: false,
@@ -83,13 +99,29 @@ const Square = () => {
             timeAgo: "5小时前",
         },
         {
+            id: 210,
+            type: 'normal',
+            user: "手办收藏家",
+            avatar: "https://api.dicebear.com/9.x/avataaars/svg?seed=Max&backgroundColor=ffd5dc",
+            content:
+                 "新入手的蕾姆手办到了！细节简直无敌，这个做工对得起价格，摆在柜子里太养眼了。大家觉得怎么样？ #手办 #二次元 #Re0",
+            image: "/images/mock/post-anime-figure.png",
+            likes: 233,
+            comments: 41,
+            isLiked: false,
+            distance: "3.2km",
+            tags: ["手办", "开箱"],
+            isVerified: false,
+            timeAgo: "1小时前",
+        },
+        {
             id: 202,
             type: 'normal',
             user: "手作娘小B",
-            avatar: "bg-green-200",
+            avatar: "https://api.dicebear.com/9.x/avataaars/svg?seed=Eliza&backgroundColor=c0aede",
             content:
                 "新做的小裙子，还在打版中，大家喜欢长款还是短款？在线蹲一个建议~",
-            image: "bg-teal-100",
+            image: "/images/mock/post-bjd-1.png",
             likes: 88,
             comments: 45,
             isLiked: false,
@@ -133,8 +165,9 @@ const Square = () => {
                         e.stopPropagation();
                         push("PublicUserProfile", { name: post.user, avatar: post.avatar });
                     }}
-                    className={`w-10 h-10 rounded-full ${post.avatar} cursor-pointer relative ring-2 ring-white shadow-sm`}
+                    className={`w-10 h-10 rounded-full cursor-pointer relative ring-2 ring-white shadow-sm overflow-hidden`}
                 >
+                    <img src={post.avatar} alt={post.user} className="w-full h-full object-cover" />
                     {post.isVerified && (
                         <div className="absolute -bottom-1 -right-1 bg-white rounded-full p-0.5 shadow-sm">
                             <ShieldCheck size={12} className="text-secondary-500 fill-secondary-100" />
@@ -188,8 +221,10 @@ const Square = () => {
             {post.type === 'normal' && (
                 <div
                     onClick={() => push("PostDetail", { id: post.id })}
-                    className={`w-full aspect-[4/3] ${post.image} rounded-xl mb-3 cursor-pointer`}
-                />
+                    className="w-full aspect-[4/3] rounded-xl mb-3 cursor-pointer overflow-hidden"
+                >
+                    <img src={post.image} alt="Post content" className="w-full h-full object-cover" />
+                </div>
             )}
             
             {post.type === 'pk' && (

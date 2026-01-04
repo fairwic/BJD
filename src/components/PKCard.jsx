@@ -20,7 +20,8 @@ const PKCard = ({ leftImage, rightImage, leftLabel, rightLabel, onVote }) => {
             {/* Left Side */}
             <div 
                 onClick={() => handleVote('left')}
-                className={`flex-1 relative ${leftImage} cursor-pointer transition-all duration-500 overflow-hidden group`}
+                className="flex-1 relative bg-cover bg-center cursor-pointer transition-all duration-500 overflow-hidden group"
+                style={{ backgroundImage: `url(${leftImage})` }}
             >
                 <div className="absolute inset-0 bg-black/10 group-active:bg-black/20 transition-colors" />
                 <div className="absolute bottom-4 left-4 z-10">
@@ -47,7 +48,8 @@ const PKCard = ({ leftImage, rightImage, leftLabel, rightLabel, onVote }) => {
             {/* Right Side */}
             <div 
                  onClick={() => handleVote('right')}
-                 className={`flex-1 relative ${rightImage} cursor-pointer transition-all duration-500 overflow-hidden group`}
+                 className="flex-1 relative bg-cover bg-center cursor-pointer transition-all duration-500 overflow-hidden group"
+                 style={{ backgroundImage: `url(${rightImage})` }}
             >
                 <div className="absolute inset-0 bg-black/10 group-active:bg-black/20 transition-colors" />
                 <div className="absolute bottom-4 right-4 z-10">

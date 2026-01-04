@@ -44,15 +44,21 @@ const AfterBeforeSlider = ({ beforeImage, afterImage, beforeLabel = "Before", af
             onTouchMove={handleTouchMove}
         >
             {/* After Image (Background) */}
-            <div className={`absolute inset-0 ${afterImage} bg-cover bg-center`} />
+            <div 
+                className="absolute inset-0 bg-cover bg-center"
+                style={{ backgroundImage: `url(${afterImage})` }} 
+            />
             <span className="absolute top-4 right-4 bg-black/50 text-white px-2 py-1 rounded text-xs font-bold pointer-events-none">
                 {afterLabel}
             </span>
 
             {/* Before Image (Foreground, Clipped) */}
             <div 
-                className={`absolute inset-0 ${beforeImage} bg-cover bg-center border-r-2 border-white`}
-                style={{ width: `${sliderPosition}%` }}
+                className="absolute inset-0 bg-cover bg-center border-r-2 border-white"
+                style={{ 
+                    width: `${sliderPosition}%`, 
+                    backgroundImage: `url(${beforeImage})`
+                }}
             >
                  <span className="absolute top-4 left-4 bg-black/50 text-white px-2 py-1 rounded text-xs font-bold pointer-events-none">
                     {beforeLabel}
