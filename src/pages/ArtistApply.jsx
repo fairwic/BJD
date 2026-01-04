@@ -25,13 +25,17 @@ const ArtistApply = () => {
     ];
 
     const artistTypes = [
-        { id: 'makeup', label: '妆师', icon: Palette, desc: '娃娃妆面绘制' },
-        { id: 'wig', label: '毛娘', icon: Scissors, desc: '假发/植毛制作' },
+        { id: 'makeup', label: '妆师', icon: Palette, desc: 'BJD/二次元妆面' },
+        { id: 'wig', label: '毛娘', icon: Scissors, desc: '假发造型/植毛' },
+        { id: 'art', label: '画师', icon: Brush, desc: 'OC/立绘/插画' },
+        { id: 'handmade', label: '手作', icon: Star, desc: '痛包/娃衣/道具' },
     ];
 
     const styleOptions = {
         makeup: ['古风', '清冷', '日系', '病娇', '甜美', '暗黑', '写实', '其他'],
         wig: ['长直', '卷发', '古风', '现代', '染色', '植毛', '造型', '其他'],
+        art: ['日系', '韩系', '厚涂', 'Q版', '水彩', '立绘', '设计', '其他'],
+        handmade: ['痛包', '娃衣', '眼珠', '道具', '布艺', '黏土', '饰品', '其他'],
     };
 
     const toggleStyle = (style) => {
@@ -58,7 +62,7 @@ const ArtistApply = () => {
                 <button onClick={pop} className="p-1">
                     <ChevronLeft size={24} className="text-gray-700" />
                 </button>
-                <h1 className="text-base font-bold text-gray-800 ml-2">成为妆师/毛娘</h1>
+                <h1 className="text-base font-bold text-gray-800 ml-2">成为认证创作者</h1>
             </div>
 
             {step === 1 && (
@@ -70,15 +74,15 @@ const ArtistApply = () => {
                                 <Palette size={28} />
                             </div>
                             <div>
-                                <h2 className="text-xl font-bold">成为BJD大师</h2>
-                                <p className="text-white/80 text-sm">用您的技艺为娃娃注入灵魂</p>
+                                <h2 className="text-xl font-bold">成为官方认证创作者</h2>
+                                <p className="text-white/80 text-sm">用您的技艺为热爱赋能</p>
                             </div>
                         </div>
                         <div className="bg-white/10 rounded-xl p-4 backdrop-blur">
                             <div className="flex justify-around text-center">
                                 <div>
                                     <p className="text-2xl font-bold">500+</p>
-                                    <p className="text-xs text-white/80">认证大师</p>
+                                    <p className="text-xs text-white/80">认证创作者</p>
                                 </div>
                                 <div>
                                     <p className="text-2xl font-bold">¥800+</p>
@@ -137,7 +141,7 @@ const ArtistApply = () => {
                             onClick={() => setStep(2)}
                             className="w-full py-3 bg-gradient-to-r from-rose-400 to-pink-500 text-white rounded-full font-bold text-sm active:scale-95 transition-transform"
                         >
-                            申请成为大师
+                            申请成为创作者
                         </button>
                     </div>
                 </div>
@@ -170,14 +174,14 @@ const ArtistApply = () => {
                             </div>
                         </div>
 
-                        {/* 大师名称 */}
+                        {/* 创作者名称 */}
                         <div className="bg-white rounded-xl p-4">
-                            <label className="block text-sm font-medium text-gray-700 mb-2">大师名称 *</label>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">创作昵称 *</label>
                             <input
                                 type="text"
                                 value={form.artistName}
                                 onChange={e => setForm({ ...form, artistName: e.target.value })}
-                                placeholder="您的大师名称/工作室名称"
+                                placeholder="您的创作昵称/工作室名称"
                                 className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-rose-200 focus:border-rose-400 outline-none"
                             />
                         </div>
@@ -275,7 +279,7 @@ const ArtistApply = () => {
                                 className="mt-1 w-4 h-4 text-rose-500"
                             />
                             <span className="text-xs text-gray-500">
-                                我已阅读并同意 <span className="text-rose-500">《大师服务协议》</span> 和 <span className="text-rose-500">《平台服务规范》</span>
+                                我已阅读并同意 <span className="text-rose-500">《创作者服务协议》</span> 和 <span className="text-rose-500">《平台服务规范》</span>
                             </span>
                         </div>
                     </div>

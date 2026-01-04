@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useRouter } from "../router/RouteStack";
 import {
@@ -10,15 +11,29 @@ import {
     Search,
     Plus,
     Book,
-    ChevronRight,
     Sparkles,
+    Flame,
+    Camera,
+    Tag,
 } from "lucide-react";
+import PKCard from "../components/PKCard";
+import AfterBeforeSlider from "../components/AfterBeforeSlider";
+
+// Mock Data for Trending Topics
+const TRENDING_TOPICS = [
+    { id: 1, tag: "#BJD私养图", count: "2.4w" },
+    { id: 2, tag: "#娃屋改造", count: "1.2w" },
+    { id: 3, tag: "#今日穿搭", count: "8.5k" },
+    { id: 4, tag: "#妆师推荐", count: "5.6k" },
+    { id: 5, tag: "#新手提问", count: "3.2k" },
+];
 
 const Square = () => {
     const { push } = useRouter();
     const [posts, setPosts] = useState([
         {
             id: 201,
+            type: 'normal',
             user: "养娃大户",
             avatar: "bg-red-200",
             content:
@@ -30,9 +45,46 @@ const Square = () => {
             distance: "1.2km",
             tags: ["资深玩家"],
             isVerified: true,
+            timeAgo: "2小时前",
+            dollModel: "Volks SDGr Alice", // Tribal connection data
+        },
+        {
+            id: 204,
+            type: 'pk',
+            user: "选择困难症",
+            avatar: "bg-yellow-200",
+            content: "家人们，新接的崽配哪个假发更好看？左边是温柔风，右边是御姐风，纠结ing...",
+            leftImage: "bg-pink-100",
+            rightImage: "bg-purple-100",
+            leftLabel: "温柔粉",
+            rightLabel: "御姐紫",
+            likes: 45,
+            comments: 89,
+            isLiked: false,
+            distance: "2.0km",
+            tags: ["求助"],
+            isVerified: false,
+            timeAgo: "30分钟前",
+        },
+        {
+            id: 205,
+            type: 'compare',
+            user: "神手妆师",
+            avatar: "bg-teal-200",
+            content: "今日改妆作业交付。从原来的素头到现在的样子，赋予了灵魂。 #BJD妆面 #改妆",
+            beforeImage: "bg-gray-200",
+            afterImage: "bg-rose-100",
+            likes: 312,
+            comments: 56,
+            isLiked: false,
+            distance: "5.5km",
+            tags: ["认证妆师"],
+            isVerified: true,
+            timeAgo: "5小时前",
         },
         {
             id: 202,
+            type: 'normal',
             user: "手作娘小B",
             avatar: "bg-green-200",
             content:
@@ -44,19 +96,7 @@ const Square = () => {
             distance: "500m",
             tags: ["手作娘"],
             isVerified: true,
-        },
-        {
-            id: 203,
-            user: "摄影师C",
-            avatar: "bg-blue-200",
-            content: "周末的外拍聚会，带了三个崽，累并快乐着。",
-            image: "bg-indigo-100",
-            likes: 256,
-            comments: 12,
-            isLiked: false,
-            distance: "3.5km",
-            tags: ["摄影师"],
-            isVerified: false,
+            timeAgo: "4小时前",
         },
     ]);
 
@@ -75,47 +115,55 @@ const Square = () => {
         );
     };
 
-    const handleShare = (post) => {
-        alert(`分享: ${post.content.substring(0, 20)}...`);
+    const handleTopicClick = (tag) => {
+        push("CreatePost", { initialTags: tag + " " });
+    };
+
+    // Tribing user action
+    const handleSameStyleClick = (dollModel) => {
+        push("CreatePost", { initialTags: `#${dollModel} ` });
     };
 
     const PostCard = ({ post }) => (
-        <div className="bg-white mb-3 pb-3 border-b border-gray-100 last:border-0">
-            <div className="flex items-center gap-3 p-4 pb-2">
+        <div className="bg-white mb-2 p-4 pb-2 border-b border-gray-100 last:border-0 hover:bg-gray-50/50 transition-colors">
+            {/* Header */}
+            <div className="flex items-center gap-3 mb-3">
                 <div
                     onClick={(e) => {
                         e.stopPropagation();
                         push("PublicUserProfile", { name: post.user, avatar: post.avatar });
                     }}
-                    className={`w-10 h-10 rounded-full ${post.avatar} cursor-pointer relative`}
+                    className={`w-10 h-10 rounded-full ${post.avatar} cursor-pointer relative ring-2 ring-white shadow-sm`}
                 >
                     {post.isVerified && (
-                        <div className="absolute -bottom-1 -right-1 bg-white rounded-full p-0.5">
-                            <ShieldCheck size={12} className="text-primary-500 fill-primary-100" />
+                        <div className="absolute -bottom-1 -right-1 bg-white rounded-full p-0.5 shadow-sm">
+                            <ShieldCheck size={12} className="text-secondary-500 fill-secondary-100" />
                         </div>
                     )}
                 </div>
-                <div
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        push("PublicUserProfile", { name: post.user, avatar: post.avatar });
-                    }}
-                    className="cursor-pointer flex-1"
-                >
+                <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                        <p className="font-bold text-sm text-gray-800">{post.user}</p>
+                        <p
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                push("PublicUserProfile", { name: post.user, avatar: post.avatar });
+                            }}
+                            className="font-bold text-sm text-gray-900 truncate cursor-pointer"
+                        >
+                            {post.user}
+                        </p>
                         {post.tags &&
                             post.tags.map((tag, i) => (
                                 <span
                                     key={i}
-                                    className="text-[10px] bg-secondary-50 text-secondary-500 px-1.5 py-0.5 rounded-full"
+                                    className="text-[10px] bg-secondary-50 text-secondary-600 px-1.5 py-0.5 rounded-full font-medium"
                                 >
                                     {tag}
                                 </span>
                             ))}
                     </div>
                     <div className="flex items-center gap-2 text-xs text-gray-400 mt-0.5">
-                        <span>2小时前</span>
+                        <span>{post.timeAgo}</span>
                         <span>·</span>
                         <div className="flex items-center gap-0.5">
                             <MapPin size={10} />
@@ -123,100 +171,181 @@ const Square = () => {
                         </div>
                     </div>
                 </div>
-                <button className="text-gray-400">
+                <button className="text-gray-400 p-1">
                     <MoreHorizontal size={18} />
                 </button>
             </div>
-            <div
+
+            {/* Content Text */}
+            <p
                 onClick={() => push("PostDetail", { id: post.id })}
-                className={`w-full aspect-[4/3] ${post.image} mb-3 cursor-pointer`}
-            />
-            <div className="px-4">
-                <p
+                className="text-gray-800 text-sm leading-relaxed mb-3 cursor-pointer line-clamp-3"
+            >
+                {post.content}
+            </p>
+
+            {/* Dynamic Content Area */}
+            {post.type === 'normal' && (
+                <div
                     onClick={() => push("PostDetail", { id: post.id })}
-                    className="text-gray-700 text-sm leading-relaxed cursor-pointer"
-                >
-                    {post.content}
-                </p>
-                <div className="flex items-center gap-6 mt-3 text-gray-500">
+                    className={`w-full aspect-[4/3] ${post.image} rounded-xl mb-3 cursor-pointer`}
+                />
+            )}
+            
+            {post.type === 'pk' && (
+                <PKCard 
+                    leftImage={post.leftImage}
+                    rightImage={post.rightImage}
+                    leftLabel={post.leftLabel}
+                    rightLabel={post.rightLabel}
+                />
+            )}
+
+            {post.type === 'compare' && (
+                <AfterBeforeSlider 
+                    beforeImage={post.beforeImage}
+                    afterImage={post.afterImage}
+                />
+            )}
+
+            {/* Tribal Connection Action */}
+            {post.dollModel && (
+                <div className="mb-3">
+                    <button 
+                        onClick={() => handleSameStyleClick(post.dollModel)}
+                        className="flex items-center gap-1.5 px-3 py-1.5 bg-secondary-50 text-secondary-600 rounded-lg text-xs font-bold active:bg-secondary-100 transition-colors w-full sm:w-auto justify-center"
+                    >
+                        <Tag size={14} />
+                        我也养 {post.dollModel}！晒同款
+                    </button>
+                </div>
+            )}
+
+            {/* Actions */}
+            <div className="flex items-center justify-between mt-2 pt-2 border-t border-gray-50">
+                <div className="flex items-center gap-6">
                     <button
                         onClick={() => handleLike(post.id)}
-                        className={`flex items-center gap-1.5 ${post.isLiked ? "text-secondary-500" : ""}`}
+                        className={`flex items-center gap-1.5 transition-colors ${
+                            post.isLiked ? "text-rose-500" : "text-gray-500 active:text-rose-500"
+                        }`}
                     >
-                        <Heart size={20} fill={post.isLiked ? "currentColor" : "none"} />
-                        <span className="text-sm">{post.likes}</span>
+                        <Heart
+                            size={20}
+                            className={post.isLiked ? "fill-current" : ""}
+                            strokeWidth={post.isLiked ? 0 : 2}
+                        />
+                        <span className="text-sm font-medium">{post.likes}</span>
                     </button>
                     <button
                         onClick={() => push("PostDetail", { id: post.id })}
-                        className="flex items-center gap-1.5"
+                        className="flex items-center gap-1.5 text-gray-500 active:text-gray-900 transition-colors"
                     >
                         <MessageSquare size={20} />
-                        <span className="text-sm">{post.comments}</span>
-                    </button>
-                    <button onClick={() => handleShare(post)} className="ml-auto">
-                        <Share2 size={20} />
+                        <span className="text-sm font-medium">{post.comments}</span>
                     </button>
                 </div>
+                <button
+                    onClick={() => alert(`Sharing post ${post.id}`)}
+                    className="text-gray-500 active:text-gray-900 transition-colors"
+                >
+                    <Share2 size={20} />
+                </button>
             </div>
         </div>
     );
 
     return (
-        <div className="pb-20">
-            <div className="sticky top-0 z-30 bg-white/95 backdrop-blur px-4 h-12 flex items-center border-b border-gray-100 gap-3">
-                <div className="bg-gray-100 rounded-full px-3 py-1.5 flex items-center gap-2 flex-1">
+        <div className="pb-20 bg-gray-50 min-h-screen relative">
+            {/* Header */}
+            <div className="sticky top-0 z-30 bg-white/95 backdrop-blur px-4 h-12 flex items-center border-b border-gray-100 gap-3 shadow-sm">
+                <div className="flex-1 bg-gray-100 rounded-full px-3 py-1.5 flex items-center gap-2">
                     <Search size={16} className="text-gray-400" />
                     <input
                         type="text"
-                        placeholder="搜索娃圈动态..."
-                        className="bg-transparent text-sm w-full outline-none"
+                        placeholder="搜索娃圈动态/好物..."
+                        className="bg-transparent text-sm w-full outline-none placeholder:text-gray-400"
                     />
                 </div>
-                <button onClick={() => push("CreatePost")} className="text-secondary-500">
-                    <Plus size={24} />
+                <button className="relative p-1">
+                    <MessageSquare size={24} className="text-gray-700" />
+                    <span className="absolute top-0 right-0 w-2 h-2 bg-rose-500 rounded-full ring-2 ring-white" />
                 </button>
             </div>
-            <div className="bg-gray-50 min-h-screen">
-                <div className="p-3 space-y-2">
-                    {/* 知识库快捷入口 */}
-                    <div
-                        onClick={() => push("KnowledgeBase")}
-                        className="bg-gradient-to-r from-primary-50 to-purple-50 rounded-xl p-3 flex items-center gap-3 cursor-pointer active:scale-98 transition-transform"
-                    >
-                        <div className="bg-white p-2 rounded-full shadow-sm text-primary-500">
-                            <Book size={20} />
-                        </div>
-                        <div className="flex-1">
-                            <p className="font-bold text-sm text-gray-800">BJD新手指南</p>
-                            <p className="text-xs text-gray-600">
-                                入门必读 · 品牌大全 · 避坑攻略
-                            </p>
-                        </div>
-                        <ChevronRight size={16} className="text-gray-400" />
-                    </div>
 
-                    {/* AI文案助手 */}
+            {/* Quick Post Entry */}
+            <div className="bg-white p-4 pb-2 mb-2">
+                <div className="flex gap-3 mb-3">
+                    <div className="w-10 h-10 rounded-full bg-indigo-100 flex-shrink-0" />
                     <div
                         onClick={() => push("CreatePost")}
-                        className="bg-gradient-to-r from-secondary-100 to-purple-100 rounded-xl p-3 flex items-center gap-3 cursor-pointer active:scale-98 transition-transform"
+                        className="flex-1 bg-gray-50 rounded-full px-4 flex items-center text-sm text-gray-400 cursor-pointer hover:bg-gray-100 transition-colors"
                     >
-                        <div className="bg-white p-2 rounded-full shadow-sm text-secondary-500">
-                            <Sparkles size={20} />
-                        </div>
-                        <div>
-                            <p className="font-bold text-sm text-gray-800">发帖没灵感？</p>
-                            <p className="text-xs text-gray-600">让 AI 帮你写出神仙文案 ✨</p>
-                        </div>
+                        今天有什么新鲜事分享？
                     </div>
                 </div>
+                
+                {/* Trending Topics Carousel */}
+                <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2">
+                    <div className="flex items-center gap-1 pr-2 text-rose-500 font-bold text-xs flex-shrink-0">
+                        <Flame size={14} className="fill-current" />
+                        热议
+                    </div>
+                    {TRENDING_TOPICS.map((topic) => (
+                        <button
+                            key={topic.id}
+                            onClick={() => handleTopicClick(topic.tag)}
+                            className="flex-shrink-0 px-3 py-1 bg-gray-50 rounded-full text-xs text-gray-600 font-medium active:bg-rose-50 active:text-rose-500 transition-colors border border-gray-100"
+                        >
+                            {topic.tag}
+                        </button>
+                    ))}
+                </div>
+            </div>
+
+            {/* Community Activities */}
+            <div className="px-3 pb-3 grid grid-cols-2 gap-3">
+                <div
+                    onClick={() => push("CreatePost", { initialTags: "#今日打卡 " })}
+                    className="bg-gradient-to-br from-indigo-50 to-blue-50 rounded-xl p-3 cursor-pointer active:scale-98 transition-transform border border-indigo-100/50"
+                >
+                    <div className="flex items-center gap-2 mb-1">
+                        <div className="bg-white p-1.5 rounded-lg shadow-sm text-indigo-500">
+                            <Camera size={16} />
+                        </div>
+                        <span className="font-bold text-gray-800 text-sm">每日打卡</span>
+                    </div>
+                    <p className="text-xs text-gray-500 pl-1">记录养娃日常 ✨</p>
+                </div>
+
+                <div
+                    onClick={() => push("KnowledgeBase")}
+                    className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-3 cursor-pointer active:scale-98 transition-transform border border-amber-100/50"
+                >
+                    <div className="flex items-center gap-2 mb-1">
+                        <div className="bg-white p-1.5 rounded-lg shadow-sm text-amber-500">
+                            <Book size={16} />
+                        </div>
+                        <span className="font-bold text-gray-800 text-sm">新手指南</span>
+                    </div>
+                    <p className="text-xs text-gray-500 pl-1">入坑避雷必读 📖</p>
+                </div>
+            </div>
+
+            {/* Feed */}
+            <div className="space-y-0">
                 {posts.map((post) => (
                     <PostCard key={post.id} post={post} />
                 ))}
-                {/* 重复显示更多内容 */}
-                {posts.map((post) => (
-                    <PostCard key={`dup-${post.id}`} post={post} />
-                ))}
             </div>
+
+            {/* Floating Action Button (FAB) */}
+            <button
+                onClick={() => push("CreatePost")}
+                className="fixed bottom-24 right-4 w-14 h-14 bg-gradient-to-r from-rose-500 to-pink-600 text-white rounded-full shadow-lg shadow-rose-200 flex items-center justify-center active:scale-90 transition-transform z-40"
+            >
+                <Plus size={28} />
+            </button>
         </div>
     );
 };

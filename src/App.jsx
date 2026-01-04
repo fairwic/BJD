@@ -21,6 +21,7 @@ import ContractSigning from "./pages/ContractSigning";
 import LeaderProfile from "./pages/LeaderProfile";
 import MerchantProfile from "./pages/MerchantProfile";
 import MyGroupBuys from "./pages/MyGroupBuys";
+import MyOrders from "./pages/MyOrders";
 import PublicUserProfile from "./pages/PublicUserProfile";
 import MyFollowing from "./pages/MyFollowing";
 import MyLikes from "./pages/MyLikes";
@@ -115,6 +116,8 @@ const MainApp = () => {
         return <MerchantProfile />;
       case "MyGroupBuys":
         return <MyGroupBuys />;
+      case "MyOrders":
+        return <MyOrders params={currentRoute.params} />;
       case "PublicUserProfile":
         return <PublicUserProfile />;
       case "MyFollowing":

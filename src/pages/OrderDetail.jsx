@@ -1,160 +1,141 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useApp } from '../context/AppContext';
 import { useRouter } from '../router/RouteStack';
-import { ORDER_STATUS } from '../data/mock';
-import { ChevronLeft, Copy, CheckCircle2, Truck, Clock, AlertCircle, ArrowRightLeft, ShieldCheck } from 'lucide-react';
-import TrustTimeline from '../components/TrustTimeline';
+import { ChevronLeft, MapPin, MessageCircle, Copy, Truck } from 'lucide-react';
 
 const OrderDetail = () => {
-    const { currentRoute, pop } = useRouter();
-    const { orders, payDeposit, payFinal, generateTransferCode } = useApp();
+    const { pop, currentRoute } = useRouter();
+    const { orders } = useApp();
     const { id } = currentRoute.params;
 
     const order = orders.find(o => o.id === id);
-    const [transferCode, setTransferCode] = useState(null);
 
-    if (!order) return <div>Order not found</div>;
+    if (!order) return <div className="p-4">Order not found</div>;
 
-    const handleTransfer = () => {
-        const code = generateTransferCode(order.id);
-        setTransferCode(code);
+    // Status logic helpers
+    const getStatusText = (status) => {
+        const map = {
+            'pending_payment': '等待买家付款',
+            'pending_shipment': '等待卖家发货',
+            'shipped': '卖家已发货',
+            'completed': '交易成功',
+            'refund': '退款中',
+            'unpaid_deposit': '等待支付定金', // Legacy fallback
+        };
+        return map[status] || status;
     };
 
-    const copyCode = () => {
-        navigator.clipboard.writeText(transferCode);
-        alert('转单码已复制');
+    const getStatusDesc = (status) => {
+        if (status === 'pending_payment') return '剩 23小时59分 自动关闭';
+        if (status === 'pending_shipment') return '卖家正在打包中...';
+        if (status === 'shipped') return '包裹正在飞速奔向你';
+        if (status === 'completed') return '期待你的评价';
+        return '';
     };
-
-    const timelineStages = [
-        { type: 'modeling', name: '原型制作', date: '2023-10-05', photos: ['bg-gray-200', 'bg-gray-300'] },
-        { type: 'mold', name: '翻模', date: '2023-11-12', photos: ['bg-orange-100'] },
-        { type: 'casting', name: '树脂灌注', date: '2023-12-01', photos: [] },
-        { type: 'polishing', name: '打磨', date: null, photos: [] },
-        { type: 'makeup', name: '上妆', date: null, photos: [] },
-        { type: 'shipping', name: '发货', date: null, photos: [] }
-    ];
-
-    // Calculate current stage based on status usually, here we mock it to 'casting' (index 2)
-    // for demonstration if status is PRODUCTION
-    const currentStageIndex = order.status === ORDER_STATUS.PRODUCTION ? 2 :
-        order.status === ORDER_STATUS.WAIT_FINAL ? 4 :
-            order.status === ORDER_STATUS.SHIPPED ? 6 : 0;
 
     return (
         <div className="min-h-screen bg-gray-50 pb-24">
-            <div className="bg-white p-4 sticky top-0 z-10 flex items-center gap-4 shadow-sm">
-                <button onClick={pop}><ChevronLeft size={24} /></button>
-                <h1 className="font-bold text-lg">订单详情</h1>
+            {/* Header */}
+            <div className="bg-rose-500 text-white p-6 pb-12">
+                <div className="flex items-center gap-3 mb-6">
+                    <button onClick={pop}><ChevronLeft size={24} /></button>
+                    <span className="font-bold text-lg">订单详情</span>
+                </div>
+                <h1 className="text-2xl font-bold mb-1">{getStatusText(order.status)}</h1>
+                <p className="text-white/80 text-sm">{getStatusDesc(order.status)}</p>
             </div>
 
-            {/* Status Card */}
-            <div className="m-4 bg-white p-6 rounded-2xl shadow-sm">
-                <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 bg-rose-100 rounded-full flex items-center justify-center text-rose-500">
-                        {order.status === ORDER_STATUS.PRODUCTION ? <Clock size={20} /> : <CheckCircle2 size={20} />}
-                    </div>
-                    <div>
-                        <h2 className="font-bold text-lg text-gray-800">
-                            {order.status === ORDER_STATUS.UNPAID_DEPOSIT && '等待支付定金'}
-                            {order.status === ORDER_STATUS.WAIT_VERIFY && '等待团长审核'}
-                            {order.status === ORDER_STATUS.PRODUCTION && '工厂制作中'}
-                            {order.status === ORDER_STATUS.WAIT_FINAL && '等待支付尾款'}
-                            {order.status === ORDER_STATUS.WAIT_SHIP && '等待发货'}
-                            {order.status === ORDER_STATUS.SHIPPED && '卖家已发货'}
-                            {order.status === ORDER_STATUS.TRANSFERRED && '订单已转让'}
-                        </h2>
-                        <p className="text-xs text-gray-500 mt-0.5">预计发货: 2024年5月</p>
-                    </div>
+            {/* Address (Mock) */}
+            <div className="mx-4 -mt-6 bg-white rounded-xl p-4 shadow-sm flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-rose-100 flex items-center justify-center text-rose-500 shrink-0">
+                    <MapPin size={16} />
                 </div>
-
-                {/* Trust Timeline */}
-                <div className="mt-8 px-2 relative">
-                    <div className="flex items-center gap-2 mb-4 text-sm font-bold text-gray-800">
-                        <ShieldCheck size={18} className="text-green-500" />
-                        <span>生产全链路监控</span>
-                    </div>
-                    <TrustTimeline stages={timelineStages} currentStageIndex={currentStageIndex} />
-                </div>
-            </div>
-
-            {/* Product Card */}
-            <div className="m-4 bg-white p-4 rounded-2xl shadow-sm flex gap-4">
-                <div className={`w-20 h-20 rounded-lg ${order.image} shrink-0`} />
                 <div className="flex-1">
-                    <h3 className="font-bold text-sm text-gray-800 line-clamp-2">{order.title}</h3>
-                    <p className="text-xs text-gray-500 mt-1">规格: {order.skuName}</p>
-                    <div className="mt-2 flex justify-between items-end">
-                        <span className="text-rose-500 font-bold">¥{order.price}</span>
-                        <span className="text-xs bg-gray-100 px-2 py-1 rounded text-gray-600">x 1</span>
+                    <div className="font-bold text-gray-800 flex gap-2">
+                        <span>张三</span>
+                        <span className="text-gray-500 font-normal">138****8888</span>
                     </div>
+                    <p className="text-xs text-gray-500 mt-1 line-clamp-1">
+                        上海市 静安区 南京西路 1266号 恒隆广场
+                    </p>
                 </div>
             </div>
 
-            {/* Payment Info */}
-            <div className="m-4 bg-white p-4 rounded-2xl shadow-sm space-y-3">
-                <div className="flex justify-between text-sm">
-                    <span className="text-gray-500">定金 (需付)</span>
-                    <span className="font-medium">¥{order.deposit}</span>
+            {/* Product Info */}
+            <div className="mx-4 mt-3 bg-white rounded-xl p-4 shadow-sm">
+                 <div className="flex items-center gap-2 mb-3 pb-3 border-b border-gray-50">
+                    <span className="font-bold text-sm text-gray-800">{order.leader || "卖家"}</span>
+                    <ChevronLeft size={14} className="rotate-180 text-gray-400" />
                 </div>
-                <div className="flex justify-between text-sm">
-                    <span className="text-gray-500">尾款 (待付)</span>
-                    <span className="font-medium">¥{order.finalPayment}</span>
+                <div className="flex gap-3">
+                    <div className={`w-20 h-20 rounded-lg bg-gray-100 shrink-0 ${order.image}`} />
+                    <div className="flex-1">
+                        <h3 className="font-bold text-sm text-gray-800 line-clamp-2">{order.title}</h3>
+                        <p className="text-xs text-gray-500 bg-gray-50 inline-block px-1.5 py-0.5 rounded mt-1">
+                            {order.skuName}
+                        </p>
+                    </div>
+                    <div className="text-right">
+                        <p className="font-bold text-sm">¥{order.price}</p>
+                        <p className="text-xs text-gray-400">x1</p>
+                    </div>
                 </div>
-                <div className="border-t border-gray-50 pt-3 flex justify-between text-sm font-bold">
-                    <span>实付金额</span>
-                    <span className="text-rose-500">¥{order.paidDeposit + order.paidFinal}</span>
+                <div className="flex justify-end gap-2 mt-4">
+                     <button className="flex items-center gap-1 px-3 py-1.5 rounded-full border border-gray-200 text-xs text-gray-600 font-medium">
+                        <MessageCircle size={12} /> 联系卖家
+                     </button>
                 </div>
             </div>
 
-            {/* Transfer Section */}
-            {order.status === ORDER_STATUS.PRODUCTION && (
-                <div className="m-4 bg-gradient-to-r from-purple-50 to-rose-50 p-4 rounded-2xl border border-purple-100">
-                    <div className="flex items-center gap-2 mb-2 text-purple-700 font-bold text-sm">
-                        <ArrowRightLeft size={16} />
-                        <span>一键转单</span>
+            {/* Order Info */}
+            <div className="mx-4 mt-3 bg-white rounded-xl p-4 shadow-sm space-y-3 text-xs text-gray-500">
+                <div className="flex justify-between">
+                    <span>订单编号</span>
+                    <div className="flex items-center gap-1">
+                        <span>{order.id}</span>
+                        <span className="text-gray-400 underline decoration-dotted">复制</span>
                     </div>
-                    <p className="text-xs text-gray-600 mb-3">生成转单码分享给买家，对方支付后订单自动转移，无需联系团长改Excel。</p>
-
-                    {!transferCode ? (
-                        <button
-                            onClick={handleTransfer}
-                            className="w-full bg-white border border-purple-200 text-purple-600 font-bold py-2 rounded-xl text-sm hover:bg-purple-50 transition-colors"
-                        >
-                            生成转单码
-                        </button>
-                    ) : (
-                        <div className="bg-white p-3 rounded-xl border border-purple-200 flex justify-between items-center">
-                            <code className="text-sm font-mono font-bold text-gray-800">{transferCode}</code>
-                            <button onClick={copyCode} className="text-purple-600 hover:bg-purple-50 p-1.5 rounded-lg">
-                                <Copy size={16} />
-                            </button>
-                        </div>
-                    )}
                 </div>
-            )}
+                <div className="flex justify-between">
+                    <span>下单时间</span>
+                    <span>2024-01-04 12:30:45</span>
+                </div>
+                <div className="flex justify-between">
+                    <span>支付方式</span>
+                    <span>微信支付</span>
+                </div>
+            </div>
 
-            {/* Actions */}
-            <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-100 flex gap-3 max-w-md mx-auto">
-                {order.status === ORDER_STATUS.UNPAID_DEPOSIT && (
-                    <button
-                        onClick={() => payDeposit(order.id)}
-                        className="flex-1 bg-rose-500 text-white font-bold py-3 rounded-xl hover:bg-rose-600"
-                    >
-                        支付定金 ¥{order.deposit}
-                    </button>
-                )}
-                {order.status === ORDER_STATUS.WAIT_FINAL && (
-                    <button
-                        onClick={() => payFinal(order.id)}
-                        className="flex-1 bg-rose-500 text-white font-bold py-3 rounded-xl hover:bg-rose-600"
-                    >
-                        支付尾款 ¥{order.finalPayment}
-                    </button>
-                )}
-                {order.status === ORDER_STATUS.WAIT_VERIFY && (
-                    <button disabled className="flex-1 bg-gray-100 text-gray-400 font-bold py-3 rounded-xl">
-                        等待审核中...
-                    </button>
+             {/* Price Summary */}
+             <div className="mx-4 mt-3 bg-white rounded-xl p-4 shadow-sm space-y-2">
+                <div className="flex justify-between text-sm">
+                    <span className="text-gray-500">商品总额</span>
+                    <span className="text-gray-900">¥{order.price}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                    <span className="text-gray-500">运费</span>
+                    <span className="text-gray-900">¥0.00</span>
+                </div>
+                <div className="border-t border-gray-50 pt-2 flex justify-end items-end gap-2">
+                    <span className="text-xs text-gray-500">实付款</span>
+                    <span className="text-lg font-bold text-rose-500">¥{order.price}</span>
+                </div>
+            </div>
+
+            {/* Standard Action Bar */}
+            <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 p-3 px-4 flex justify-end gap-3 max-w-md mx-auto">
+                {order.status === 'pending_payment' ? (
+                     <>
+                        <button className="px-4 py-2 rounded-full border border-gray-200 text-sm text-gray-600">取消订单</button>
+                        <button className="px-4 py-2 rounded-full bg-rose-500 text-white text-sm font-bold shadow-sm shadow-rose-200">立即支付</button>
+                     </>
+                ) : order.status === 'shipped' ? (
+                    <>
+                        <button className="px-4 py-2 rounded-full border border-gray-200 text-sm text-gray-600">查看物流</button>
+                        <button className="px-4 py-2 rounded-full bg-rose-500 text-white text-sm font-bold shadow-sm shadow-rose-200">确认收货</button>
+                    </>
+                ) : (
+                    <button className="px-4 py-2 rounded-full border border-gray-200 text-sm text-gray-600">申请售后</button>
                 )}
             </div>
         </div>

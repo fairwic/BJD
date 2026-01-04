@@ -7,13 +7,31 @@ import {
     Heart,
     Clock,
     ChevronDown,
+    Sparkles,
+    Zap,
+    Palette,
+    X
 } from "lucide-react";
 
 const SecondHandMarket = () => {
     const { push } = useRouter();
     const [activeCategory, setActiveCategory] = useState("all");
     const [sortBy, setSortBy] = useState("default"); // default, price_asc, price_desc, likes
-    const [filterCondition, setFilterCondition] = useState("all"); // all, new, used
+    
+    // Advanced Filter State
+    const [isFilterOpen, setIsFilterOpen] = useState(false);
+    const [priceRange, setPriceRange] = useState({ min: '', max: '' });
+    const [selectedSizes, setSelectedSizes] = useState([]);
+    const [selectedConditions, setSelectedConditions] = useState([]);
+    const [selectedIPs, setSelectedIPs] = useState([]);
+    const [selectedBrands, setSelectedBrands] = useState([]);
+
+    const FILTER_DATA = {
+        sizes: ["3分", "4分", "6分", "8分", "叔", "特体"],
+        conditions: ["全新", "仅拆", "99新", "95新", "85新", "战损"],
+        ips: ["原神", "恋与深空", "排球少年", "明日方舟", "初音未来"],
+        brands: ["AS", "龙魂", "DZ", "GEM", "Telesthesia", "Doll Chateau"]
+    };
 
     const CATEGORIES = [
         { id: "all", label: "全部" },
@@ -25,6 +43,12 @@ const SecondHandMarket = () => {
         { id: "plush", label: "棉花娃" },
         { id: "card", label: "拍立得/纸片" },
         { id: "other", label: "其他周边" },
+    ];
+
+    const BANNERS = [
+        { id: 1, title: "春日祭 · 踏青季", sub: "BJD外拍装备9折起", bg: "bg-gradient-to-r from-pink-100 to-rose-100", text: "text-pink-600", icon: <Sparkles size={16} /> },
+        { id: 2, title: "急出回血专区", sub: "好价捡漏 每日更新", bg: "bg-gradient-to-r from-blue-100 to-indigo-100", text: "text-blue-600", icon: <Zap size={16} /> },
+        { id: 3, title: "约稿 · 自由妆", sub: "认证妆师 在线接单", bg: "bg-gradient-to-r from-teal-100 to-emerald-100", text: "text-teal-600", icon: <Palette size={16} /> },
     ];
 
     const MOCK_ITEMS = [
@@ -132,13 +156,18 @@ const SecondHandMarket = () => {
     
     // State for Merged Items
     const [allItems, setAllItems] = useState(MOCK_ITEMS);
+    const [isLoading, setIsLoading] = useState(true);
 
-    // Load User Listings
+    // Load User Listings with Simulation
     useEffect(() => {
-        const userListings = JSON.parse(localStorage.getItem('user_listings') || '[]');
-        if (userListings.length > 0) {
-            setAllItems([...userListings, ...MOCK_ITEMS]);
-        }
+        setIsLoading(true);
+        setTimeout(() => {
+            const userListings = JSON.parse(localStorage.getItem('user_listings') || '[]');
+            if (userListings.length > 0) {
+                setAllItems([...userListings, ...MOCK_ITEMS]);
+            }
+            setIsLoading(false);
+        }, 800); // Simulate network
     }, []);
 
     // Filter Logic
@@ -152,10 +181,34 @@ const SecondHandMarket = () => {
             else if (item.type !== "goods") return false; // Default to goods for specific categories like 'badge', 'stand' etc (mock simplified)
         }
         
-        // 2. Condition Filter
-        if (filterCondition !== "all") {
-             if (filterCondition === "new" && !item.condition.includes("全新")) return false; 
-             if (filterCondition === "used" && item.condition.includes("全新")) return false;
+        // 2. Advanced Filters
+        
+        // Price Range
+        if (priceRange.min && parseFloat(item.price) < parseFloat(priceRange.min)) return false;
+        if (priceRange.max && parseFloat(item.price) > parseFloat(priceRange.max)) return false;
+
+        // Size (Check tags)
+        if (selectedSizes.length > 0) {
+            const hasSize = selectedSizes.some(size => item.tags.includes(size));
+            // Assuming BJD category items should have size tags. 
+            // If item is 'goods' but user selected '3分', we strictly filter.
+            if (!hasSize) return false;
+        }
+
+        // Condition
+        if (selectedConditions.length > 0) {
+            const hasCondition = selectedConditions.some(c => item.condition.includes(c));
+            if (!hasCondition) return false;
+        }
+
+        // IP Filter (Check tags)
+        if (selectedIPs.length > 0) {
+            if (!selectedIPs.some(ip => item.tags.includes(ip))) return false;
+        }
+
+        // Brand Filter (Check tags)
+        if (selectedBrands.length > 0) {
+            if (!selectedBrands.some(brand => item.tags.some(tag => tag.includes(brand)))) return false;
         }
 
         return true;
@@ -178,6 +231,17 @@ const SecondHandMarket = () => {
 
     return (
         <div className="pb-24 bg-gray-50 min-h-screen flex flex-col font-sans">
+             <style>{`
+                @keyframes slideUp {
+                    from { opacity: 0; transform: translateY(20px); }
+                    to { opacity: 1; transform: translateY(0); }
+                }
+                .animate-slide-up {
+                    animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+                    opacity: 0;
+                }
+            `}</style>
+            
             {/* Header with Glassmorphism */}
             <div className="sticky top-0 z-30 bg-white/80 backdrop-blur-md px-4 py-3 flex items-center gap-3 shadow-[0_2px_8px_rgba(0,0,0,0.05)] border-b border-white/50">
                 <div className="flex-1 bg-gray-100/80 rounded-full flex items-center px-4 py-2.5 gap-2 border border-transparent focus-within:bg-white focus-within:border-primary-300 transition-all">
@@ -197,8 +261,37 @@ const SecondHandMarket = () => {
                 </button>
             </div>
 
+            {/* Banners */}
+            <div className="px-4 pt-4 overflow-x-auto scrollbar-hide">
+                <div className="flex gap-3 w-max">
+                    {BANNERS.map(banner => (
+                        <div 
+                            key={banner.id} 
+                            onClick={() => {
+                                // Simple logic mapping banners to filters
+                                if (banner.id === 1) setActiveCategory('bjd');
+                                if (banner.id === 2) setSortBy('price_asc'); // 'Sale' implies cheap prices
+                                if (banner.id === 3) setActiveCategory('commission');
+                            }}
+                            className={`w-64 p-3 rounded-2xl ${banner.bg} relative overflow-hidden shadow-sm active:scale-95 transition-transform cursor-pointer`}
+                        >
+                            <div className={`absolute top-0 right-0 p-2 opacity-10 ${banner.text}`}>
+                                <Sparkles size={64} />
+                            </div>
+                            <div className="relative z-10">
+                                <div className={`flex items-center gap-1 text-xs font-bold mb-1 ${banner.text} bg-white/40 w-max px-2 py-0.5 rounded-full`}>
+                                    {banner.icon}
+                                    {banner.title}
+                                </div>
+                                <div className={`text-sm font-bold text-gray-800`}>{banner.sub}</div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
             {/* Category Filter */}
-            <div className="bg-white pb-4 px-4 pt-2">
+            <div className="bg-transparent pb-4 px-4 pt-2">
                 <div className="flex items-center gap-3 overflow-x-auto scrollbar-hide py-2">
                     {CATEGORIES.map((cat) => (
                         <button
@@ -206,14 +299,14 @@ const SecondHandMarket = () => {
                             onClick={() => setActiveCategory(cat.id)}
                             className={`whitespace-nowrap px-4 py-1.5 rounded-full text-xs font-bold transition-all border ${activeCategory === cat.id
                                     ? "bg-gray-900 text-white border-gray-900 shadow-md transform scale-105"
-                                    : "bg-white text-gray-500 border-gray-200 hover:border-gray-300"
+                                    : "bg-white text-gray-500 border-gray-200 hover:border-gray-300 shadow-sm"
                                 }`}
                         >
                             {cat.label}
                         </button>
                     ))}
                 </div>
-                <div className="flex items-center justify-between mt-3 text-xs font-medium text-gray-500 bg-gray-50/50 p-2 rounded-lg">
+                <div className="flex items-center justify-between mt-3 text-xs font-medium text-gray-500 bg-white p-2 rounded-xl shadow-sm border border-gray-100">
                     <button 
                         onClick={() => setSortBy("default")}
                         className={`flex items-center gap-1 px-2 py-1 rounded transition-colors ${sortBy === 'default' ? 'text-gray-900 font-bold' : 'hover:bg-gray-100'}`}
@@ -232,11 +325,15 @@ const SecondHandMarket = () => {
                         </div>
                     </button>
                     <button 
-                        onClick={() => setFilterCondition(filterCondition === 'all' ? 'new' : 'all')}
-                        className={`flex items-center gap-1 px-2 py-1 rounded transition-colors ${filterCondition !== 'all' ? 'text-gray-900 font-bold' : 'hover:bg-gray-100'}`}
+                         onClick={() => setIsFilterOpen(true)}
+                        className={`flex items-center gap-1 px-2 py-1 rounded transition-colors ${
+                            (priceRange.min || priceRange.max || selectedSizes.length > 0 || selectedConditions.length > 0 || selectedIPs.length > 0 || selectedBrands.length > 0)
+                            ? 'text-gray-900 font-bold bg-gray-100' 
+                            : 'hover:bg-gray-100 text-gray-700'
+                        }`}
                     >
-                        <span>{filterCondition === 'new' ? '全新/仅拆' : (activeCategory === "commission" ? "类型" : "成色")}</span>
-                        <Filter size={12} />
+                        <span>筛选</span>
+                        <Filter size={12} fill={(priceRange.min || priceRange.max || selectedSizes.length > 0 || selectedConditions.length > 0 || selectedIPs.length > 0 || selectedBrands.length > 0) ? "currentColor" : "none"} />
                     </button>
                     <button 
                          onClick={() => setSortBy("likes")}
@@ -250,82 +347,260 @@ const SecondHandMarket = () => {
 
             {/* Product Grid - Masonry-ish feel */}
             <div className="p-3 grid grid-cols-2 gap-3">
-                {filteredItems.map((item) => (
-                    <div
-                        key={item.id}
-                        onClick={() => push("ProductDetail", { id: item.id, type: item.type === "service" ? "service" : "secondhand" })}
-                        className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer group border border-gray-100"
-                    >
-                        {/* Image Container */}
-                        <div className="aspect-square relative overflow-hidden bg-gray-100">
-                             <img 
-                                src={item.image} 
-                                alt={item.title}
-                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                            <div className="absolute top-2 right-2 bg-black/60 text-white text-[10px] px-2 py-1 rounded-full backdrop-blur-md flex items-center gap-1 font-medium z-10">
-                                <Clock size={10} />
-                                {item.time}
-                            </div>
-                            {/* Condition Tag */}
-                            <div className="absolute bottom-2 left-2 z-10">
-                                <span className={`text-[10px] px-2 py-0.5 rounded-md backdrop-blur shadow-sm font-bold ${
-                                    item.type === "service" 
-                                    ? "bg-purple-500/90 text-white"
-                                    : "bg-white/90 text-primary-600"
-                                }`}>
-                                    {item.condition}
-                                </span>
-                            </div>
+                {isLoading ? (
+                     // Skeleton Loader
+                     [1,2,3,4].map(i => (
+                        <div key={i} className="bg-white rounded-2xl overflow-hidden border border-white p-2 space-y-2">
+                             <div className="w-full aspect-square bg-gray-100 animate-pulse rounded-xl" />
+                             <div className="h-4 bg-gray-100 w-3/4 rounded animate-pulse" />
+                             <div className="flex justify-between">
+                                 <div className="h-3 bg-gray-100 w-1/4 rounded animate-pulse" />
+                                 <div className="h-3 bg-gray-100 w-1/4 rounded animate-pulse" />
+                             </div>
                         </div>
-
-                        {/* Info Content */}
-                        <div className="p-3">
-                            <h3 className="text-sm font-bold text-gray-800 line-clamp-2 leading-snug mb-2 group-hover:text-primary-600 transition-colors">
-                                {item.title}
-                            </h3>
-
-                            {/* Tags */}
-                            <div className="flex flex-wrap gap-1.5 mb-2.5">
-                                {item.tags.slice(0, 2).map((tag, i) => (
-                                    <span
-                                        key={i}
-                                        className="text-[10px] px-1.5 py-0.5 rounded-md bg-gray-100 text-gray-500 font-medium"
-                                    >
-                                        #{tag}
+                     ))
+                ) : (
+                    filteredItems.map((item, index) => (
+                        <div
+                            key={item.id}
+                            onClick={() => push("ProductDetail", { id: item.id, type: item.type === "service" ? "service" : "secondhand" })}
+                            className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer group border border-gray-100 animate-slide-up"
+                            style={{ animationDelay: `${index * 0.05}s` }}
+                        >
+                            {/* Image Container */}
+                            <div className="aspect-square relative overflow-hidden bg-gray-100">
+                                 <img 
+                                    src={item.image} 
+                                    alt={item.title}
+                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                                <div className="absolute top-2 right-2 bg-black/60 text-white text-[10px] px-2 py-1 rounded-full backdrop-blur-md flex items-center gap-1 font-medium z-10">
+                                    <Clock size={10} />
+                                    {item.time}
+                                </div>
+                                {/* Condition Tag */}
+                                <div className="absolute bottom-2 left-2 z-10">
+                                    <span className={`text-[10px] px-2 py-0.5 rounded-md backdrop-blur shadow-sm font-bold ${
+                                        item.type === "service" 
+                                        ? "bg-purple-500/90 text-white"
+                                        : "bg-white/90 text-primary-600"
+                                    }`}>
+                                        {item.condition}
                                     </span>
-                                ))}
+                                </div>
                             </div>
-
-                            {/* Price Row */}
-                            <div className="flex items-baseline gap-1 mb-2">
-                                {item.type === 'exchange' ? (
-                                     <span className="text-sm text-purple-600 font-bold">{item.price}</span>
-                                ) : (
-                                    <>
-                                        <span className="text-xs text-rose-500 font-bold">¥</span>
-                                        <span className="text-lg text-rose-500 font-extrabold font-outfit">{item.price}</span>
-                                    </>
-                                )}
-                                {item.originalPrice && (
-                                    <span className="text-[10px] text-gray-300 line-through ml-1">¥{item.originalPrice}</span>
-                                )}
-                            </div>
-
-                            {/* Seller Row */}
-                            <div className="flex items-center gap-2 pt-2 border-t border-gray-50">
-                                <div className={`w-5 h-5 rounded-full ${item.seller.avatar} border border-white shadow-sm shrink-0`} />
-                                <span className="text-xs text-gray-500 truncate flex-1 scale-90 origin-left">{item.seller.name}</span>
-                                <div className="flex items-center gap-0.5 text-gray-400 group-hover:text-rose-400 transition-colors">
-                                    <Heart size={12} fill="currentColor" className="opacity-0 group-hover:opacity-100 transition-opacity" />
-                                    <span className="text-[10px]">{item.likes}</span>
+    
+                            {/* Info Content */}
+                            <div className="p-3">
+                                <h3 className="text-sm font-bold text-gray-800 line-clamp-2 leading-snug mb-2 group-hover:text-primary-600 transition-colors">
+                                    {item.title}
+                                </h3>
+    
+                                {/* Tags */}
+                                <div className="flex flex-wrap gap-1.5 mb-2.5">
+                                    {item.tags.slice(0, 2).map((tag, i) => (
+                                        <span
+                                            key={i}
+                                            className="text-[10px] px-1.5 py-0.5 rounded-md bg-gray-100 text-gray-500 font-medium"
+                                        >
+                                            #{tag}
+                                        </span>
+                                    ))}
+                                </div>
+    
+                                {/* Price Row */}
+                                <div className="flex items-baseline gap-1 mb-2">
+                                    {item.type === 'exchange' ? (
+                                         <span className="text-sm text-purple-600 font-bold">{item.price}</span>
+                                    ) : (
+                                        <>
+                                            <span className="text-xs text-rose-500 font-bold">¥</span>
+                                            <span className="text-lg text-rose-500 font-extrabold font-outfit">{item.price}</span>
+                                        </>
+                                    )}
+                                    {item.originalPrice && (
+                                        <span className="text-[10px] text-gray-300 line-through ml-1">¥{item.originalPrice}</span>
+                                    )}
+                                </div>
+    
+                                {/* Seller Row */}
+                                <div className="flex items-center gap-2 pt-2 border-t border-gray-50">
+                                    <div className={`w-5 h-5 rounded-full ${item.seller.avatar} border border-white shadow-sm shrink-0`} />
+                                    <span className="text-xs text-gray-500 truncate flex-1 scale-90 origin-left">{item.seller.name}</span>
+                                    <div className="flex items-center gap-0.5 text-gray-400 group-hover:text-rose-400 transition-colors">
+                                        <Heart size={12} fill="currentColor" className="opacity-0 group-hover:opacity-100 transition-opacity" />
+                                        <span className="text-[10px]">{item.likes}</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                ))}
+                    ))
+                )}
             </div>
+
+            {/* Advanced Filter Drawer */}
+            {isFilterOpen && (
+                <div className="fixed inset-0 z-50 flex flex-col justify-end">
+                    {/* Backdrop */}
+                    <div 
+                        className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity"
+                        onClick={() => setIsFilterOpen(false)}
+                    />
+                    
+                    {/* Drawer Content */}
+                    <div className="relative bg-white rounded-t-3xl p-6 pb-8 animate-slide-up shadow-2xl h-[70vh] flex flex-col">
+                        <div className="flex items-center justify-between mb-6">
+                            <h3 className="text-lg font-bold text-gray-900">筛选</h3>
+                            <button onClick={() => setIsFilterOpen(false)} className="p-1 rounded-full hover:bg-gray-100">
+                                <X size={20} className="text-gray-500" />
+                            </button>
+                        </div>
+
+                        <div className="flex-1 overflow-y-auto space-y-6 scrollbar-hide">
+                            {/* Price Range */}
+                            <div className="space-y-3">
+                                <h4 className="text-sm font-bold text-gray-900">价格区间</h4>
+                                <div className="flex items-center gap-3">
+                                    <input 
+                                        type="number" 
+                                        placeholder="最低价" 
+                                        className="flex-1 bg-gray-50 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-primary-100 transition-all text-center"
+                                        value={priceRange.min}
+                                        onChange={(e) => setPriceRange({...priceRange, min: e.target.value})}
+                                    />
+                                    <span className="text-gray-300">-</span>
+                                    <input 
+                                        type="number" 
+                                        placeholder="最高价" 
+                                        className="flex-1 bg-gray-50 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-primary-100 transition-all text-center"
+                                        value={priceRange.max}
+                                        onChange={(e) => setPriceRange({...priceRange, max: e.target.value})}
+                                    />
+                                </div>
+                            </div>
+
+                            {/* IPs */}
+                            <div className="space-y-3">
+                                <h4 className="text-sm font-bold text-gray-900">热门 IP / 作品</h4>
+                                <div className="flex flex-wrap gap-2">
+                                    {FILTER_DATA.ips.map(ip => (
+                                        <button
+                                            key={ip}
+                                            onClick={() => {
+                                                setSelectedIPs(prev => 
+                                                    prev.includes(ip) ? prev.filter(i => i !== ip) : [...prev, ip]
+                                                );
+                                            }}
+                                            className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
+                                                selectedIPs.includes(ip)
+                                                ? "bg-blue-600 text-white shadow-md transform scale-105"
+                                                : "bg-blue-50 text-blue-600 hover:bg-blue-100"
+                                            }`}
+                                        >
+                                            {ip}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Brands */}
+                            <div className="space-y-3">
+                                <h4 className="text-sm font-bold text-gray-900">品牌 / 娃社</h4>
+                                <div className="flex flex-wrap gap-2">
+                                    {FILTER_DATA.brands.map(brand => (
+                                        <button
+                                            key={brand}
+                                            onClick={() => {
+                                                setSelectedBrands(prev => 
+                                                    prev.includes(brand) ? prev.filter(b => b !== brand) : [...prev, brand]
+                                                );
+                                            }}
+                                            className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
+                                                selectedBrands.includes(brand)
+                                                ? "bg-purple-600 text-white shadow-md transform scale-105"
+                                                : "bg-purple-50 text-purple-600 hover:bg-purple-100"
+                                            }`}
+                                        >
+                                            {brand}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Sizes */}
+                            <div className="space-y-3">
+                                <h4 className="text-sm font-bold text-gray-900">尺寸 / 规格</h4>
+                                <div className="flex flex-wrap gap-2">
+                                    {FILTER_DATA.sizes.map(size => (
+                                        <button
+                                            key={size}
+                                            onClick={() => {
+                                                setSelectedSizes(prev => 
+                                                    prev.includes(size) ? prev.filter(s => s !== size) : [...prev, size]
+                                                );
+                                            }}
+                                            className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
+                                                selectedSizes.includes(size)
+                                                ? "bg-gray-900 text-white shadow-md transform scale-105"
+                                                : "bg-gray-50 text-gray-500 hover:bg-gray-100"
+                                            }`}
+                                        >
+                                            {size}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Condition */}
+                            <div className="space-y-3">
+                                <h4 className="text-sm font-bold text-gray-900">成色 / 状态</h4>
+                                <div className="flex flex-wrap gap-2">
+                                    {FILTER_DATA.conditions.map(cond => (
+                                        <button
+                                            key={cond}
+                                            onClick={() => {
+                                                setSelectedConditions(prev => 
+                                                    prev.includes(cond) ? prev.filter(c => c !== cond) : [...prev, cond]
+                                                );
+                                            }}
+                                            className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
+                                                selectedConditions.includes(cond)
+                                                ? "bg-gray-900 text-white shadow-md transform scale-105"
+                                                : "bg-gray-50 text-gray-500 hover:bg-gray-100"
+                                            }`}
+                                        >
+                                            {cond}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Actions */}
+                        <div className="flex gap-3 pt-4 border-t border-gray-50 mt-4">
+                            <button
+                                onClick={() => {
+                                    setPriceRange({ min: '', max: '' });
+                                    setSelectedSizes([]);
+                                    setSelectedConditions([]);
+                                    setSelectedIPs([]);
+                                    setSelectedBrands([]);
+                                }} 
+                                className="flex-1 py-3 rounded-full font-bold text-gray-500 hover:bg-gray-50 transition-colors"
+                            >
+                                重置
+                            </button>
+                            <button 
+                                onClick={() => setIsFilterOpen(false)}
+                                className="flex-[2] py-3 rounded-full bg-gray-900 text-white font-bold shadow-lg shadow-gray-200 active:scale-95 transition-transform"
+                            >
+                                查看结果
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

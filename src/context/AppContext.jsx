@@ -98,7 +98,35 @@ const INITIAL_CHATS = [
 
 export const AppProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(USERS[0]); // Default to first user
-  const [orders, setOrders] = useState(MOCK_ORDERS);
+  const [orders, setOrders] = useState([
+      ...MOCK_ORDERS,
+      // Mock Data for "My Orders" Showcase
+      {
+          id: 'mock_pay', userId: USERS[0].id, leader: "AS官方旗舰店",
+          title: "AS 1/3 华熙 2024Ver. 白肌 官妆全套", skuName: "白肌/官妆/全套",
+          price: "2480.00", status: "pending_payment", image: "bg-gray-200"
+      },
+      {
+          id: 'mock_ship', userId: USERS[0].id, leader: "森森的娃衣铺",
+          title: "MSD/4分 【小红帽】洋装套装 点数很多", skuName: "红色/4分通用",
+          price: "128.00", status: "pending_shipment", image: "bg-red-100"
+      },
+      {
+          id: 'mock_receipt', userId: USERS[0].id, leader: "顺丰速运",
+          title: "BJD外出包 痛包 双肩包 黑色", skuName: "黑色/60cm",
+          price: "85.00", status: "shipped", image: "bg-gray-800"
+      },
+      {
+          id: 'mock_review', userId: USERS[0].id, leader: "妆师-小鱼",
+          title: "3分/4分 自由妆 伪娘妆", skuName: "自由妆/指定色系",
+          price: "150.00", status: "completed", image: "bg-pink-100"
+      },
+      {
+          id: 'mock_refund', userId: USERS[0].id, leader: "某不知名卖家",
+          title: "二手 3分 假发 炸毛", skuName: "棕色",
+          price: "45.00", status: "refund", image: "bg-yellow-100"
+      }
+  ]);
   // Combine Merchant Products and Group Buys into a single "Product" source for simplicity in this demo
   const [groupBuys, setGroupBuys] = useState([
     ...MOCK_GROUP_BUYS,
