@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { useRouter } from '../router/RouteStack';
-import { ChevronLeft, Share2, Heart, ShoppingBag, ShieldCheck, Clock, Gift, Unlock, Lock, Trophy, MessageCircle, RefreshCw, Tag } from 'lucide-react';
+import { ChevronLeft, Share2, Heart, ShoppingBag, ShieldCheck, Clock, Gift, Unlock, Lock, Trophy, MessageCircle, RefreshCw, Tag, X, Check } from 'lucide-react';
 
 const ProductDetail = () => {
     const { currentRoute, pop, push } = useRouter();
@@ -9,8 +9,15 @@ const ProductDetail = () => {
     const { id, type } = currentRoute.params || {};
 
     const [selectedSku, setSelectedSku] = useState(null);
+    const [showBarterModal, setShowBarterModal] = useState(false);
+    const [selectedMyItem, setSelectedMyItem] = useState(null);
+    const [barterMessage, setBarterMessage] = useState('');
 
-    // --- Mock Data for New Types ---
+    // ... existing code ...
+    const MY_ITEMS = [
+        { id: 1001, title: "万叶 同款色纸", image: "bg-green-100", condition: "全新无损" },
+        { id: 1002, title: "流浪者 粘土人", image: "bg-indigo-100", condition: "仅拆摆" },
+    ];
     const SECOND_HAND_ITEMS = [
         {
             id: 101,
@@ -59,7 +66,7 @@ const ProductDetail = () => {
 
     const handleAction = () => {
         if (isBarter) {
-            alert('模拟: 发起交换请求');
+            setShowBarterModal(true);
         } else if (isSecondHand) {
             alert('模拟: 跳转闲鱼支付');
         } else {
@@ -232,6 +239,103 @@ const ProductDetail = () => {
                     </button>
                 )}
             </div>
+            {/* Barter Modal */}
+            {showBarterModal && (
+                <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
+                    <div className="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 shadow-2xl animate-in slide-in-from-bottom duration-300">
+                        {/* Modal Header */}
+                        <div className="flex items-center justify-between mb-6">
+                            <div>
+                                <h3 className="text-lg font-bold text-gray-900">发起交换</h3>
+                                <p className="text-xs text-gray-500 mt-1">选择你持有的物品进行交换</p>
+                            </div>
+                            <button
+                                onClick={() => setShowBarterModal(false)}
+                                className="p-2 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors"
+                            >
+                                <X size={20} className="text-gray-500" />
+                            </button>
+                        </div>
+
+                        {/* My Items Selection */}
+                        <div className="mb-6">
+                            <h4 className="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
+                                <span className="w-1.5 h-4 bg-accent rounded-full"></span>
+                                选择持有物品
+                            </h4>
+                            <div className="space-y-3 max-h-48 overflow-y-auto pr-1 custom-scrollbar">
+                                {MY_ITEMS.map((item) => (
+                                    <div
+                                        key={item.id}
+                                        onClick={() => setSelectedMyItem(item)}
+                                        className={`flex items-center gap-3 p-3 rounded-xl border transition-all cursor-pointer ${
+                                            selectedMyItem?.id === item.id
+                                                ? "border-accent bg-accent/5 ring-1 ring-accent"
+                                                : "border-gray-100 bg-gray-50 hover:bg-gray-100"
+                                        }`}
+                                    >
+                                        <div className={`w-12 h-12 rounded-lg ${item.image} shrink-0`} />
+                                        <div className="flex-1 min-w-0">
+                                            <div className="font-bold text-sm text-gray-800 truncate">{item.title}</div>
+                                            <div className="text-xs text-gray-500 mt-0.5">{item.condition}</div>
+                                        </div>
+                                        <div className={`w-5 h-5 rounded-full border flex items-center justify-center transition-colors ${
+                                            selectedMyItem?.id === item.id
+                                                ? "bg-accent border-accent text-white"
+                                                : "border-gray-300 bg-white"
+                                        }`}>
+                                            {selectedMyItem?.id === item.id && <Check size={12} strokeWidth={3} />}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                            <button className="w-full mt-3 py-2 text-xs font-bold text-accent border border-dashed border-accent/40 bg-accent/5 rounded-xl hover:bg-accent/10 transition-colors">
+                                + 添加新物品
+                            </button>
+                        </div>
+
+                        {/* Message Input */}
+                        <div className="mb-6">
+                            <h4 className="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
+                                <span className="w-1.5 h-4 bg-green-500 rounded-full"></span>
+                                留言备注
+                            </h4>
+                            <textarea
+                                value={barterMessage}
+                                onChange={(e) => setBarterMessage(e.target.value)}
+                                placeholder="向对方描述你的置换诚意，或者补充物品细节..."
+                                className="w-full h-24 bg-gray-50 p-3 rounded-xl text-sm outline-none border border-transparent focus:border-accent/50 focus:bg-white transition-all resize-none placeholder:text-gray-400"
+                            />
+                        </div>
+
+                        {/* Action Buttons */}
+                        <div className="flex gap-3">
+                            <button
+                                onClick={() => setShowBarterModal(false)}
+                                className="flex-1 py-3 rounded-xl font-bold text-gray-600 bg-gray-100 hover:bg-gray-200 transition-colors"
+                            >
+                                取消
+                            </button>
+                            <button
+                                onClick={() => {
+                                    if (!selectedMyItem) {
+                                        alert("请先选择一个用于交换的物品");
+                                        return;
+                                    }
+                                    alert(`已发送交换请求！\n使用物品：${selectedMyItem.title}\n留言：${barterMessage}`);
+                                    setShowBarterModal(false);
+                                    setBarterMessage('');
+                                    setSelectedMyItem(null);
+                                }}
+                                disabled={!selectedMyItem}
+                                className="flex-[2] py-3 rounded-xl font-bold text-white bg-gradient-to-r from-accent to-accent-dark hover:shadow-lg hover:shadow-accent/20 disabled:opacity-50 disabled:shadow-none transition-all"
+                            >
+                                确认发起交换
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
