@@ -73,11 +73,26 @@ const SecondHandMarket = () => {
     // Quick Filter State (单选，用于快速过滤器的 IP/品牌)
     const [activeQuickFilter, setActiveQuickFilter] = useState(null);
 
-    const FILTER_DATA = {
-        sizes: ["3分", "4分", "6分", "8分", "叔", "特体"],
+    const GUZI_FILTER_DATA = {
+        ips: SCRAPED_DATA['Japanese IP']?.map(i => i.name) || ["原神", "恋与深空", "排球少年", "明日方舟", "初音未来", "鬼灭之刃"],
+        characters: ["散兵", "钟离", "纳西妲", "万叶", "影山飞雄", "日向翔阳", "五条悟", "炭治郎", "阿尼亚"],
+        categories: ["吧唧", "立牌", "色纸", "痛包", "手办", "挂件", "棉花娃娃"],
+        conditions: ["全新", "仅拆", "99新", "95新", "85新"],
+    };
+
+    const BJD_FILTER_DATA = {
+        brands: SCRAPED_DATA['BJD Brand']?.map(b => b.name) || ["龙魂人形社", "DollZone", "Soom", "Volks"],
+        sizes: ["3分", "4分", "6分", "8分", "叔", "特体", "大叔", "巨婴"],
+        types: ["整娃", "单头", "素体", "娃衣", "眼珠", "假发"],
         conditions: ["全新", "仅拆", "99新", "95新", "85新", "战损"],
-        ips: ["原神", "恋与深空", "排球少年", "明日方舟", "初音未来"],
-        brands: ["AS", "龙魂", "DZ", "GEM", "Telesthesia", "Doll Chateau"]
+    };
+
+    // 兼容旧代码
+    const FILTER_DATA = {
+        sizes: BJD_FILTER_DATA.sizes,
+        conditions: activeZone === 'bjd' ? BJD_FILTER_DATA.conditions : GUZI_FILTER_DATA.conditions,
+        ips: GUZI_FILTER_DATA.ips,
+        brands: BJD_FILTER_DATA.brands
     };
 
     const CATEGORIES = [
@@ -299,10 +314,10 @@ const SecondHandMarket = () => {
                                                 setActiveQuickFilter(activeQuickFilter === ip ? null : ip);
                                             }}
                                             className={`flex-shrink-0 pl-1 pr-3 py-1 rounded-full text-[10px] font-bold border whitespace-nowrap transition-all flex items-center gap-1.5 ${activeQuickFilter === ip
-                                                    ? "bg-rose-500 text-white border-rose-500 shadow-md scale-105"
-                                                    : myIPs.includes(ip)
-                                                        ? "bg-rose-100 text-rose-600 border-rose-200"
-                                                        : "bg-gray-50 text-gray-500 border-gray-100"
+                                                ? "bg-rose-500 text-white border-rose-500 shadow-md scale-105"
+                                                : myIPs.includes(ip)
+                                                    ? "bg-rose-100 text-rose-600 border-rose-200"
+                                                    : "bg-gray-50 text-gray-500 border-gray-100"
                                                 }`}
                                         >
                                             <img
@@ -338,10 +353,10 @@ const SecondHandMarket = () => {
                                                 setActiveQuickFilter(activeQuickFilter === brand ? null : brand);
                                             }}
                                             className={`flex-shrink-0 pl-1 pr-3 py-1 rounded-full text-[10px] font-bold border whitespace-nowrap transition-all flex items-center gap-1.5 ${activeQuickFilter === brand
-                                                    ? "bg-purple-500 text-white border-purple-500 shadow-md scale-105"
-                                                    : myBrands.includes(brand)
-                                                        ? "bg-purple-100 text-purple-600 border-purple-200"
-                                                        : "bg-gray-50 text-gray-500 border-gray-100"
+                                                ? "bg-purple-500 text-white border-purple-500 shadow-md scale-105"
+                                                : myBrands.includes(brand)
+                                                    ? "bg-purple-100 text-purple-600 border-purple-200"
+                                                    : "bg-gray-50 text-gray-500 border-gray-100"
                                                 }`}
                                         >
                                             <img
@@ -678,15 +693,15 @@ const SecondHandMarket = () => {
                             </button>
                         </div>
 
-                        <div className="flex-1 overflow-y-auto space-y-6 scrollbar-hide">
-                            {/* Price Range */}
-                            <div className="space-y-3">
+                        <div className="flex-1 overflow-y-auto space-y-5 scrollbar-hide">
+                            {/* Price Range - 通用 */}
+                            <div className="space-y-2">
                                 <h4 className="text-sm font-bold text-gray-900">价格区间</h4>
                                 <div className="flex items-center gap-3">
                                     <input
                                         type="number"
                                         placeholder="最低价"
-                                        className="flex-1 bg-gray-50 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-primary-100 transition-all text-center"
+                                        className="flex-1 bg-gray-50 rounded-xl px-4 py-2.5 text-sm font-medium outline-none focus:ring-2 focus:ring-rose-100 transition-all text-center"
                                         value={priceRange.min}
                                         onChange={(e) => setPriceRange({ ...priceRange, min: e.target.value })}
                                     />
@@ -694,97 +709,146 @@ const SecondHandMarket = () => {
                                     <input
                                         type="number"
                                         placeholder="最高价"
-                                        className="flex-1 bg-gray-50 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-primary-100 transition-all text-center"
+                                        className="flex-1 bg-gray-50 rounded-xl px-4 py-2.5 text-sm font-medium outline-none focus:ring-2 focus:ring-rose-100 transition-all text-center"
                                         value={priceRange.max}
                                         onChange={(e) => setPriceRange({ ...priceRange, max: e.target.value })}
                                     />
                                 </div>
                             </div>
 
-                            {/* IPs */}
-                            <div className="space-y-3">
-                                <h4 className="text-sm font-bold text-gray-900">热门 IP / 作品</h4>
-                                <div className="flex flex-wrap gap-2">
-                                    {FILTER_DATA.ips.map(ip => (
-                                        <button
-                                            key={ip}
-                                            onClick={() => {
-                                                setSelectedIPs(prev =>
-                                                    prev.includes(ip) ? prev.filter(i => i !== ip) : [...prev, ip]
-                                                );
-                                            }}
-                                            className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${selectedIPs.includes(ip)
-                                                ? "bg-blue-600 text-white shadow-md transform scale-105"
-                                                : "bg-blue-50 text-blue-600 hover:bg-blue-100"
-                                                }`}
-                                        >
-                                            {ip}
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
+                            {activeZone === 'guzi' ? (
+                                /* ========== 谷子岛筛选 ========== */
+                                <>
+                                    {/* IP / 作品 */}
+                                    <div className="space-y-2">
+                                        <h4 className="text-sm font-bold text-gray-900">IP / 作品</h4>
+                                        <div className="flex flex-wrap gap-2">
+                                            {GUZI_FILTER_DATA.ips.slice(0, 12).map(ip => (
+                                                <button
+                                                    key={ip}
+                                                    onClick={() => setSelectedIPs(prev => prev.includes(ip) ? prev.filter(i => i !== ip) : [...prev, ip])}
+                                                    className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all ${selectedIPs.includes(ip)
+                                                            ? "bg-rose-500 text-white shadow-md scale-105"
+                                                            : "bg-rose-50 text-rose-600 hover:bg-rose-100"
+                                                        }`}
+                                                >
+                                                    {ip}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
 
-                            {/* Brands */}
-                            <div className="space-y-3">
-                                <h4 className="text-sm font-bold text-gray-900">品牌 / 娃社</h4>
-                                <div className="flex flex-wrap gap-2">
-                                    {FILTER_DATA.brands.map(brand => (
-                                        <button
-                                            key={brand}
-                                            onClick={() => {
-                                                setSelectedBrands(prev =>
-                                                    prev.includes(brand) ? prev.filter(b => b !== brand) : [...prev, brand]
-                                                );
-                                            }}
-                                            className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${selectedBrands.includes(brand)
-                                                ? "bg-purple-600 text-white shadow-md transform scale-105"
-                                                : "bg-purple-50 text-purple-600 hover:bg-purple-100"
-                                                }`}
-                                        >
-                                            {brand}
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
+                                    {/* 角色 */}
+                                    <div className="space-y-2">
+                                        <h4 className="text-sm font-bold text-gray-900">热门角色</h4>
+                                        <div className="flex flex-wrap gap-2">
+                                            {GUZI_FILTER_DATA.characters.map(char => (
+                                                <button
+                                                    key={char}
+                                                    onClick={() => setActiveQuickFilter(activeQuickFilter === char ? null : char)}
+                                                    className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all ${activeQuickFilter === char
+                                                            ? "bg-orange-500 text-white shadow-md scale-105"
+                                                            : "bg-orange-50 text-orange-600 hover:bg-orange-100"
+                                                        }`}
+                                                >
+                                                    {char}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
 
-                            {/* Sizes */}
-                            <div className="space-y-3">
-                                <h4 className="text-sm font-bold text-gray-900">尺寸 / 规格</h4>
-                                <div className="flex flex-wrap gap-2">
-                                    {FILTER_DATA.sizes.map(size => (
-                                        <button
-                                            key={size}
-                                            onClick={() => {
-                                                setSelectedSizes(prev =>
-                                                    prev.includes(size) ? prev.filter(s => s !== size) : [...prev, size]
-                                                );
-                                            }}
-                                            className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${selectedSizes.includes(size)
-                                                ? "bg-gray-900 text-white shadow-md transform scale-105"
-                                                : "bg-gray-50 text-gray-500 hover:bg-gray-100"
-                                                }`}
-                                        >
-                                            {size}
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
+                                    {/* 类别 */}
+                                    <div className="space-y-2">
+                                        <h4 className="text-sm font-bold text-gray-900">商品类别</h4>
+                                        <div className="flex flex-wrap gap-2">
+                                            {GUZI_FILTER_DATA.categories.map(cat => (
+                                                <button
+                                                    key={cat}
+                                                    onClick={() => setActiveQuickFilter(activeQuickFilter === cat ? null : cat)}
+                                                    className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all ${activeQuickFilter === cat
+                                                            ? "bg-blue-500 text-white shadow-md scale-105"
+                                                            : "bg-blue-50 text-blue-600 hover:bg-blue-100"
+                                                        }`}
+                                                >
+                                                    {cat}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </>
+                            ) : (
+                                /* ========== BJD 岛筛选 ========== */
+                                <>
+                                    {/* 品牌 / 娃社 */}
+                                    <div className="space-y-2">
+                                        <h4 className="text-sm font-bold text-gray-900">品牌 / 娃社</h4>
+                                        <div className="flex flex-wrap gap-2">
+                                            {BJD_FILTER_DATA.brands.slice(0, 12).map(brand => (
+                                                <button
+                                                    key={brand}
+                                                    onClick={() => setSelectedBrands(prev => prev.includes(brand) ? prev.filter(b => b !== brand) : [...prev, brand])}
+                                                    className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all ${selectedBrands.includes(brand)
+                                                            ? "bg-purple-500 text-white shadow-md scale-105"
+                                                            : "bg-purple-50 text-purple-600 hover:bg-purple-100"
+                                                        }`}
+                                                >
+                                                    {brand}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
 
-                            {/* Condition */}
-                            <div className="space-y-3">
-                                <h4 className="text-sm font-bold text-gray-900">成色 / 状态</h4>
+                                    {/* 尺寸 */}
+                                    <div className="space-y-2">
+                                        <h4 className="text-sm font-bold text-gray-900">尺寸 / 规格</h4>
+                                        <div className="flex flex-wrap gap-2">
+                                            {BJD_FILTER_DATA.sizes.map(size => (
+                                                <button
+                                                    key={size}
+                                                    onClick={() => setSelectedSizes(prev => prev.includes(size) ? prev.filter(s => s !== size) : [...prev, size])}
+                                                    className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all ${selectedSizes.includes(size)
+                                                            ? "bg-indigo-500 text-white shadow-md scale-105"
+                                                            : "bg-indigo-50 text-indigo-600 hover:bg-indigo-100"
+                                                        }`}
+                                                >
+                                                    {size}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    {/* 类型 */}
+                                    <div className="space-y-2">
+                                        <h4 className="text-sm font-bold text-gray-900">商品类型</h4>
+                                        <div className="flex flex-wrap gap-2">
+                                            {BJD_FILTER_DATA.types.map(type => (
+                                                <button
+                                                    key={type}
+                                                    onClick={() => setActiveQuickFilter(activeQuickFilter === type ? null : type)}
+                                                    className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all ${activeQuickFilter === type
+                                                            ? "bg-teal-500 text-white shadow-md scale-105"
+                                                            : "bg-teal-50 text-teal-600 hover:bg-teal-100"
+                                                        }`}
+                                                >
+                                                    {type}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </>
+                            )}
+
+                            {/* 成色 - 通用 */}
+                            <div className="space-y-2">
+                                <h4 className="text-sm font-bold text-gray-900">成色</h4>
                                 <div className="flex flex-wrap gap-2">
                                     {FILTER_DATA.conditions.map(cond => (
                                         <button
                                             key={cond}
-                                            onClick={() => {
-                                                setSelectedConditions(prev =>
-                                                    prev.includes(cond) ? prev.filter(c => c !== cond) : [...prev, cond]
-                                                );
-                                            }}
-                                            className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${selectedConditions.includes(cond)
-                                                ? "bg-gray-900 text-white shadow-md transform scale-105"
-                                                : "bg-gray-50 text-gray-500 hover:bg-gray-100"
+                                            onClick={() => setSelectedConditions(prev => prev.includes(cond) ? prev.filter(c => c !== cond) : [...prev, cond])}
+                                            className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all ${selectedConditions.includes(cond)
+                                                    ? "bg-gray-800 text-white shadow-md scale-105"
+                                                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                                                 }`}
                                         >
                                             {cond}
