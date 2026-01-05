@@ -52,43 +52,83 @@
   "BJD Brand": [
     {
       "name": "龙魂人形社",
-      "path": "/images/brands/龙魂人形社.jpg"
+      "path": "https://treasure.qiandaocdn.com/treasure/images/9579871f8ce8d49218c496813688d230.jpg?imginfo=w180,h180!fill_w480_h480_jpg"
     },
     {
       "name": "DollZone",
-      "path": "/images/brands/DollZone.jpg"
+      "path": "https://treasure.qiandaocdn.com/treasure/images/d3c1d55b60eaffbfc4f373d3668e18e0.jpg?imginfo=w169,h169!fill_w480_h480_jpg"
     },
     {
       "name": "Soom",
-      "path": "/images/brands/Soom.jpg"
+      "path": "https://treasure.qiandaocdn.com/treasure/images/f2d678c0f536d1bab094e5891a2d8f88.jpg?imginfo=w150,h150!fill_w480_h480_jpg"
     },
     {
       "name": "IxDoll妹头",
-      "path": "/images/brands/IxDoll妹头.png"
+      "path": "https://treasure.qiandaocdn.com/treasure/images/531cabadc2c7bd0fa89b4035906bf1db.png?imginfo=w168,h168!fill_w480_h480_jpg"
     },
     {
       "name": "Volks",
-      "path": "/images/brands/Volks.png"
+      "path": "https://treasure.qiandaocdn.com/treasure/images/300cfae6dcd5cf40453f5dc52076d890.png?imginfo=w360,h360!fill_w480_h480_jpg"
     },
     {
       "name": "薇娅娃娃",
-      "path": "/images/brands/薇娅娃娃.png"
+      "path": "https://treasure.qiandaocdn.com/treasure/images/7bfe24a28b5af39e8cba5ce8412c2eb6.png?imginfo=w168,h168!fill_w480_h480_jpg"
     },
     {
       "name": "ASDOLL天使工房",
-      "path": "/images/brands/ASDOLL天使工房.jpg"
+      "path": "https://treasure.qiandaocdn.com/treasure/images/5555309e57b31d0904eafd1868b7af0e.jpg?imginfo=w342,h342!fill_w480_h480_jpg"
     },
     {
       "name": "Azone",
-      "path": "/images/brands/Azone.png"
+      "path": "https://treasure.qiandaocdn.com/treasure/images/4d4013974fe296b56674c54599157488.png?imginfo=w360,h360!fill_w480_h480_jpg"
     },
     {
       "name": "蘑菇王国的不二臣",
-      "path": "/images/brands/蘑菇王国的不二臣.jpg"
+      "path": "https://treasure.qiandaocdn.com/treasure/images/f095b57528bdaad6ee2012c27b43653b.jpg?imginfo=w996,h996!fill_w480_h480_jpg"
     },
     {
       "name": "Mystic Kids",
-      "path": "/images/brands/Mystic Kids.jpg"
+      "path": "https://treasure.qiandaocdn.com/treasure/images/7d60f9ef88c71e7f1007eb2c5a0790ae.jpg?imginfo=w148,h148!fill_w480_h480_jpg"
+    },
+    {
+      "name": "RingDoll",
+      "path": "https://treasure.qiandaocdn.com/treasure/images/40846a3fe239cb481a06eef283b5a0a5.png?imginfo=w200,h200!fill_w480_h480_jpg"
+    },
+    {
+      "name": "NAPI",
+      "path": "https://treasure.qiandaocdn.com/treasure/images/4ad8d2f055dd924303aaf7fd425a4f30.jpg?imginfo=w123,h123!fill_w480_h480_jpg"
+    },
+    {
+      "name": "2DDoll",
+      "path": "https://treasure.qiandaocdn.com/treasure/images/45fef47fce2e27e0ef48c34c98bd9fdb.jpg?imginfo=w289,h289!fill_w480_h480_jpg"
+    },
+    {
+      "name": "Myou Doll",
+      "path": "https://treasure.qiandaocdn.com/treasure/images/0511ccae32f47fbf45ddaeee36834a1f.jpg?imginfo=w148,h148!fill_w480_h480_jpg"
+    },
+    {
+      "name": "鬼契人型",
+      "path": "https://treasure.qiandaocdn.com/treasure/images/293a2629f0b6abb982d0450268c2986e.jpg?imginfo=w152,h153!fill_w480_h480_jpg"
+    },
+    {
+      "name": "LUTS",
+      "path": "https://treasure.qiandaocdn.com/treasure/images/e0ea4182f1e308ac58d67a8eb7e46604.jpg?imginfo=w148,h148!fill_w480_h480_jpg"
+    },
+    {
+      "name": "Gem of Doll",
+      "path": "https://treasure.qiandaocdn.com/treasure/images/2f5d421c8300ed61c59b2b0ed6a4099b.jpg?imginfo=w136,h137!fill_w480_h480_jpg"
+    },
+    {
+      "name": "珍妮童话镇",
+      "path": "https://treasure.qiandaocdn.com/treasure/images/42badb8bbf949aee26bc1add82ccabb3.jpg?imginfo=w300,h300!fill_w480_h480_jpg"
+    },
+    {
+      "name": "Doll Chateau",
+      "path": "https://treasure.qiandaocdn.com/treasure/images/5f3a86a9fdf4028844373474c2ee2629.jpg?imginfo=w148,h148!fill_w480_h480_jpg"
+    },
+    {
+      "name": "Charm Doll",
+      "path": "https://treasure.qiandaocdn.com/treasure/images/5dca1c8a42e47dc70ecbb6bc2e5b11f8.jpg?imginfo=w148,h148!fill_w480_h480_jpg"
     }
   ]
 }

@@ -70,6 +70,9 @@ const SecondHandMarket = () => {
     const [selectedIPs, setSelectedIPs] = useState([]);
     const [selectedBrands, setSelectedBrands] = useState([]);
 
+    // Quick Filter State (单选，用于快速过滤器的 IP/品牌)
+    const [activeQuickFilter, setActiveQuickFilter] = useState(null);
+
     const FILTER_DATA = {
         sizes: ["3分", "4分", "6分", "8分", "叔", "特体"],
         conditions: ["全新", "仅拆", "99新", "95新", "85新", "战损"],
@@ -96,106 +99,31 @@ const SecondHandMarket = () => {
     ];
 
     const MOCK_ITEMS = [
-        {
-            id: 101,
-            type: "goods",
-            title: "【出】原神 散兵 模玩熊特典 色纸",
-            price: 45.0,
-            originalPrice: 60.0,
-            image: "/images/stand.png", // Using Acrylic Stand image as placeholder for general goods
-            seller: {
-                name: "吃土少女A",
-                avatar: "bg-pink-200",
-                credit: "极好",
-            },
-            tags: ["原神", "散兵", "全新未拆"],
-            likes: 12,
-            time: "10分钟前",
-            condition: "全新",
-        },
-        {
-            id: 501,
-            type: "exchange",
-            title: "【换】出原神散兵特典色纸 求万叶色纸/其他",
-            price: "只换不售",
-            originalPrice: null,
-            image: "/images/badge.png", // Using Badge image for swap item
-            seller: {
-                name: "吃土求回血",
-                avatar: "bg-orange-200",
-                credit: "极好",
-            },
-            tags: ["换物", "原神", "散兵"],
-            likes: 5,
-            time: "15分钟前",
-            condition: "仅换",
-        },
-        {
-            id: 102,
-            type: "goods",
-            title: "【通过】恋与制作人 李泽言 生日 吧唧 复数出",
-            price: 18.0,
-            originalPrice: 25.0,
-            image: "/images/badge.png",
-            seller: {
-                name: "李夫人",
-                avatar: "bg-purple-200",
-                credit: "优秀",
-            },
-            tags: ["恋与制作人", "李泽言", "仅拆封"],
-            likes: 45,
-            time: "25分钟前",
-            condition: "99新",
-        },
-        {
-            id: 201,
-            type: "bjd",
-            title: "【AS华熙】自养4分男娃 普肌 单头/整娃",
-            price: 850.0,
-            originalPrice: 1200.0,
-            image: "/images/bjd.png",
-            seller: {
-                name: "养娃大户",
-                avatar: "bg-amber-200",
-                credit: "极好",
-            },
-            tags: ["AS", "华熙", "4分"],
-            likes: 156,
-            time: "2小时前",
-            condition: "85新",
-        },
-        {
-            id: 301,
-            type: "service",
-            title: "【妆面接单】BJD/二次元面妆 仿官妆 自由妆",
-            price: "200起",
-            image: "/images/commission.png",
-            seller: {
-                name: "云墨妆坊",
-                avatar: "bg-rose-300",
-                credit: "认证妆师",
-            },
-            tags: ["妆面", "BJD", "接单中"],
-            likes: 342,
-            time: "刚刚",
-            condition: "服务",
-        },
-        {
-            id: 302,
-            type: "service",
-            title: "【手作】痛包扎板/排版接单 独家设计",
-            price: "50起",
-            image: "/images/plush.png", // Using Plush image as placeholder for handmade
-            seller: {
-                name: "手作娘",
-                avatar: "bg-teal-300",
-                credit: "优秀",
-            },
-            tags: ["痛包", "排版", "手工"],
-            likes: 88,
-            time: "5小时前",
-            condition: "服务",
-        },
+        // ========== 谷子类商品 ==========
+        { id: 101, type: "goods", title: "【出】原神 散兵 模玩熊特典 色纸", price: 45.0, originalPrice: 60.0, image: "/images/stand.png", seller: { name: "吃土少女A", avatar: "bg-pink-200", credit: "极好" }, tags: ["原神", "散兵"], likes: 12, time: "10分钟前", condition: "全新" },
+        { id: 102, type: "goods", title: "【出】原神 钟离 Q版立牌", price: 35.0, originalPrice: 50.0, image: "/images/stand.png", seller: { name: "原批少女", avatar: "bg-amber-200", credit: "极好" }, tags: ["原神", "钟离"], likes: 28, time: "30分钟前", condition: "全新" },
+        { id: 103, type: "goods", title: "【出】原神 纳西妲 官方吧唧", price: 25.0, originalPrice: 35.0, image: "/images/badge.png", seller: { name: "草神厨", avatar: "bg-green-200", credit: "优秀" }, tags: ["原神", "纳西妲"], likes: 45, time: "1小时前", condition: "99新" },
+        { id: 104, type: "goods", title: "【出】鬼灭之刃 炭治郎 景品手办", price: 120.0, originalPrice: 180.0, image: "/images/stand.png", seller: { name: "鬼灭厨", avatar: "bg-red-200", credit: "极好" }, tags: ["鬼灭之刃", "炭治郎"], likes: 67, time: "2小时前", condition: "95新" },
+        { id: 105, type: "goods", title: "【出】鬼灭之刃 �的豆子 吧唧套", price: 88.0, originalPrice: 120.0, image: "/images/badge.png", seller: { name: "豆子控", avatar: "bg-pink-300", credit: "优秀" }, tags: ["鬼灭之刃", "祢豆子"], likes: 89, time: "3小时前", condition: "全新" },
+        { id: 106, type: "goods", title: "【出】排球少年 日向翔阳 生写真", price: 15.0, originalPrice: 20.0, image: "/images/badge.png", seller: { name: "乌野厨", avatar: "bg-orange-200", credit: "极好" }, tags: ["排球少年", "日向翔阳"], likes: 34, time: "4小时前", condition: "全新" },
+        { id: 107, type: "goods", title: "【出】排球少年 影山飞雄 亚克力立牌", price: 55.0, originalPrice: 75.0, image: "/images/stand.png", seller: { name: "影山太太", avatar: "bg-blue-200", credit: "优秀" }, tags: ["排球少年", "影山飞雄"], likes: 56, time: "5小时前", condition: "99新" },
+        { id: 108, type: "goods", title: "【出】咒术回战 五条悟 官方挂件", price: 68.0, originalPrice: 98.0, image: "/images/badge.png", seller: { name: "咒术厨", avatar: "bg-indigo-200", credit: "极好" }, tags: ["咒术回战", "五条悟"], likes: 123, time: "6小时前", condition: "全新" },
+        { id: 109, type: "goods", title: "【出】文豪野犬 太宰治 痛包套装", price: 188.0, originalPrice: 280.0, image: "/images/plush.png", seller: { name: "太中厨", avatar: "bg-purple-200", credit: "优秀" }, tags: ["文豪野犬", "太宰治"], likes: 78, time: "1天前", condition: "95新" },
+        { id: 110, type: "goods", title: "【出】间谍过家家 阿尼亚 棉花娃娃", price: 158.0, originalPrice: 220.0, image: "/images/plush.png", seller: { name: "阿尼亚厨", avatar: "bg-pink-100", credit: "极好" }, tags: ["间谍过家家", "阿尼亚"], likes: 234, time: "2天前", condition: "全新" },
+        { id: 111, type: "exchange", title: "【换】出原神散兵色纸 求万叶/魈", price: "只换不售", originalPrice: null, image: "/images/badge.png", seller: { name: "吃土求回血", avatar: "bg-orange-200", credit: "极好" }, tags: ["换物", "原神", "散兵"], likes: 5, time: "15分钟前", condition: "仅换" },
+        { id: 112, type: "goods", title: "【出】名侦探柯南 怪盗基德 周边套", price: 128.0, originalPrice: 168.0, image: "/images/stand.png", seller: { name: "基德厨", avatar: "bg-white", credit: "优秀" }, tags: ["名侦探柯南", "怪盗基德"], likes: 45, time: "3小时前", condition: "99新" },
+        // ========== BJD 类商品 ==========
+        { id: 201, type: "bjd", title: "【龙魂人形社】4分男娃头 自养 普肌", price: 850.0, originalPrice: 1200.0, image: "/images/bjd.png", seller: { name: "养娃大户", avatar: "bg-amber-200", credit: "极好" }, tags: ["龙魂人形社", "4分", "单头"], likes: 156, time: "2小时前", condition: "85新" },
+        { id: 202, type: "bjd", title: "【DollZone】6分女娃整娃 白肌 官妆", price: 2800.0, originalPrice: 3500.0, image: "/images/bjd.png", seller: { name: "娃娘小A", avatar: "bg-rose-200", credit: "极好" }, tags: ["DollZone", "6分", "整娃"], likes: 89, time: "1天前", condition: "95新" },
+        { id: 203, type: "bjd", title: "【Soom】叔体素体 蜜色肌 全新", price: 1500.0, originalPrice: 2000.0, image: "/images/bjd.png", seller: { name: "叔控", avatar: "bg-purple-200", credit: "优秀" }, tags: ["Soom", "叔", "素体"], likes: 67, time: "3天前", condition: "全新" },
+        { id: 204, type: "bjd", title: "【Volks】SD13男 限定款 带官妆", price: 8500.0, originalPrice: 12000.0, image: "/images/bjd.png", seller: { name: "V厨", avatar: "bg-blue-200", credit: "极好" }, tags: ["Volks", "SD", "整娃"], likes: 234, time: "1周前", condition: "95新" },
+        { id: 205, type: "bjd", title: "【龙魂人形社】3分女娃头 官妆 白肌", price: 650.0, originalPrice: 900.0, image: "/images/bjd.png", seller: { name: "龙娃控", avatar: "bg-pink-200", credit: "优秀" }, tags: ["龙魂人形社", "3分", "单头"], likes: 45, time: "5小时前", condition: "99新" },
+        { id: 206, type: "bjd", title: "【RingDoll】成年男体 普肌 全套", price: 3200.0, originalPrice: 4200.0, image: "/images/bjd.png", seller: { name: "RD粉", avatar: "bg-gray-200", credit: "极好" }, tags: ["RingDoll", "叔", "素体"], likes: 78, time: "2天前", condition: "95新" },
+        { id: 207, type: "bjd", title: "【Gem of Doll】4分娃衣套装 洛丽塔", price: 380.0, originalPrice: 520.0, image: "/images/bjd.png", seller: { name: "娃衣控", avatar: "bg-pink-300", credit: "优秀" }, tags: ["Gem of Doll", "4分", "娃衣"], likes: 56, time: "1天前", condition: "全新" },
+        { id: 208, type: "bjd", title: "【Doll Chateau】8分萌娃 整娃出", price: 1800.0, originalPrice: 2500.0, image: "/images/bjd.png", seller: { name: "DC厨", avatar: "bg-yellow-200", credit: "极好" }, tags: ["Doll Chateau", "8分", "整娃"], likes: 123, time: "4天前", condition: "99新" },
+        // ========== 服务类 ==========
+        { id: 301, type: "service", title: "【妆面接单】BJD/二次元面妆 仿官妆 自由妆", price: "200起", image: "/images/commission.png", seller: { name: "云墨妆坊", avatar: "bg-rose-300", credit: "认证妆师" }, tags: ["妆面", "BJD", "接单中"], likes: 342, time: "刚刚", condition: "服务" },
+        { id: 302, type: "service", title: "【手作】痛包扎板/排版接单 独家设计", price: "50起", image: "/images/plush.png", seller: { name: "手作娘", avatar: "bg-teal-300", credit: "优秀" }, tags: ["痛包", "排版", "手工"], likes: 88, time: "5小时前", condition: "服务" },
     ];
 
     // State for Merged Items
@@ -265,6 +193,12 @@ const SecondHandMarket = () => {
         // Brand Filter (Check tags)
         if (selectedBrands.length > 0) {
             if (!selectedBrands.some(brand => item.tags.some(tag => tag.includes(brand)))) return false;
+        }
+
+        // Quick Filter (单选过滤)
+        if (activeQuickFilter) {
+            const matchesFilter = item.tags.some(tag => tag.includes(activeQuickFilter));
+            if (!matchesFilter) return false;
         }
 
         return true;
@@ -362,11 +296,13 @@ const SecondHandMarket = () => {
                                         <button
                                             key={ip}
                                             onClick={() => {
-                                                // Toggle logic if desired, or set filter
+                                                setActiveQuickFilter(activeQuickFilter === ip ? null : ip);
                                             }}
-                                            className={`flex-shrink-0 pl-1 pr-3 py-1 rounded-full text-[10px] font-bold border whitespace-nowrap transition-colors flex items-center gap-1.5 ${myIPs.includes(ip)
-                                                ? "bg-rose-100 text-rose-600 border-rose-200"
-                                                : "bg-gray-50 text-gray-500 border-gray-100 bg-white"
+                                            className={`flex-shrink-0 pl-1 pr-3 py-1 rounded-full text-[10px] font-bold border whitespace-nowrap transition-all flex items-center gap-1.5 ${activeQuickFilter === ip
+                                                    ? "bg-rose-500 text-white border-rose-500 shadow-md scale-105"
+                                                    : myIPs.includes(ip)
+                                                        ? "bg-rose-100 text-rose-600 border-rose-200"
+                                                        : "bg-gray-50 text-gray-500 border-gray-100"
                                                 }`}
                                         >
                                             <img
@@ -382,17 +318,50 @@ const SecondHandMarket = () => {
                         );
                     })()
                 ) : (
-                    // BJD: Show Brands & Sizes + Filter
-                    <>
-                        {[...FILTER_DATA.brands, ...FILTER_DATA.sizes].map(tag => (
-                            <button key={tag} className="flex-shrink-0 px-3 py-1.5 bg-purple-50 text-purple-600 rounded-full text-[10px] font-bold border border-purple-100 whitespace-nowrap">
-                                {tag}
-                            </button>
-                        ))}
-                        <button onClick={() => setIsFilterOpen(true)} className="flex-shrink-0 px-3 py-1.5 bg-gray-50 text-gray-400 rounded-full text-[10px] font-bold border border-gray-100 flex items-center gap-1">
-                            <Filter size={10} /> 筛选
-                        </button>
-                    </>
+                    // BJD: Show User Brands + All Brands, sorted
+                    (() => {
+                        const myBrands = currentUser?.preferences?.brands || [];
+                        const allBrands = SCRAPED_DATA['BJD Brand']?.map(b => b.name) || [];
+                        // specific logic: My Brands first, then others. Dedup.
+                        const displayBrands = [...new Set([...myBrands, ...allBrands])];
+
+                        return (
+                            <>
+                                {displayBrands.map(brand => {
+                                    const brandInfo = SCRAPED_DATA['BJD Brand']?.find(b => b.name === brand);
+                                    const imgSrc = brandInfo ? brandInfo.path : `https://ui-avatars.com/api/?name=${encodeURIComponent(brand)}&background=${myBrands.includes(brand) ? '9333ea' : 'random'}&color=fff&rounded=true&bold=true&size=32`;
+
+                                    return (
+                                        <button
+                                            key={brand}
+                                            onClick={() => {
+                                                setActiveQuickFilter(activeQuickFilter === brand ? null : brand);
+                                            }}
+                                            className={`flex-shrink-0 pl-1 pr-3 py-1 rounded-full text-[10px] font-bold border whitespace-nowrap transition-all flex items-center gap-1.5 ${activeQuickFilter === brand
+                                                    ? "bg-purple-500 text-white border-purple-500 shadow-md scale-105"
+                                                    : myBrands.includes(brand)
+                                                        ? "bg-purple-100 text-purple-600 border-purple-200"
+                                                        : "bg-gray-50 text-gray-500 border-gray-100"
+                                                }`}
+                                        >
+                                            <img
+                                                src={imgSrc}
+                                                alt={brand}
+                                                className="w-5 h-5 rounded-full object-cover"
+                                                onError={(e) => {
+                                                    e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(brand)}&background=random&color=fff&rounded=true&size=20`;
+                                                }}
+                                            />
+                                            {brand}
+                                        </button>
+                                    );
+                                })}
+                                <button onClick={() => setIsFilterOpen(true)} className="flex-shrink-0 px-3 py-1.5 bg-gray-50 text-gray-400 rounded-full text-[10px] font-bold border border-gray-100 flex items-center gap-1">
+                                    <Filter size={10} /> 筛选
+                                </button>
+                            </>
+                        );
+                    })()
                 )}
             </div>
 
@@ -421,41 +390,60 @@ const SecondHandMarket = () => {
                                 </div>
                             </div>
 
-                            {/* Interests Selection */}
+                            {/* Interests/Brands Selection - 根据岛屿类型显示 */}
                             <div className="mb-8">
                                 <div className="flex items-center justify-between mb-4">
-                                    <h3 className="font-bold text-gray-900">选择你感兴趣的</h3>
-                                    <span className="text-xs text-gray-400">已选 {currentUser?.preferences?.interests?.length || 0} 个</span>
+                                    <h3 className="font-bold text-gray-900">
+                                        {activeZone === 'guzi' ? '关注的IP' : '关注的娃社'}
+                                    </h3>
+                                    <span className="text-xs text-gray-400">
+                                        已选 {activeZone === 'guzi'
+                                            ? (currentUser?.preferences?.interests?.length || 0)
+                                            : (currentUser?.preferences?.brands?.length || 0)} 个
+                                    </span>
                                 </div>
                                 <div className="flex flex-wrap gap-2">
-                                    {/* Predefined Popular IPs */}
-                                    {/* Scraped Popular IPs with Real Images */}
-                                    {SCRAPED_DATA['Japanese IP'].map(item => {
-                                        const isSelected = currentUser?.preferences?.interests?.includes(item.name);
+                                    {(activeZone === 'guzi'
+                                        ? SCRAPED_DATA['Japanese IP']
+                                        : SCRAPED_DATA['BJD Brand']
+                                    )?.map(item => {
+                                        const selectedList = activeZone === 'guzi'
+                                            ? currentUser?.preferences?.interests
+                                            : currentUser?.preferences?.brands;
+                                        const isSelected = selectedList?.includes(item.name);
+                                        const themeColor = activeZone === 'guzi' ? 'rose' : 'purple';
+
                                         return (
                                             <button
                                                 key={item.name}
                                                 onClick={() => {
-                                                    const currentInterests = currentUser?.preferences?.interests || [];
-                                                    let newInterests;
+                                                    const currentList = selectedList || [];
+                                                    const key = activeZone === 'guzi' ? 'interests' : 'brands';
+                                                    let newList;
                                                     if (isSelected) {
-                                                        newInterests = currentInterests.filter(i => i !== item.name);
+                                                        newList = currentList.filter(i => i !== item.name);
                                                     } else {
-                                                        newInterests = [...currentInterests, item.name];
+                                                        newList = [...currentList, item.name];
                                                     }
-                                                    savePreferences({ ...currentUser.preferences, interests: newInterests });
+                                                    savePreferences({ ...currentUser.preferences, [key]: newList });
                                                 }}
                                                 className={`px-3 py-1.5 rounded-xl text-sm font-bold transition-all flex items-center gap-2 ${isSelected
-                                                    ? "bg-gray-900 text-white shadow-md transform scale-105"
+                                                    ? `bg-${themeColor}-500 text-white shadow-md transform scale-105`
                                                     : "bg-white border border-gray-200 text-gray-500 hover:border-gray-300"
                                                     }`}
                                             >
-                                                <img src={item.path} alt={item.name} className="w-5 h-5 rounded-full object-cover" />
+                                                <img
+                                                    src={item.path}
+                                                    alt={item.name}
+                                                    className="w-5 h-5 rounded-full object-cover"
+                                                    onError={(e) => {
+                                                        e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(item.name)}&background=random&color=fff&rounded=true&size=20`;
+                                                    }}
+                                                />
                                                 <span>{item.name}</span>
                                             </button>
                                         );
                                     })}
-                                    {/* Add more from config if needed later */}
                                 </div>
                             </div>
                         </div>
