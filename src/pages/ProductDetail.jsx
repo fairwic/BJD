@@ -57,6 +57,19 @@ const ProductDetail = () => {
             images: ["/images/commission.png"],
             tags: ["妆面", "BJD", "接单"],
             condition: "服务"
+        },
+        {
+            id: 302, // Service Request (Client needs Artist)
+            title: "【求妆】6分 DZ 莫纹",
+            price: "预算300", 
+            originalPrice: null,
+            image: "/images/doll_head.png", // Mock
+            seller: { name: "富婆妹妹", avatar: "bg-purple-300", credit: "信用极好" },
+            description: "求一位擅长古风/真人的劳斯。不需要太浓的妆面。甚至可以稍微淡一点。工期不急。",
+            images: ["/images/doll_head.png"],
+            tags: ["求妆", "DZ", "6分"],
+            condition: "求购", // or 需求
+            type: 'service_request' 
         }
     ];
 
@@ -64,33 +77,48 @@ const ProductDetail = () => {
 
     // --- Data Resolution ---
     // --- Data Resolution ---
-    let product;
     
     // Priority: Check if it's a known Barter Item
     const barterItem = BARTER_ITEMS.find(i => i.id === Number(id));
 
-    let isBarter = !!barterItem || type === 'barter';
-    let isService = type === 'service';
-    let isSecondHand = !isBarter && (type === 'secondhand' || isService); 
-    let isGroupBuy = !isSecondHand && !isBarter;
-
-    if (isBarter) {
-        product = barterItem || BARTER_ITEMS[0];
-    } else if (isSecondHand) {
-        product = SECOND_HAND_ITEMS.find(i => i.id === Number(id)) || SECOND_HAND_ITEMS[0]; // Fallback for demo
+    let product;
+    if (barterItem) {
+        product = barterItem;
     } else {
-        product = groupBuys.find(g => g.id === id);
+        // Search in Second Hand Items
+        product = SECOND_HAND_ITEMS.find(i => i.id === Number(id));
+        if (!product) {
+            // Search in Group Buys
+            product = groupBuys.find(g => g.id === id);
+        }
     }
 
     if (!product) return <div className="p-10 text-center text-gray-400">商品不存在或已下架</div>;
+
+    const isBarter = !!barterItem || type === 'barter';
+    // Service Logic: detailed check
+    // If ID is 301, it's an Offer. If 302, it's a Request. 
+    // In real app, check product.category or type.
+    const isService = product.tags?.includes('妆面') || product.tags?.includes('接单') || product.tags?.includes('求妆');
+    const isServiceRequest = product.type === 'service_request' || product.title.includes('求');
+    
+    // Legacy flags
+    const isSecondHand = !isBarter && !isService && (type === 'secondhand'); // basic goods
+    const isGroupBuy = !isSecondHand && !isBarter && !isService;
 
     const handleAction = () => {
         if (isBarter) {
             push('BarterInitiate', { product });
         } else if (isService) {
-            alert('模拟: 跳转约稿沟通/支付定金');
+            if (isServiceRequest) {
+                // Artist applying to a request
+                push('CommissionApply', { product });
+            } else {
+                // Client booking a service
+                push('OrderCheckout', { product, sku: { name: '服务定金' } }); 
+            }
         } else if (isSecondHand) {
-            alert('模拟: 跳转闲鱼支付');
+            push('OrderCheckout', { product });
         } else {
             // Group Buy Logic
             if (!selectedSku) {
@@ -98,7 +126,7 @@ const ProductDetail = () => {
                 return;
             }
             if (product.type === 'spot') {
-                alert('模拟功能：已加入购物车/跳转支付');
+                push('OrderCheckout', { product, sku: selectedSku });
                 return;
             }
             push('ContractSigning', {
@@ -261,8 +289,10 @@ const ProductDetail = () => {
                                 : "bg-rose-500 text-white hover:bg-rose-600 disabled:opacity-50 disabled:cursor-not-allowed"
                             }`}
                     >
-                        {isSecondHand
-                            ? (isService ? "立即预约" : "我想要")
+                        {isSecondHand || isService
+                            ? (isService 
+                                ? (isServiceRequest ? "立即应征" : "立即预约")
+                                : "我想要")
                             : (selectedSku
                                 ? (product.type === 'spot' ? `立即购买 ¥${product.price}` : `支付定金 ¥${product.deposit}`)
                                 : '请选择规格')

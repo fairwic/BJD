@@ -13,10 +13,53 @@ import {
     X
 } from "lucide-react";
 
+import { useApp } from "../context/AppContext";
+
 const SecondHandMarket = () => {
     const { push } = useRouter();
+    const { currentUser, savePreferences } = useApp();
     const [activeCategory, setActiveCategory] = useState("all");
+    
+    // Zone Logic
+    // Simplify: User preferences now has 'zones' array. If not, fallback to single 'zone'.
+    const [myZones, setMyZones] = useState(currentUser?.preferences?.zones || [currentUser?.preferences?.zone || 'guzi']);
+    const [activeZone, setActiveZone] = useState(myZones[0]);
+    const [isZoneDrawerOpen, setIsZoneDrawerOpen] = useState(false);
+
+    // Sync activeZone if myZones changes (e.g. adding a new one)
+    useEffect(() => {
+        if (!myZones.includes(activeZone)) {
+            setActiveZone(myZones[0]);
+        }
+    }, [myZones]);
+
+    const handleAddZone = (newZone) => {
+        if (!myZones.includes(newZone)) {
+            const newZones = [...myZones, newZone];
+            setMyZones(newZones);
+            // Persist
+            savePreferences({ ...currentUser.preferences, zones: newZones });
+        }
+        setActiveZone(newZone);
+        setIsZoneDrawerOpen(false);
+    };
+
+    const handleRemoveZone = (zoneToRemove) => {
+        if (myZones.length <= 1) return;
+        const newZones = myZones.filter(z => z !== zoneToRemove);
+        setMyZones(newZones);
+        savePreferences({ ...currentUser.preferences, zones: newZones });
+        if (activeZone === zoneToRemove) {
+            setActiveZone(newZones[0]);
+        }
+    };
+
     const [sortBy, setSortBy] = useState("default"); // default, price_asc, price_desc, likes
+    
+    // ... (Filter Logic remains the same, omitted for brevity if unchanged, but I need to be careful with REPLACE)
+    // Actually, I should just replace the top part and header carefully.
+
+
     
     // Advanced Filter State
     const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -172,6 +215,18 @@ const SecondHandMarket = () => {
 
     // Filter Logic
     const filteredItems = allItems.filter(item => {
+        // 0. Zone Filter
+        if (activeZone === 'guzi') {
+            // Guzi Zone: Exclude 'bjd' type, include 'goods', 'badge', etc.
+            // Simplified logic: If it has BJD tags or type is BJD/Service(Doll), exclude.
+            const isBJD = item.type === 'bjd' || item.tags.includes('BJD') || item.tags.includes('AS') || item.tags.includes('妆面');
+            if (isBJD) return false;
+        } else if (activeZone === 'bjd') {
+            // BJD Zone: Only include BJD related
+            const isBJD = item.type === 'bjd' || item.tags.includes('BJD') || item.tags.includes('AS') || item.tags.includes('妆面') || item.title.includes('娃');
+            if (!isBJD) return false;
+        }
+
         // 1. Category Filter
         if (activeCategory !== "all") {
             if (activeCategory === "bjd") { if (item.type !== "bjd") return false; }
@@ -243,20 +298,205 @@ const SecondHandMarket = () => {
             `}</style>
             
             {/* Header with Glassmorphism */}
-            <div className="sticky top-0 z-30 bg-white/80 backdrop-blur-md px-4 py-3 flex items-center gap-3 shadow-[0_2px_8px_rgba(0,0,0,0.05)] border-b border-white/50">
-                <div className="flex-1 bg-gray-100/80 rounded-full flex items-center px-4 py-2.5 gap-2 border border-transparent focus-within:bg-white focus-within:border-primary-300 transition-all">
-                    <Search size={18} className="text-gray-400" />
-                    <input
-                        type="text"
-                        placeholder="搜好价/找劳斯... (e.g. BJD/妆娘)"
-                        className="bg-transparent text-sm w-full outline-none placeholder:text-gray-400 text-gray-700"
-                    />
-                </div>
+            <div className="sticky top-0 z-30 bg-white/80 backdrop-blur-md px-4 py-3 flex flex-col gap-2 shadow-[0_2px_8px_rgba(0,0,0,0.05)] border-b border-white/50 transition-all duration-300">
+                {/* Conditional Zone Switcher (Only if multiple zones) - ABOVE Search */}
+                {myZones.length > 1 && (
+                     <div className="flex bg-gray-100 p-1 rounded-xl w-full max-w-[240px] self-center animate-slide-up" style={{ animationDuration: '0.3s' }}>
+                        <button 
+                            onClick={() => setActiveZone('guzi')}
+                            className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all ${activeZone === 'guzi' ? 'bg-white text-rose-500 shadow-sm' : 'text-gray-400'}`}
+                        >
+                            谷子
+                        </button>
+                        <button 
+                            onClick={() => setActiveZone('bjd')}
+                            className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all ${activeZone === 'bjd' ? 'bg-white text-purple-500 shadow-sm' : 'text-gray-400'}`}
+                        >
+                            BJD
+                        </button>
+                    </div>
+                )}
 
+                <div className="flex items-center gap-3 w-full">
+                    {/* Search Bar */}
+                    <div className="flex-1 bg-gray-100/80 rounded-full flex items-center px-4 py-2.5 gap-2 border border-transparent focus-within:bg-white focus-within:border-primary-300 transition-all">
+                        <Search size={18} className="text-gray-400" />
+                        <input
+                            type="text"
+                            placeholder={activeZone === 'guzi' ? "搜吧唧/立牌..." : "搜娃社/妆师..."}
+                            className="bg-transparent text-sm w-full outline-none placeholder:text-gray-400 text-gray-700"
+                        />
+                    </div>
+
+                    {/* Right Side: My Boards / Discovery */}
+                    <button 
+                        onClick={() => setIsZoneDrawerOpen(true)}
+                        className="flex flex-col items-center justify-center text-gray-600 active:scale-95 transition-transform"
+                    >
+                        <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center border border-white shadow-sm">
+                            {activeZone === 'guzi' ? <span className="text-lg">🍬</span> : <span className="text-lg">🩰</span>}
+                        </div>
+                        <span className="text-[10px] font-bold mt-0.5">岛屿</span>
+                    </button>
+                </div>
             </div>
 
+            {/* Quick Context Filters (Horizontal Scroll) */}
+            <div className="px-4 py-2 flex gap-2 overflow-x-auto scrollbar-hide">
+                {activeZone === 'guzi' ? (
+                    // Guzi: Show User Interests (IPs) + Popular IPs, sorted
+                    (() => {
+                        const myIPs = currentUser?.preferences?.interests || [];
+                        const allIPs = FILTER_DATA.ips;
+                        // specific logic: My IPs first, then others. Dedup.
+                        const displayIPs = [...new Set([...myIPs, ...allIPs])];
+                        
+                                {displayIPs.map(ip => {
+                                    const ipInfo = SCRAPED_DATA['Japanese IP'].find(i => i.name === ip);
+                                    const imgSrc = ipInfo ? ipInfo.path : `https://ui-avatars.com/api/?name=${ip}&background=${myIPs.includes(ip) ? 'e11d48' : 'random'}&color=fff&rounded=true&bold=true&size=32`;
+                                    
+                                    return (
+                                    <button 
+                                        key={ip} 
+                                        onClick={() => {
+                                            // Toggle logic if desired, or set filter
+                                        }}
+                                        className={`flex-shrink-0 pl-1 pr-3 py-1 rounded-full text-[10px] font-bold border whitespace-nowrap transition-colors flex items-center gap-1.5 ${
+                                        myIPs.includes(ip) 
+                                        ? "bg-rose-100 text-rose-600 border-rose-200" 
+                                        : "bg-gray-50 text-gray-500 border-gray-100 bg-white"
+                                    }`}>
+                                        <img 
+                                            src={imgSrc} 
+                                            alt={ip}
+                                            className="w-5 h-5 rounded-full object-cover"
+                                        />
+                                        {ip}
+                                    </button>
+                                    );
+                                })}
+                            </>
+                        );
+                    })()
+                ) : (
+                    // BJD: Show Brands & Sizes + Filter
+                    <>
+                        {[...FILTER_DATA.brands, ...FILTER_DATA.sizes].map(tag => (
+                            <button key={tag} className="flex-shrink-0 px-3 py-1.5 bg-purple-50 text-purple-600 rounded-full text-[10px] font-bold border border-purple-100 whitespace-nowrap">
+                                {tag}
+                            </button>
+                        ))}
+                        <button onClick={() => setIsFilterOpen(true)} className="flex-shrink-0 px-3 py-1.5 bg-gray-50 text-gray-400 rounded-full text-[10px] font-bold border border-gray-100 flex items-center gap-1">
+                            <Filter size={10} /> 筛选
+                        </button>
+                    </>
+                )}
+            </div>
+
+            {/* Zone/Discovery Drawer */}
+            {isZoneDrawerOpen && (
+                <div className="fixed inset-0 z-50 flex justify-end">
+                    <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" onClick={() => setIsZoneDrawerOpen(false)} />
+                    <div className="relative w-3/4 max-w-sm bg-white h-full shadow-2xl p-6 animate-slide-left flex flex-col">
+                         <div className="flex items-center justify-between mb-8">
+                            <h2 className="text-xl font-serif font-bold text-gray-900">我的岛屿</h2>
+                            <button onClick={() => setIsZoneDrawerOpen(false)}><X size={24} className="text-gray-400" /></button>
+                         </div>
+
+                         {/* Scrollable Content */}
+                         <div className="flex-1 overflow-y-auto min-h-0 -mx-6 px-6">
+                             {/* Current Zone Info */}
+                             <div className="mb-8 p-4 rounded-2xl bg-gray-50 border border-gray-100">
+                                 <div className="flex items-center gap-3 mb-2">
+                                    <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center text-2xl shadow-sm">
+                                        {activeZone === 'guzi' ? '🍬' : '🩰'}
+                                    </div>
+                                    <div>
+                                        <h3 className="font-bold text-lg">{activeZone === 'guzi' ? '谷子岛' : 'BJD岛'}</h3>
+                                        <p className="text-xs text-gray-400">当前所在的岛屿</p>
+                                    </div>
+                                 </div>
+                             </div>
+
+                             {/* Interests Selection */}
+                             <div className="mb-8">
+                                 <div className="flex items-center justify-between mb-4">
+                                    <h3 className="font-bold text-gray-900">选择你感兴趣的</h3>
+                                    <span className="text-xs text-gray-400">已选 {currentUser?.preferences?.interests?.length || 0} 个</span>
+                                 </div>
+                                 <div className="flex flex-wrap gap-2">
+                                     {/* Predefined Popular IPs */}
+                                     {/* Scraped Popular IPs with Real Images */}
+                                     {SCRAPED_DATA['Japanese IP'].map(item => {
+                                         const isSelected = currentUser?.preferences?.interests?.includes(item.name);
+                                         return (
+                                             <button
+                                                 key={item.name}
+                                                 onClick={() => {
+                                                     const currentInterests = currentUser?.preferences?.interests || [];
+                                                     let newInterests;
+                                                     if (isSelected) {
+                                                         newInterests = currentInterests.filter(i => i !== item.name);
+                                                     } else {
+                                                         newInterests = [...currentInterests, item.name];
+                                                     }
+                                                     savePreferences({ ...currentUser.preferences, interests: newInterests });
+                                                 }}
+                                                 className={`px-3 py-1.5 rounded-xl text-sm font-bold transition-all flex items-center gap-2 ${
+                                                     isSelected 
+                                                     ? "bg-gray-900 text-white shadow-md transform scale-105" 
+                                                     : "bg-white border border-gray-200 text-gray-500 hover:border-gray-300"
+                                                 }`}
+                                             >
+                                                 <img src={item.path} alt={item.name} className="w-5 h-5 rounded-full object-cover" />
+                                                 <span>{item.name}</span>
+                                             </button>
+                                         );
+                                     })}
+                                     {/* Add more from config if needed later */}
+                                 </div>
+                             </div>
+                         </div>
+
+                         {/* Switch Zone Action */}
+                         <div className="pt-6 border-t border-gray-100 mt-auto">
+                             <p className="text-xs text-gray-400 mb-3 text-center">
+                                 {myZones.includes(activeZone === 'guzi' ? 'bjd' : 'guzi') ? '切换到你的另一个岛屿' : '这也是你感兴趣的吗？'}
+                             </p>
+                             
+                             {/* Case 1: Already has both - Just Switch */}
+                             {myZones.includes(activeZone === 'guzi' ? 'bjd' : 'guzi') ? (
+                                <button 
+                                    onClick={() => {
+                                        setActiveZone(activeZone === 'guzi' ? 'bjd' : 'guzi');
+                                        setIsZoneDrawerOpen(false);
+                                    }}
+                                    className={`w-full py-3 rounded-xl flex items-center justify-center gap-3 transition-colors bg-gray-100 text-gray-700`}
+                                >
+                                    <span className="text-xl">{activeZone === 'guzi' ? '🩰' : '🍬'}</span>
+                                    <span className="font-bold">前往 {activeZone === 'guzi' ? 'BJD岛' : '谷子岛'}</span>
+                                </button>
+                             ) : (
+                                 /* Case 2: Doesn't have it - Add it */
+                                <button 
+                                    onClick={() => handleAddZone(activeZone === 'guzi' ? 'bjd' : 'guzi')}
+                                    className={`w-full py-3 rounded-xl flex items-center justify-center gap-3 transition-colors ${
+                                        activeZone === 'guzi' 
+                                        ? 'bg-purple-50 text-purple-600 hover:bg-purple-100' 
+                                        : 'bg-rose-50 text-rose-600 hover:bg-rose-100'
+                                    }`}
+                                >
+                                    <span className="text-xl">{activeZone === 'guzi' ? '🩰' : '🍬'}</span>
+                                    <span className="font-bold">开启 {activeZone === 'guzi' ? 'BJD岛' : '谷子岛'}</span>
+                                </button>
+                             )}
+                         </div>
+                    </div>
+                </div>
+            )}
+            
             {/* Banners */}
-            <div className="px-4 pt-4 overflow-x-auto scrollbar-hide">
+            <div className="px-4 pt-2 overflow-x-auto scrollbar-hide">
                 <div className="flex gap-3 w-max">
                     {BANNERS.map(banner => (
                         <div 

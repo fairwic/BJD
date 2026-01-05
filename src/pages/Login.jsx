@@ -18,7 +18,7 @@ const Login = () => {
             return;
         }
         login(1);
-        replace('Home');
+        replace('Onboarding');
     };
 
     return (

@@ -398,11 +398,17 @@ export const AppProvider = ({ children }) => {
     );
   };
 
-  const addNotification = (msg) => {
+    const addNotification = (msg) => {
     setNotifications((prev) => [...prev, { id: Date.now(), msg }]);
     setTimeout(() => {
       setNotifications((prev) => prev.slice(1));
     }, 3000);
+  };
+
+  // Preferences
+  const savePreferences = (prefs) => {
+      setCurrentUser(prev => ({ ...prev, preferences: prefs }));
+      console.log("Saved preferences:", prefs);
   };
 
   return (
@@ -428,6 +434,7 @@ export const AppProvider = ({ children }) => {
         createRequirement, // New
         takeRequirement, // New
         sendChatMessage, // New
+        savePreferences, // New
       }}
     >
       {children}

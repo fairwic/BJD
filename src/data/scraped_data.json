@@ -1,0 +1,94 @@
+{
+  "Japanese IP": [
+    {
+      "name": "鬼灭之刃",
+      "path": "/images/ips/鬼灭之刃.png"
+    },
+    {
+      "name": "火影忍者",
+      "path": "/images/ips/火影忍者.png"
+    },
+    {
+      "name": "Hello Kitty",
+      "path": "/images/ips/Hello Kitty.png"
+    },
+    {
+      "name": "名侦探柯南",
+      "path": "/images/ips/名侦探柯南.png"
+    },
+    {
+      "name": "吉伊卡哇",
+      "path": "/images/ips/吉伊卡哇.png"
+    },
+    {
+      "name": "VOCALOID",
+      "path": "/images/ips/VOCALOID.png"
+    },
+    {
+      "name": "蜡笔小新",
+      "path": "/images/ips/蜡笔小新.jpg"
+    },
+    {
+      "name": "文豪野犬",
+      "path": "/images/ips/文豪野犬.png"
+    },
+    {
+      "name": "咒术回战",
+      "path": "/images/ips/咒术回战.png"
+    },
+    {
+      "name": "魔法少女小圆",
+      "path": "/images/ips/魔法少女小圆.png"
+    },
+    {
+      "name": "排球少年",
+      "path": "/images/ips/排球少年.jpeg"
+    },
+    {
+      "name": "间谍过家家",
+      "path": "/images/ips/间谍过家家.png"
+    }
+  ],
+  "BJD Brand": [
+    {
+      "name": "龙魂人形社",
+      "path": "/images/brands/龙魂人形社.jpg"
+    },
+    {
+      "name": "DollZone",
+      "path": "/images/brands/DollZone.jpg"
+    },
+    {
+      "name": "Soom",
+      "path": "/images/brands/Soom.jpg"
+    },
+    {
+      "name": "IxDoll妹头",
+      "path": "/images/brands/IxDoll妹头.png"
+    },
+    {
+      "name": "Volks",
+      "path": "/images/brands/Volks.png"
+    },
+    {
+      "name": "薇娅娃娃",
+      "path": "/images/brands/薇娅娃娃.png"
+    },
+    {
+      "name": "ASDOLL天使工房",
+      "path": "/images/brands/ASDOLL天使工房.jpg"
+    },
+    {
+      "name": "Azone",
+      "path": "/images/brands/Azone.png"
+    },
+    {
+      "name": "蘑菇王国的不二臣",
+      "path": "/images/brands/蘑菇王国的不二臣.jpg"
+    },
+    {
+      "name": "Mystic Kids",
+      "path": "/images/brands/Mystic Kids.jpg"
+    }
+  ]
+}

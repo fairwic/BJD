@@ -63,6 +63,9 @@ import CreateSaleListing from "./pages/publish/CreateSaleListing";
 import CreateBuyListing from "./pages/publish/CreateBuyListing";
 import CreateBarterListing from "./pages/publish/CreateBarterListing";
 import CreateCommissionListing from "./pages/publish/CreateCommissionListing";
+import CommissionApply from "./pages/CommissionApply";
+import OrderCheckout from "./pages/OrderCheckout";
+import Onboarding from "./pages/Onboarding";
 
 // Extracted Components
 import UserProfile from "./pages/UserProfile";
@@ -96,6 +99,8 @@ const MainApp = () => {
         return <Login />;
       case "ForgotPassword":
         return <ForgotPassword />;
+      case "Onboarding":
+        return <Onboarding />;
       case "ProductDetail":
         return <ProductDetail />;
       case "OrderDetail":
@@ -210,6 +215,10 @@ const MainApp = () => {
         return <CreateBarterListing />;
       case "CreateCommissionListing":
         return <CreateCommissionListing />;
+      case "CommissionApply":
+        return <CommissionApply />;
+      case "OrderCheckout":
+        return <OrderCheckout />;
 
       case "Home":
       default:
