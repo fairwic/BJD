@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useRouter } from '../router/RouteStack';
-import { ChevronLeft, Edit2, Share2, Calendar, Package, FileText, Image as ImageIcon, Heart, Wrench, ShoppingBag } from 'lucide-react';
+import { ChevronLeft, Edit2, Share2, Calendar, Package, FileText, Image as ImageIcon, Heart, Wrench, ShoppingBag, X, QrCode, Download } from 'lucide-react';
 
 const DollProfile = () => {
     const { currentRoute, pop, push } = useRouter();
@@ -23,15 +23,93 @@ const DollProfile = () => {
         outfitCount: 12,
         photoCount: 89,
         maintenanceRecords: [
-            { date: '2023-11-20', type: '清洁保养', note: '全身清洁，关节上油' },
             { date: '2023-12-01', type: '维修', note: '左手关节松动，已加紧' }
         ],
         daysOwned: 54
     });
 
+    const [showCertificate, setShowCertificate] = useState(false);
+
     const handleShare = () => {
-        alert('生成精美电子身份证，分享到社交平台');
+        setShowCertificate(true);
     };
+
+    // 电子出生证模态框
+    if (showCertificate) {
+        return (
+            <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4 backdrop-blur-sm">
+                <div className="bg-white w-full max-w-sm rounded-2xl overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-300">
+                    {/* Header Controls */}
+                    <div className="flex justify-between p-4 bg-gray-900 text-white">
+                        <button onClick={() => setShowCertificate(false)}><X size={24} /></button>
+                        <button className="flex items-center gap-2 bg-white/20 px-3 py-1 rounded-full text-sm hover:bg-white/30 transition-colors">
+                            <Download size={16} /> 保存图片
+                        </button>
+                    </div>
+
+                    {/* Certificate Content */}
+                    <div className="bg-[url('https://www.transparenttextures.com/patterns/cream-paper.png')] bg-amber-50 p-6 text-center relative">
+                        {/* Decorative Borders */}
+                        <div className="absolute top-4 left-4 w-16 h-16 border-t-2 border-l-2 border-amber-800/20" />
+                        <div className="absolute top-4 right-4 w-16 h-16 border-t-2 border-r-2 border-amber-800/20" />
+                        <div className="absolute bottom-4 left-4 w-16 h-16 border-b-2 border-l-2 border-amber-800/20" />
+                        <div className="absolute bottom-4 right-4 w-16 h-16 border-b-2 border-r-2 border-amber-800/20" />
+
+                        {/* Title */}
+                        <div className="mb-6">
+                            <h2 className="text-2xl font-serif font-bold text-gray-800 tracking-widest">BIRTH CERTIFICATE</h2>
+                            <p className="text-xs text-amber-800 uppercase tracking-[0.3em] mt-1">Authentic BJD Identity</p>
+                        </div>
+
+                        {/* Photo */}
+                        <div className="mx-auto w-40 h-40 bg-white p-2 shadow-lg rotate-1 transform hover:rotate-0 transition-transform duration-500 mb-6">
+                            <div className={`w-full h-full ${doll.images[0]} grayscale hover:grayscale-0 transition-all duration-500`} />
+                        </div>
+
+                        {/* Details */}
+                        <div className="space-y-4 font-serif">
+                            <div>
+                                <h1 className="text-3xl font-bold text-gray-900">{doll.name}</h1>
+                                <p className="text-sm text-gray-500 italic mt-1">{doll.brand} · {doll.size}</p>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4 text-left px-4 my-6">
+                                <div className="border-b border-amber-800/10 pb-1">
+                                    <p className="text-[10px] text-gray-400 uppercase tracking-wider">Birthday</p>
+                                    <p className="font-bold text-gray-800">{doll.birthday}</p>
+                                </div>
+                                <div className="border-b border-amber-800/10 pb-1">
+                                    <p className="text-[10px] text-gray-400 uppercase tracking-wider">Skin Color</p>
+                                    <p className="font-bold text-gray-800">{doll.skinColor}</p>
+                                </div>
+                                <div className="border-b border-amber-800/10 pb-1">
+                                    <p className="text-[10px] text-gray-400 uppercase tracking-wider">Guardian</p>
+                                    <p className="font-bold text-gray-800">当前用户</p>
+                                </div>
+                                <div className="border-b border-amber-800/10 pb-1">
+                                    <p className="text-[10px] text-gray-400 uppercase tracking-wider">ID Number</p>
+                                    <p className="font-bold text-gray-800 font-mono text-xs pt-1">{doll.id.toUpperCase()}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Footer */}
+                        <div className="flex items-end justify-between mt-8 pt-4 border-t border-amber-800/10">
+                            <div className="text-left">
+                                <QrCode size={40} className="text-gray-800 opacity-80" />
+                            </div>
+                            <div className="text-right">
+                                <div className="font-handwriting text-xl text-gray-600 -rotate-2">
+                                    Official Signed
+                                </div>
+                                <p className="text-[10px] text-gray-400 uppercase mt-1">Certified By GOMaster</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen bg-gray-50 pb-20">

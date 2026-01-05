@@ -5,7 +5,7 @@ import { ChevronLeft, FileText, PenTool, CheckCircle2 } from 'lucide-react';
 
 const ContractSigning = () => {
     const { currentRoute, pop, replace } = useRouter();
-    const { payDeposit } = useApp();
+    const { payDeposit, createOrder } = useApp();
     const { orderData } = currentRoute.params || {}; // Expecting order data to be passed
 
     const [agreed, setAgreed] = useState(false);
@@ -24,18 +24,15 @@ const ContractSigning = () => {
 
         // Simulate API call
         setTimeout(() => {
-            // Proceed to pay deposit (or create order directly if deposit logic is handled there)
-            // For this flow, we assume we call payDeposit from here or return to ProductDetail to pay
-            // Let's assume we call payDeposit here for a seamless flow
-
             if (orderData) {
-                payDeposit(orderData.groupBuyId, orderData.skuId);
-                replace('OrderDetail', { id: Date.now() }); // Mock ID, in real app payDeposit should return ID
-                // Note: In our mock AppContext, payDeposit doesn't return the new order ID directly in a way we can grab easily without async, 
-                // but let's assume for demo we redirect to the latest order or just 'Home'
-                // Actually, let's just go back to Home or OrderList for safety in this mock
-                alert('合同签署成功，定金支付成功！');
-                replace('Home');
+                // 1. Create the order logic
+                const newOrderId = createOrder(orderData.groupBuyId, orderData.skuId);
+
+                // 2. Pay deposit logic
+                payDeposit(newOrderId);
+
+                // 3. Redirect to Order Detail directly
+                replace('OrderDetail', { id: newOrderId });
             } else {
                 alert('订单数据丢失');
                 pop();

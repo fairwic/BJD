@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useRouter } from '../router/RouteStack';
-import { ChevronLeft, Search, Book, Lightbulb, ShieldAlert, Wrench, Play, MessageCircle, ChevronRight, TrendingUp, Clock } from 'lucide-react';
+import { ChevronLeft, Search, Book, Lightbulb, ShieldAlert, Wrench, Play, MessageCircle, ChevronRight, TrendingUp, Clock, Palette } from 'lucide-react';
 
 const KnowledgeBase = () => {
     const { pop, push } = useRouter();
@@ -155,7 +155,7 @@ const KnowledgeBase = () => {
     // 筛选
     const filteredArticles = articles.filter(article => {
         const matchSearch = article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          article.summary.toLowerCase().includes(searchQuery.toLowerCase());
+            article.summary.toLowerCase().includes(searchQuery.toLowerCase());
         const matchCategory = activeCategory === 'all' || article.category === activeCategory;
         return matchSearch && matchCategory;
     });
@@ -167,22 +167,20 @@ const KnowledgeBase = () => {
         >
             <div className="flex items-start gap-3">
                 {/* 图标 */}
-                <div className={`p-3 rounded-xl ${
-                    article.category === '新手指南' ? 'bg-blue-50 text-blue-500' :
-                    article.category === '品牌大全' ? 'bg-purple-50 text-purple-500' :
-                    article.category === '术语解释' ? 'bg-yellow-50 text-yellow-600' :
-                    article.category === '避坑指南' ? 'bg-red-50 text-red-500' :
-                    'bg-green-50 text-green-500'
-                }`}>
+                <div className={`p-3 rounded-xl ${article.category === '新手指南' ? 'bg-blue-50 text-blue-500' :
+                        article.category === '品牌大全' ? 'bg-purple-50 text-purple-500' :
+                            article.category === '术语解释' ? 'bg-yellow-50 text-yellow-600' :
+                                article.category === '避坑指南' ? 'bg-red-50 text-red-500' :
+                                    'bg-green-50 text-green-500'
+                    }`}>
                     {article.icon}
                 </div>
 
                 {/* 内容 */}
                 <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
-                        <span className={`text-[10px] px-2 py-0.5 rounded-full ${
-                            article.difficulty === '入门' ? 'bg-green-100 text-green-600' : 'bg-orange-100 text-orange-600'
-                        }`}>
+                        <span className={`text-[10px] px-2 py-0.5 rounded-full ${article.difficulty === '入门' ? 'bg-green-100 text-green-600' : 'bg-orange-100 text-orange-600'
+                            }`}>
                             {article.difficulty}
                         </span>
                         {article.type === 'video' && (
@@ -252,6 +250,28 @@ const KnowledgeBase = () => {
                 </div>
             </div>
 
+            {/* 工具箱 (New Feature) */}
+            <div className="mx-4 -mt-6 mb-6 relative z-10">
+                <div
+                    onClick={() => push('SkinMatchStudio')}
+                    className="bg-white rounded-xl p-4 shadow-lg border border-rose-100 flex items-center justify-between active:scale-98 transition-transform cursor-pointer"
+                >
+                    <div className="flex items-center gap-3">
+                        <div className="p-3 bg-rose-50 text-rose-500 rounded-xl">
+                            <Palette size={24} />
+                        </div>
+                        <div>
+                            <h3 className="font-bold text-gray-900">肤色比对室</h3>
+                            <p className="text-xs text-gray-500">跨品牌肤色匹配，避免色差翻车</p>
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-1 text-xs text-rose-500 font-bold bg-rose-50 px-2 py-1 rounded-lg">
+                        <span>立即试用</span>
+                        <ChevronRight size={14} />
+                    </div>
+                </div>
+            </div>
+
             {/* 分类筛选 */}
             <div className="bg-white px-4 py-3 border-b border-gray-100">
                 <div className="flex gap-2 overflow-x-auto scrollbar-hide">
@@ -259,11 +279,10 @@ const KnowledgeBase = () => {
                         <button
                             key={cat}
                             onClick={() => setActiveCategory(cat)}
-                            className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
-                                activeCategory === cat
+                            className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${activeCategory === cat
                                     ? 'bg-rose-500 text-white'
                                     : 'bg-gray-100 text-gray-600'
-                            }`}
+                                }`}
                         >
                             {cat === 'all' ? '全部' : cat}
                         </button>

@@ -5,7 +5,39 @@ export default {
         "./src/**/*.{js,ts,jsx,tsx}",
     ],
     theme: {
-        extend: {},
+        extend: {
+            colors: {
+                // Primary Brand Colors (Vibrant, Anime-style)
+                primary: {
+                    50: '#f0f9ff',
+                    100: '#e0f2fe',
+                    200: '#bae6fd',
+                    300: '#7dd3fc',
+                    400: '#38bdf8', // Main Blue (Bright)
+                    500: '#0ea5e9',
+                    600: '#0284c7',
+                    700: '#0369a1',
+                },
+                secondary: {
+                    50: '#fff1f2',
+                    100: '#ffe4e6',
+                    200: '#fecdd3',
+                    300: '#fda4af',
+                    400: '#fb7185', // Main Pink (Cute)
+                    500: '#f43f5e',
+                    600: '#e11d48',
+                },
+                accent: {
+                    light: '#fde047', // Yellow
+                    DEFAULT: '#a855f7', // Purple
+                    dark: '#7e22ce',
+                }
+            },
+            fontFamily: {
+                sans: ['"Outfit"', '"Noto Sans SC"', 'sans-serif'],
+                display: ['"Potta One"', '"Outfit"', 'cursive'], // For headers
+            }
+        },
     },
     plugins: [],
 }

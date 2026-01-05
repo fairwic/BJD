@@ -1,0 +1,270 @@
+import React, { useState } from 'react';
+import { useRouter } from '../router/RouteStack';
+import { ChevronLeft, ShoppingBag, Upload, Camera, CheckCircle, AlertCircle, Store, Package, Truck, Shield } from 'lucide-react';
+
+const MerchantApply = () => {
+    const { pop } = useRouter();
+    const [step, setStep] = useState(1); // 1: 介绍, 2: 填写资料, 3: 提交成功
+    const [form, setForm] = useState({
+        shopName: '',
+        category: '',
+        desc: '',
+        contact: '',
+        wechat: '',
+        idCard: false,
+        license: false,
+        agree: false,
+    });
+
+    const benefits = [
+        { icon: Store, title: '开设专属店铺', desc: '拥有独立店铺页面，展示您的商品' },
+        { icon: Package, title: '发布现货商品', desc: '自由定价，即卖即发' },
+        { icon: Truck, title: '便捷发货', desc: '平台提供物流对接服务' },
+        { icon: Shield, title: '交易保障', desc: '担保交易，资金安全' },
+    ];
+
+    const categories = ['娃衣/配饰', '眼珠/假毛', '整娃/素体', '拍摄道具', '其他'];
+
+    const handleSubmit = () => {
+        if (!form.agree) {
+            alert('请先同意入驻协议');
+            return;
+        }
+        setStep(3);
+    };
+
+    return (
+        <div className="min-h-screen bg-gray-50">
+            {/* Header */}
+            <div className="bg-white px-4 py-3 flex items-center sticky top-0 z-20 shadow-sm">
+                <button onClick={pop} className="p-1">
+                    <ChevronLeft size={24} className="text-gray-700" />
+                </button>
+                <h1 className="text-base font-bold text-gray-800 ml-2">成为商家</h1>
+            </div>
+
+            {step === 1 && (
+                <div className="pb-24">
+                    {/* Hero Banner */}
+                    <div className="bg-gradient-to-br from-orange-400 to-amber-500 p-6 text-white">
+                        <div className="flex items-center gap-3 mb-4">
+                            <div className="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center">
+                                <ShoppingBag size={28} />
+                            </div>
+                            <div>
+                                <h2 className="text-xl font-bold">成为BJD现货商家</h2>
+                                <p className="text-white/80 text-sm">将您的BJD好物分享给更多娃友</p>
+                            </div>
+                        </div>
+                        <div className="bg-white/10 rounded-xl p-4 backdrop-blur">
+                            <div className="flex justify-around text-center">
+                                <div>
+                                    <p className="text-2xl font-bold">5000+</p>
+                                    <p className="text-xs text-white/80">活跃商家</p>
+                                </div>
+                                <div>
+                                    <p className="text-2xl font-bold">10万+</p>
+                                    <p className="text-xs text-white/80">月成交</p>
+                                </div>
+                                <div>
+                                    <p className="text-2xl font-bold">0</p>
+                                    <p className="text-xs text-white/80">入驻费用</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* 入驻权益 */}
+                    <div className="p-4">
+                        <h3 className="font-bold text-gray-800 mb-3">入驻权益</h3>
+                        <div className="grid grid-cols-2 gap-3">
+                            {benefits.map((b, i) => (
+                                <div key={i} className="bg-white p-4 rounded-xl shadow-sm">
+                                    <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center text-orange-500 mb-2">
+                                        <b.icon size={20} />
+                                    </div>
+                                    <p className="font-bold text-sm text-gray-800">{b.title}</p>
+                                    <p className="text-xs text-gray-500 mt-1">{b.desc}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* 入驻条件 */}
+                    <div className="p-4 bg-white mt-2">
+                        <h3 className="font-bold text-gray-800 mb-3">入驻条件</h3>
+                        <div className="space-y-2 text-sm">
+                            <div className="flex items-center gap-2 text-gray-600">
+                                <CheckCircle size={16} className="text-green-500" />
+                                <span>完成实名认证</span>
+                            </div>
+                            <div className="flex items-center gap-2 text-gray-600">
+                                <CheckCircle size={16} className="text-green-500" />
+                                <span>提供有效联系方式</span>
+                            </div>
+                            <div className="flex items-center gap-2 text-gray-600">
+                                <CheckCircle size={16} className="text-green-500" />
+                                <span>同意《商家入驻协议》</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* 底部按钮 */}
+                    <div className="fixed bottom-0 left-0 right-0 bg-white p-4 border-t border-gray-100">
+                        <button
+                            onClick={() => setStep(2)}
+                            className="w-full py-3 bg-gradient-to-r from-orange-400 to-amber-500 text-white rounded-full font-bold text-sm active:scale-95 transition-transform"
+                        >
+                            立即入驻
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            {step === 2 && (
+                <div className="pb-24">
+                    <div className="p-4 space-y-4">
+                        {/* 店铺名称 */}
+                        <div className="bg-white rounded-xl p-4">
+                            <label className="block text-sm font-medium text-gray-700 mb-2">店铺名称 *</label>
+                            <input
+                                type="text"
+                                value={form.shopName}
+                                onChange={e => setForm({ ...form, shopName: e.target.value })}
+                                placeholder="请输入店铺名称"
+                                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-orange-200 focus:border-orange-400 outline-none"
+                            />
+                        </div>
+
+                        {/* 经营类目 */}
+                        <div className="bg-white rounded-xl p-4">
+                            <label className="block text-sm font-medium text-gray-700 mb-2">经营类目 *</label>
+                            <div className="flex flex-wrap gap-2">
+                                {categories.map(cat => (
+                                    <button
+                                        key={cat}
+                                        onClick={() => setForm({ ...form, category: cat })}
+                                        className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${form.category === cat
+                                            ? 'bg-orange-500 text-white'
+                                            : 'bg-gray-100 text-gray-600'
+                                            }`}
+                                    >
+                                        {cat}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* 店铺简介 */}
+                        <div className="bg-white rounded-xl p-4">
+                            <label className="block text-sm font-medium text-gray-700 mb-2">店铺简介</label>
+                            <textarea
+                                value={form.desc}
+                                onChange={e => setForm({ ...form, desc: e.target.value })}
+                                placeholder="介绍一下您的店铺..."
+                                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm h-20 resize-none focus:ring-2 focus:ring-orange-200 focus:border-orange-400 outline-none"
+                            />
+                        </div>
+
+                        {/* 联系方式 */}
+                        <div className="bg-white rounded-xl p-4 space-y-3">
+                            <label className="block text-sm font-medium text-gray-700">联系方式 *</label>
+                            <input
+                                type="text"
+                                value={form.contact}
+                                onChange={e => setForm({ ...form, contact: e.target.value })}
+                                placeholder="手机号"
+                                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-orange-200 focus:border-orange-400 outline-none"
+                            />
+                            <input
+                                type="text"
+                                value={form.wechat}
+                                onChange={e => setForm({ ...form, wechat: e.target.value })}
+                                placeholder="微信号（选填）"
+                                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-orange-200 focus:border-orange-400 outline-none"
+                            />
+                        </div>
+
+                        {/* 资质上传 */}
+                        <div className="bg-white rounded-xl p-4">
+                            <label className="block text-sm font-medium text-gray-700 mb-3">资质证明</label>
+                            <div className="grid grid-cols-2 gap-3">
+                                <div
+                                    onClick={() => setForm({ ...form, idCard: !form.idCard })}
+                                    className={`border-2 border-dashed rounded-xl p-4 flex flex-col items-center gap-2 cursor-pointer ${form.idCard ? 'border-green-400 bg-green-50' : 'border-gray-200'
+                                        }`}
+                                >
+                                    {form.idCard ? (
+                                        <CheckCircle size={24} className="text-green-500" />
+                                    ) : (
+                                        <Camera size={24} className="text-gray-400" />
+                                    )}
+                                    <span className="text-xs text-gray-500">身份证照片</span>
+                                </div>
+                                <div
+                                    onClick={() => setForm({ ...form, license: !form.license })}
+                                    className={`border-2 border-dashed rounded-xl p-4 flex flex-col items-center gap-2 cursor-pointer ${form.license ? 'border-green-400 bg-green-50' : 'border-gray-200'
+                                        }`}
+                                >
+                                    {form.license ? (
+                                        <CheckCircle size={24} className="text-green-500" />
+                                    ) : (
+                                        <Upload size={24} className="text-gray-400" />
+                                    )}
+                                    <span className="text-xs text-gray-500">营业执照(选填)</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* 协议 */}
+                        <div className="flex items-start gap-2 px-2">
+                            <input
+                                type="checkbox"
+                                checked={form.agree}
+                                onChange={e => setForm({ ...form, agree: e.target.checked })}
+                                className="mt-1 w-4 h-4 text-orange-500"
+                            />
+                            <span className="text-xs text-gray-500">
+                                我已阅读并同意 <span className="text-orange-500">《商家入驻协议》</span> 和 <span className="text-orange-500">《平台服务规范》</span>
+                            </span>
+                        </div>
+                    </div>
+
+                    {/* 底部按钮 */}
+                    <div className="fixed bottom-0 left-0 right-0 bg-white p-4 border-t border-gray-100 flex gap-3">
+                        <button
+                            onClick={() => setStep(1)}
+                            className="flex-1 py-3 bg-gray-100 text-gray-600 rounded-full font-bold text-sm"
+                        >
+                            上一步
+                        </button>
+                        <button
+                            onClick={handleSubmit}
+                            className="flex-1 py-3 bg-gradient-to-r from-orange-400 to-amber-500 text-white rounded-full font-bold text-sm active:scale-95 transition-transform"
+                        >
+                            提交申请
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            {step === 3 && (
+                <div className="flex flex-col items-center justify-center min-h-[80vh] p-6 text-center">
+                    <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-4">
+                        <CheckCircle size={40} className="text-green-500" />
+                    </div>
+                    <h2 className="text-xl font-bold text-gray-800 mb-2">申请已提交</h2>
+                    <p className="text-gray-500 text-sm mb-6">我们将在1-3个工作日内审核您的申请，审核结果将通过消息通知您。</p>
+                    <button
+                        onClick={pop}
+                        className="px-8 py-3 bg-orange-500 text-white rounded-full font-bold text-sm"
+                    >
+                        返回
+                    </button>
+                </div>
+            )}
+        </div>
+    );
+};
+
+export default MerchantApply;

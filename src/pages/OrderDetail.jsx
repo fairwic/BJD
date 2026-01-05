@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { useRouter } from '../router/RouteStack';
 import { ORDER_STATUS } from '../data/mock';
-import { ChevronLeft, Copy, CheckCircle2, Truck, Clock, AlertCircle, ArrowRightLeft } from 'lucide-react';
+import { ChevronLeft, Copy, CheckCircle2, Truck, Clock, AlertCircle, ArrowRightLeft, ShieldCheck } from 'lucide-react';
+import TrustTimeline from '../components/TrustTimeline';
 
 const OrderDetail = () => {
     const { currentRoute, pop } = useRouter();
@@ -24,13 +25,20 @@ const OrderDetail = () => {
         alert('转单码已复制');
     };
 
-    const steps = [
-        { status: ORDER_STATUS.UNPAID_DEPOSIT, label: '付定金', done: order.paidDeposit > 0 },
-        { status: ORDER_STATUS.WAIT_VERIFY, label: '待审核', done: order.status !== ORDER_STATUS.UNPAID_DEPOSIT && order.status !== ORDER_STATUS.WAIT_VERIFY },
-        { status: ORDER_STATUS.PRODUCTION, label: '制作中', done: [ORDER_STATUS.WAIT_FINAL, ORDER_STATUS.WAIT_SHIP, ORDER_STATUS.SHIPPED, ORDER_STATUS.COMPLETED].includes(order.status) },
-        { status: ORDER_STATUS.WAIT_FINAL, label: '付尾款', done: order.paidFinal > 0 },
-        { status: ORDER_STATUS.SHIPPED, label: '已发货', done: order.status === ORDER_STATUS.COMPLETED },
+    const timelineStages = [
+        { type: 'modeling', name: '原型制作', date: '2023-10-05', photos: ['bg-gray-200', 'bg-gray-300'] },
+        { type: 'mold', name: '翻模', date: '2023-11-12', photos: ['bg-orange-100'] },
+        { type: 'casting', name: '树脂灌注', date: '2023-12-01', photos: [] },
+        { type: 'polishing', name: '打磨', date: null, photos: [] },
+        { type: 'makeup', name: '上妆', date: null, photos: [] },
+        { type: 'shipping', name: '发货', date: null, photos: [] }
     ];
+
+    // Calculate current stage based on status usually, here we mock it to 'casting' (index 2)
+    // for demonstration if status is PRODUCTION
+    const currentStageIndex = order.status === ORDER_STATUS.PRODUCTION ? 2 :
+        order.status === ORDER_STATUS.WAIT_FINAL ? 4 :
+            order.status === ORDER_STATUS.SHIPPED ? 6 : 0;
 
     return (
         <div className="min-h-screen bg-gray-50 pb-24">
@@ -59,15 +67,13 @@ const OrderDetail = () => {
                     </div>
                 </div>
 
-                {/* Timeline */}
-                <div className="flex justify-between items-center relative mt-6 px-2">
-                    <div className="absolute top-1/2 left-0 w-full h-0.5 bg-gray-100 -z-10" />
-                    {steps.map((step, i) => (
-                        <div key={i} className="flex flex-col items-center gap-2 bg-white px-1">
-                            <div className={`w-3 h-3 rounded-full border-2 ${step.done ? 'bg-rose-500 border-rose-500' : 'bg-white border-gray-300'}`} />
-                            <span className={`text-[10px] ${step.done ? 'text-rose-500 font-bold' : 'text-gray-400'}`}>{step.label}</span>
-                        </div>
-                    ))}
+                {/* Trust Timeline */}
+                <div className="mt-8 px-2 relative">
+                    <div className="flex items-center gap-2 mb-4 text-sm font-bold text-gray-800">
+                        <ShieldCheck size={18} className="text-green-500" />
+                        <span>生产全链路监控</span>
+                    </div>
+                    <TrustTimeline stages={timelineStages} currentStageIndex={currentStageIndex} />
                 </div>
             </div>
 
