@@ -1,6 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Outfit:wght@300;400;600;800&family=Potta+One&display=swap');
-@tailwind base;
-@tailwind components;
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -8,7 +6,7 @@
 
 @layer base {
     body {
-        @apply font-sans bg-slate-50 text-slate-800 antialiased font-light;
+        @apply font-sans bg-slate-50 text-slate-800 antialiased;
     }
 
     h1,
@@ -17,20 +15,134 @@
     h4,
     h5,
     h6 {
-        @apply font-display tracking-wide;
+        @apply font-display tracking-tight;
+    }
+
+    /* Smooth scrolling */
+    * {
+        scroll-behavior: smooth;
+    }
+
+    /* Reduced motion support */
+    @media (prefers-reduced-motion: reduce) {
+
+        *,
+        *::before,
+        *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+        }
     }
 }
 
 @layer components {
+
+    /* ========== Claymorphism Card Styles ========== */
+    .card-clay {
+        @apply bg-white rounded-2xl p-4 shadow-clay-md border-2 border-white/50;
+        background: linear-gradient(145deg, #ffffff, #f8fafc);
+    }
+
+    .card-clay-sm {
+        @apply bg-white rounded-xl p-3 shadow-clay-sm border border-white/50;
+    }
+
+    .card-clay-interactive {
+        @apply card-clay cursor-pointer transition-all duration-200;
+    }
+
+    .card-clay-interactive:hover {
+        @apply shadow-clay-lg -translate-y-0.5;
+    }
+
+    .card-clay-interactive:active {
+        @apply shadow-clay-sm translate-y-0 scale-[0.98];
+    }
+
+    /* ========== Glass Effects ========== */
+    .glass {
+        @apply bg-white/70 backdrop-blur-md border border-white/50;
+    }
+
+    .glass-dark {
+        @apply bg-black/60 backdrop-blur-md border border-white/10 text-white;
+    }
+
+    /* ========== Button Styles ========== */
     .btn-primary {
-        @apply bg-primary-400 hover:bg-primary-500 text-white font-bold py-2 px-4 rounded-xl shadow-[0_4px_0_rgb(14, 165, 233)] active:shadow-none active:translate-y-[4px] transition-all;
+        @apply bg-gradient-to-r from-primary-400 to-primary-500 hover:from-primary-500 hover:to-primary-600 text-white font-bold py-2.5 px-5 rounded-xl shadow-lg shadow-primary-200/50 active:shadow-md active:translate-y-0.5 transition-all duration-200;
     }
 
     .btn-secondary {
-        @apply bg-secondary-400 hover:bg-secondary-500 text-white font-bold py-2 px-4 rounded-xl shadow-[0_4px_0_rgb(244, 63, 94)] active:shadow-none active:translate-y-[4px] transition-all;
+        @apply bg-gradient-to-r from-secondary-400 to-secondary-500 hover:from-secondary-500 hover:to-secondary-600 text-white font-bold py-2.5 px-5 rounded-xl shadow-lg shadow-secondary-200/50 active:shadow-md active:translate-y-0.5 transition-all duration-200;
     }
 
+    .btn-clay {
+        @apply bg-white font-bold py-2.5 px-5 rounded-xl text-gray-700 shadow-clay-sm border-2 border-white/80 hover:shadow-clay-md hover:-translate-y-0.5 active:shadow-none active:translate-y-0.5 transition-all duration-200;
+    }
+
+    /* ========== FAB Glow Effect ========== */
+    .fab-glow {
+        @apply relative;
+    }
+
+    .fab-glow::before {
+        content: '';
+        @apply absolute inset-0 rounded-full bg-gradient-to-r from-rose-400 to-pink-500 opacity-50 blur-xl -z-10;
+        animation: pulse-glow 2s ease-in-out infinite;
+    }
+
+    /* ========== Interactive Cards ========== */
     .card-hover {
-        @apply hover:-translate-y-1 hover:shadow-lg transition-transform duration-300;
+        @apply hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer;
+    }
+
+    /* ========== Tags & Badges ========== */
+    .tag {
+        @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold;
+    }
+
+    .tag-rose {
+        @apply tag bg-rose-100 text-rose-600;
+    }
+
+    .tag-blue {
+        @apply tag bg-blue-100 text-blue-600;
+    }
+
+    .tag-purple {
+        @apply tag bg-purple-100 text-purple-600;
+    }
+
+    .tag-gradient {
+        @apply tag bg-gradient-to-r from-rose-100 to-pink-100 text-rose-600;
+    }
+
+    /* ========== Utility Animations ========== */
+    .animate-press {
+        @apply active:scale-95 transition-transform duration-150;
+    }
+
+    /* ========== Custom Scrollbar ========== */
+    .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+    }
+
+    .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+}
+
+@layer utilities {
+
+    /* Safe area padding for mobile */
+    .pb-safe {
+        padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    .safe-area-bottom {
+        padding-bottom: max(1rem, env(safe-area-inset-bottom));
     }
 }

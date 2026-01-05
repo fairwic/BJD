@@ -36,19 +36,21 @@ const UserProfile = () => {
 
 
     return (
-        <div className="pb-20 bg-gray-50 min-h-screen">
+        <div className="pb-20 bg-gradient-to-b from-rose-50/50 to-gray-50 min-h-screen">
             <div className="bg-white pb-6 relative overflow-hidden">
-                {/* Decorative Background */}
-                <div className="absolute top-0 left-0 right-0 h-48 bg-gradient-to-br from-rose-200 via-pink-100 to-blue-50 -z-10" />
-                <div className="absolute top-0 left-0 right-0 h-48 opacity-30 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] -z-10" />
-                
-                {/* Header Content */}
-                <div className="px-6 pt-12 pb-4" onClick={() => push("ProfileEdit")}>
+                {/* Animated Gradient Background */}
+                <div className="absolute top-0 left-0 right-0 h-52 bg-gradient-to-br from-rose-300 via-pink-200 to-indigo-200 -z-10" />
+                <div className="absolute top-0 left-0 right-0 h-52 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] -z-10" />
+                <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-white to-transparent z-0" />
+
+                <div className="px-6 pt-14 pb-4 relative z-10" onClick={() => push("ProfileEdit")}>
                     <div className="flex items-center gap-4">
                         <div className="relative group">
-                            <div className={`w-20 h-20 rounded-full border-[3px] border-white shadow-lg shadow-rose-100 ${currentUser.avatar} group-active:scale-95 transition-transform`} />
-                            <div className="absolute bottom-0 right-0 bg-white rounded-full p-1.5 shadow-md border border-gray-50 text-rose-400">
-                                 <Settings size={14} />
+                            {/* Glowing ring effect */}
+                            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-rose-400 to-pink-400 blur-md opacity-50 group-hover:opacity-70 transition-opacity" />
+                            <div className={`relative w-20 h-20 rounded-full border-[4px] border-white shadow-xl shadow-rose-200/50 ${currentUser.avatar} group-active:scale-95 transition-transform`} />
+                            <div className="absolute bottom-0 right-0 bg-white rounded-full p-1.5 shadow-lg border-2 border-white text-rose-500">
+                                <Settings size={14} />
                             </div>
                         </div>
                         <div className="flex-1 text-gray-800">
@@ -71,55 +73,70 @@ const UserProfile = () => {
                     </div>
                 </div>
 
-                {/* Social Stats */}
-                <div className="flex justify-around px-4 mt-2">
-                    <div className="flex flex-col items-center gap-0.5 active:scale-95 transition-transform cursor-pointer" onClick={() => push("MyFollowing")}>
-                        <span className="font-bold text-lg text-gray-900">12</span>
-                        <span className="text-xs text-gray-500">关注</span>
-                    </div>
-                    <div className="flex flex-col items-center gap-0.5 active:scale-95 transition-transform cursor-pointer">
-                        <span className="font-bold text-lg text-gray-900">8.6w</span>
-                        <span className="text-xs text-gray-500">粉丝</span>
-                    </div>
-                    <div className="flex flex-col items-center gap-0.5 active:scale-95 transition-transform cursor-pointer">
-                        <span className="font-bold text-lg text-gray-900">1.2k</span>
-                        <span className="text-xs text-gray-500">获赞与收藏</span>
-                    </div>
-                     <div className="flex flex-col items-center gap-0.5 active:scale-95 transition-transform cursor-pointer" onClick={() => push("MyFootprint")}>
-                        <span className="font-bold text-lg text-gray-900">128</span>
-                        <span className="text-xs text-gray-500">足迹</span>
+                {/* Social Stats - Glassmorphism Card */}
+                <div className="mx-4 mt-4 bg-white/70 backdrop-blur-md rounded-2xl p-4 shadow-clay-sm border border-white/50">
+                    <div className="flex justify-around">
+                        <div className="flex flex-col items-center gap-0.5 active:scale-95 transition-transform cursor-pointer" onClick={() => push("MyFollowing")}>
+                            <span className="font-bold text-xl text-gray-900">12</span>
+                            <span className="text-xs text-gray-500 font-medium">关注</span>
+                        </div>
+                        <div className="w-px bg-gray-200" />
+                        <div className="flex flex-col items-center gap-0.5 active:scale-95 transition-transform cursor-pointer">
+                            <span className="font-bold text-xl text-gray-900">8.6w</span>
+                            <span className="text-xs text-gray-500 font-medium">粉丝</span>
+                        </div>
+                        <div className="w-px bg-gray-200" />
+                        <div className="flex flex-col items-center gap-0.5 active:scale-95 transition-transform cursor-pointer">
+                            <span className="font-bold text-xl text-rose-500">1.2k</span>
+                            <span className="text-xs text-gray-500 font-medium">获赞与收藏</span>
+                        </div>
+                        <div className="w-px bg-gray-200" />
+                        <div className="flex flex-col items-center gap-0.5 active:scale-95 transition-transform cursor-pointer" onClick={() => push("MyFootprint")}>
+                            <span className="font-bold text-xl text-gray-900">128</span>
+                            <span className="text-xs text-gray-500 font-medium">足迹</span>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            {/* My Orders Row (Replaces List) */}
-            <div className="mx-4 mt-4 bg-white rounded-2xl p-4 shadow-sm shadow-indigo-50/50">
+            {/* My Orders Row - Claymorphism */}
+            <div className="mx-4 mt-4 bg-white rounded-2xl p-4 shadow-clay-sm border border-gray-100/50">
                 <div className="flex items-center justify-between mb-4">
-                    <h3 className="font-bold text-gray-800">我的订单</h3>
-                    <span className="text-xs text-gray-400 flex items-center cursor-pointer" onClick={() => push("MyOrders")}>
+                    <h3 className="font-display font-bold text-gray-800">我的订单</h3>
+                    <span className="text-xs text-gray-400 flex items-center cursor-pointer hover:text-rose-500 transition-colors" onClick={() => push("MyOrders")}>
                         全部订单 <ChevronRight size={14} />
                     </span>
                 </div>
                 <div className="flex justify-between items-center text-gray-600">
-                    <div className="flex flex-col items-center gap-2 cursor-pointer active:scale-95 transition-transform" onClick={() => push("MyOrders", { tab: 'pending_payment' })}>
-                        <CreditCard size={24} className="text-gray-700" strokeWidth={1.5} />
-                        <span className="text-xs">待付款</span>
+                    <div className="flex flex-col items-center gap-2.5 cursor-pointer active:scale-95 transition-all group" onClick={() => push("MyOrders", { tab: 'pending_payment' })}>
+                        <div className="p-2.5 rounded-xl bg-gradient-to-br from-amber-50 to-orange-50 text-amber-500 group-hover:shadow-md transition-shadow">
+                            <CreditCard size={22} strokeWidth={1.5} />
+                        </div>
+                        <span className="text-xs font-medium">待付款</span>
                     </div>
-                    <div className="flex flex-col items-center gap-2 cursor-pointer active:scale-95 transition-transform" onClick={() => push("MyOrders", { tab: 'pending_shipment' })}>
-                        <Package size={24} className="text-gray-700" strokeWidth={1.5} />
-                        <span className="text-xs">待发货</span>
+                    <div className="flex flex-col items-center gap-2.5 cursor-pointer active:scale-95 transition-all group" onClick={() => push("MyOrders", { tab: 'pending_shipment' })}>
+                        <div className="p-2.5 rounded-xl bg-gradient-to-br from-blue-50 to-indigo-50 text-blue-500 group-hover:shadow-md transition-shadow">
+                            <Package size={22} strokeWidth={1.5} />
+                        </div>
+                        <span className="text-xs font-medium">待发货</span>
                     </div>
-                    <div className="flex flex-col items-center gap-2 cursor-pointer active:scale-95 transition-transform" onClick={() => push("MyOrders", { tab: 'shipped' })}>
-                        <Truck size={24} className="text-gray-700" strokeWidth={1.5} />
-                        <span className="text-xs">待收货</span>
+                    <div className="flex flex-col items-center gap-2.5 cursor-pointer active:scale-95 transition-all group" onClick={() => push("MyOrders", { tab: 'shipped' })}>
+                        <div className="p-2.5 rounded-xl bg-gradient-to-br from-green-50 to-emerald-50 text-green-500 group-hover:shadow-md transition-shadow">
+                            <Truck size={22} strokeWidth={1.5} />
+                        </div>
+                        <span className="text-xs font-medium">待收货</span>
                     </div>
-                    <div className="flex flex-col items-center gap-2 cursor-pointer active:scale-95 transition-transform" onClick={() => push("MyOrders", { tab: 'pending_review' })}>
-                        <MessageSquare size={24} className="text-gray-700" strokeWidth={1.5} />
-                        <span className="text-xs">待评价</span>
+                    <div className="flex flex-col items-center gap-2.5 cursor-pointer active:scale-95 transition-all group" onClick={() => push("MyOrders", { tab: 'pending_review' })}>
+                        <div className="p-2.5 rounded-xl bg-gradient-to-br from-purple-50 to-pink-50 text-purple-500 group-hover:shadow-md transition-shadow">
+                            <MessageSquare size={22} strokeWidth={1.5} />
+                        </div>
+                        <span className="text-xs font-medium">待评价</span>
                     </div>
-                    <div className="flex flex-col items-center gap-2 cursor-pointer active:scale-95 transition-transform" onClick={() => push("MyOrders", { tab: 'refund' })}>
-                        <RotateCcw size={24} className="text-gray-700" strokeWidth={1.5} />
-                        <span className="text-xs">退款/售后</span>
+                    <div className="flex flex-col items-center gap-2.5 cursor-pointer active:scale-95 transition-all group" onClick={() => push("MyOrders", { tab: 'refund' })}>
+                        <div className="p-2.5 rounded-xl bg-gradient-to-br from-rose-50 to-red-50 text-rose-500 group-hover:shadow-md transition-shadow">
+                            <RotateCcw size={22} strokeWidth={1.5} />
+                        </div>
+                        <span className="text-xs font-medium">退款/售后</span>
                     </div>
                 </div>
             </div>
@@ -136,11 +153,11 @@ const UserProfile = () => {
                     </div>
                     <div className="space-y-3">
                         {myBarters.map(barter => {
-                             const isInit = barter.initiatorId === currentUser.id;
-                             const partnerName = isInit ? '对方' : '发起人'; // Simplify for now
-                             return (
-                                <div 
-                                    key={barter.id} 
+                            const isInit = barter.initiatorId === currentUser.id;
+                            const partnerName = isInit ? '对方' : '发起人'; // Simplify for now
+                            return (
+                                <div
+                                    key={barter.id}
                                     onClick={() => push('BarterOrderDetail', { id: barter.id })}
                                     className="flex items-center gap-3 bg-gray-50 p-3 rounded-xl active:scale-[0.99] transition-transform"
                                 >
@@ -162,7 +179,7 @@ const UserProfile = () => {
                                     </div>
                                     <ChevronRight size={16} className="text-gray-300" />
                                 </div>
-                             );
+                            );
                         })}
                     </div>
                 </div>
@@ -170,7 +187,7 @@ const UserProfile = () => {
 
             {/* Verification Card */}
             <div className="px-4 mt-3">
-                <div 
+                <div
                     onClick={() => push("ArtistApply")}
                     className="bg-gradient-to-r from-gray-900 to-gray-800 rounded-2xl p-4 flex items-center gap-4 cursor-pointer active:scale-95 transition-transform text-white shadow-lg shadow-gray-200"
                 >
@@ -203,13 +220,13 @@ const UserProfile = () => {
                         onClick={() => push("MyPosts")}
                         className="flex items-center gap-3 p-4 active:bg-gray-50"
                     >
-                         <div className="w-8 h-8 rounded-full bg-rose-50 flex items-center justify-center text-rose-500">
+                        <div className="w-8 h-8 rounded-full bg-rose-50 flex items-center justify-center text-rose-500">
                             <Sparkles size={16} />
                         </div>
                         <span className="text-sm text-gray-800 flex-1 font-bold">我的动态</span>
                         <ChevronRight size={16} className="text-gray-300" />
                     </div>
-                     <div
+                    <div
                         onClick={() => push("MyListings")}
                         className="flex items-center gap-3 p-4 active:bg-gray-50"
                     >
@@ -232,8 +249,8 @@ const UserProfile = () => {
                         <span className="text-xs text-gray-400">3只</span>
                         <ChevronRight size={16} className="text-gray-300" />
                     </div>
-                     {/* Achievements */}
-                     <div
+                    {/* Achievements */}
+                    <div
                         onClick={() => push("AchievementCenter")}
                         className="flex items-center gap-3 p-4 active:bg-gray-50"
                     >
@@ -244,8 +261,8 @@ const UserProfile = () => {
                         <span className="text-xs bg-red-100 text-red-500 px-1.5 py-0.5 rounded text-[10px] font-bold">NEW</span>
                         <ChevronRight size={16} className="text-gray-300" />
                     </div>
-                     {/* Knowledge */}
-                     <div
+                    {/* Knowledge */}
+                    <div
                         onClick={() => push("KnowledgeBase")}
                         className="flex items-center gap-3 p-4 active:bg-gray-50"
                     >
@@ -281,10 +298,10 @@ const UserProfile = () => {
                         className="flex items-center gap-3 p-4 active:bg-gray-50"
                     >
                         <Package size={18} className="text-gray-400" />
-                         <span className="text-sm text-gray-700 flex-1">支付/钱包</span>
+                        <span className="text-sm text-gray-700 flex-1">支付/钱包</span>
                         <ChevronRight size={16} className="text-gray-300" />
                     </div>
-                     <div
+                    <div
                         onClick={() => push("AccountSecurity")}
                         className="flex items-center gap-3 p-4 active:bg-gray-50"
                     >
@@ -315,9 +332,8 @@ const UserProfile = () => {
                                     login(u.id);
                                     setShowUserMenu(false);
                                 }}
-                                className={`w-full flex items-center gap-2 p-2 rounded-lg text-left transition-colors ${
-                                    currentUser.id === u.id ? 'bg-rose-50 text-rose-600' : 'hover:bg-gray-50 text-gray-700'
-                                }`}
+                                className={`w-full flex items-center gap-2 p-2 rounded-lg text-left transition-colors ${currentUser.id === u.id ? 'bg-rose-50 text-rose-600' : 'hover:bg-gray-50 text-gray-700'
+                                    }`}
                             >
                                 <div className={`w-6 h-6 rounded-full ${u.avatar || 'bg-gray-200'} border border-gray-100`} />
                                 <div className="flex-1 min-w-0">

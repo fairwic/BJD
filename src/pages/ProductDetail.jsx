@@ -61,7 +61,7 @@ const ProductDetail = () => {
         {
             id: 302, // Service Request (Client needs Artist)
             title: "【求妆】6分 DZ 莫纹",
-            price: "预算300", 
+            price: "预算300",
             originalPrice: null,
             image: "/images/doll_head.png", // Mock
             seller: { name: "富婆妹妹", avatar: "bg-purple-300", credit: "信用极好" },
@@ -69,7 +69,7 @@ const ProductDetail = () => {
             images: ["/images/doll_head.png"],
             tags: ["求妆", "DZ", "6分"],
             condition: "求购", // or 需求
-            type: 'service_request' 
+            type: 'service_request'
         }
     ];
 
@@ -77,7 +77,7 @@ const ProductDetail = () => {
 
     // --- Data Resolution ---
     // --- Data Resolution ---
-    
+
     // Priority: Check if it's a known Barter Item
     const barterItem = BARTER_ITEMS.find(i => i.id === Number(id));
 
@@ -101,7 +101,7 @@ const ProductDetail = () => {
     // In real app, check product.category or type.
     const isService = product.tags?.includes('妆面') || product.tags?.includes('接单') || product.tags?.includes('求妆');
     const isServiceRequest = product.type === 'service_request' || product.title.includes('求');
-    
+
     // Legacy flags
     const isSecondHand = !isBarter && !isService && (type === 'secondhand'); // basic goods
     const isGroupBuy = !isSecondHand && !isBarter && !isService;
@@ -115,7 +115,7 @@ const ProductDetail = () => {
                 push('CommissionApply', { product });
             } else {
                 // Client booking a service
-                push('OrderCheckout', { product, sku: { name: '服务定金' } }); 
+                push('OrderCheckout', { product, sku: { name: '服务定金' } });
             }
         } else if (isSecondHand) {
             push('OrderCheckout', { product });
@@ -143,32 +143,33 @@ const ProductDetail = () => {
     };
 
     return (
-        <div className="h-full overflow-y-auto bg-white pb-24 scrollbar-hide">
-            {/* Header */}
-            <div className="sticky top-0 z-10 flex justify-between items-center p-4 bg-white/80 backdrop-blur">
-                <button onClick={pop} className="p-2 bg-gray-100 rounded-full hover:bg-gray-200">
+        <div className="h-full overflow-y-auto bg-gradient-to-b from-gray-50 to-white pb-24 scrollbar-hide">
+            {/* Glassmorphism Header */}
+            <div className="sticky top-0 z-10 flex justify-between items-center p-4 bg-white/70 backdrop-blur-xl border-b border-white/50">
+                <button onClick={pop} className="p-2 bg-white/80 rounded-full hover:bg-white shadow-sm active:scale-95 transition-all">
                     <ChevronLeft size={20} />
                 </button>
                 <div className="flex gap-3">
-                    <button className="p-2 bg-gray-100 rounded-full hover:bg-gray-200"><Share2 size={20} /></button>
-                    <button className="p-2 bg-gray-100 rounded-full hover:bg-gray-200"><Heart size={20} /></button>
+                    <button className="p-2 bg-white/80 rounded-full hover:bg-white shadow-sm active:scale-95 transition-all"><Share2 size={20} /></button>
+                    <button className="p-2 bg-white/80 rounded-full hover:bg-white shadow-sm active:scale-95 transition-all"><Heart size={20} /></button>
                 </div>
             </div>
 
-            {/* Image Section */}
-            <div className="w-full aspect-square relative bg-gray-100">
-                 <img 
-                    src={product.image} 
-                    alt={product.title} 
+            {/* Image Section with Gradient Overlay */}
+            <div className="w-full aspect-square relative bg-gray-100 overflow-hidden">
+                <img
+                    src={product.image}
+                    alt={product.title}
                     className="w-full h-full object-cover"
                 />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
                 {isSecondHand && (
-                    <div className="absolute bottom-4 left-4 bg-orange-500 text-white px-3 py-1 rounded-full text-sm font-medium backdrop-blur-md shadow-lg">
+                    <div className="absolute bottom-4 left-4 bg-gradient-to-r from-orange-500 to-amber-500 text-white px-4 py-1.5 rounded-full text-sm font-bold backdrop-blur-md shadow-lg">
                         {product.condition}
                     </div>
                 )}
                 {isBarter && (
-                    <div className="absolute bottom-4 left-4 bg-accent text-white px-3 py-1 rounded-full text-sm font-medium backdrop-blur-md shadow-lg flex items-center gap-1">
+                    <div className="absolute bottom-4 left-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-1.5 rounded-full text-sm font-bold backdrop-blur-md shadow-lg flex items-center gap-1.5">
                         <RefreshCw size={14} />
                         只换不售
                     </div>
@@ -178,14 +179,14 @@ const ProductDetail = () => {
             {/* Content Section */}
             <div className="p-5">
                 {/* Title & Price */}
-                <div className="flex justify-between items-start mb-2">
-                    <h1 className="text-xl font-bold text-gray-900 flex-1 mr-4">{product.title}</h1>
+                <div className="flex justify-between items-start mb-3">
+                    <h1 className="text-xl font-display font-bold text-gray-900 flex-1 mr-4 leading-tight">{product.title}</h1>
                     <div className="text-right">
                         {isBarter ? (
-                            <span className="text-accent font-bold text-lg">求交换</span>
+                            <span className="text-purple-500 font-bold text-lg">求交换</span>
                         ) : (
                             <>
-                                <p className="text-rose-500 font-bold text-2xl">
+                                <p className="text-rose-500 font-extrabold text-2xl">
                                     {typeof product.price === 'number' ? `¥${product.price}` : product.price}
                                 </p>
                                 <p className="text-xs text-gray-400">
@@ -196,8 +197,8 @@ const ProductDetail = () => {
                     </div>
                 </div>
 
-                {/* Seller / User Info */}
-                <div className="bg-white p-4 mt-3 flex items-center justify-between border border-gray-100 rounded-xl shadow-sm">
+                {/* Seller / User Info - Claymorphism */}
+                <div className="bg-white p-4 mt-3 flex items-center justify-between rounded-2xl shadow-clay-sm border border-gray-100/50 hover:shadow-clay-md transition-shadow">
                     <div className="flex items-center gap-3">
                         <div className={`w-10 h-10 rounded-full ${isBarter ? product.user?.avatar : (isSecondHand ? product.seller?.avatar : "bg-gray-200")}`} />
                         <div>
@@ -266,17 +267,17 @@ const ProductDetail = () => {
                 </div>
             </div>
 
-            {/* Bottom Bar */}
-            <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-100 flex items-center gap-4 max-w-md mx-auto z-20 safe-area-bottom">
-                <div className="flex flex-col items-center gap-1 text-gray-400">
+            {/* Bottom Bar - Glassmorphism */}
+            <div className="fixed bottom-0 left-0 right-0 p-4 bg-white/80 backdrop-blur-xl border-t border-white/50 flex items-center gap-4 max-w-md mx-auto z-20 safe-area-bottom shadow-[0_-8px_30px_rgba(0,0,0,0.06)]">
+                <div className="flex flex-col items-center gap-1 text-gray-400 cursor-pointer hover:text-rose-500 transition-colors">
                     <ShoppingBag size={20} />
-                    <span className="text-[10px]">{isBarter ? "广场" : "店铺"}</span>
+                    <span className="text-[10px] font-medium">{isBarter ? "广场" : "店铺"}</span>
                 </div>
 
                 {isBarter ? (
                     <button
                         onClick={handleAction}
-                        className="flex-1 bg-gradient-to-r from-accent to-accent-dark text-white font-bold py-3 rounded-xl hover:shadow-lg transition-all"
+                        className="flex-1 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-purple-200/50 hover:shadow-xl active:scale-[0.98] transition-all"
                     >
                         发起交换
                     </button>
@@ -284,13 +285,13 @@ const ProductDetail = () => {
                     <button
                         onClick={handleAction}
                         disabled={isGroupBuy && !selectedSku}
-                        className={`flex-1 font-bold py-3 rounded-xl transition-colors ${isSecondHand
-                                ? "bg-gray-900 text-white hover:bg-gray-800"
-                                : "bg-rose-500 text-white hover:bg-rose-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className={`flex-1 font-bold py-3.5 rounded-xl transition-all active:scale-[0.98] ${isSecondHand
+                            ? "bg-gradient-to-r from-gray-800 to-gray-900 text-white shadow-lg shadow-gray-300/50"
+                            : "bg-gradient-to-r from-rose-500 to-pink-500 text-white shadow-lg shadow-rose-200/50 disabled:opacity-50 disabled:cursor-not-allowed"
                             }`}
                     >
                         {isSecondHand || isService
-                            ? (isService 
+                            ? (isService
                                 ? (isServiceRequest ? "立即应征" : "立即预约")
                                 : "我想要")
                             : (selectedSku

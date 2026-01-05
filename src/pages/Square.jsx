@@ -104,7 +104,7 @@ const Square = () => {
             user: "手办收藏家",
             avatar: "https://api.dicebear.com/9.x/avataaars/svg?seed=Max&backgroundColor=ffd5dc",
             content:
-                 "新入手的蕾姆手办到了！细节简直无敌，这个做工对得起价格，摆在柜子里太养眼了。大家觉得怎么样？ #手办 #二次元 #Re0",
+                "新入手的蕾姆手办到了！细节简直无敌，这个做工对得起价格，摆在柜子里太养眼了。大家觉得怎么样？ #手办 #二次元 #Re0",
             image: "/images/mock/post-anime-figure.png",
             likes: 233,
             comments: 41,
@@ -157,7 +157,7 @@ const Square = () => {
     };
 
     const PostCard = ({ post }) => (
-        <div className="bg-white mb-2 p-4 pb-2 border-b border-gray-100 last:border-0 hover:bg-gray-50/50 transition-colors">
+        <div className="bg-white mb-3 mx-3 p-4 pb-2 rounded-2xl shadow-clay-sm border border-gray-100/50 hover:shadow-clay-md transition-all duration-300 group">
             {/* Header */}
             <div className="flex items-center gap-3 mb-3">
                 <div
@@ -165,7 +165,7 @@ const Square = () => {
                         e.stopPropagation();
                         push("PublicUserProfile", { name: post.user, avatar: post.avatar });
                     }}
-                    className={`w-10 h-10 rounded-full cursor-pointer relative ring-2 ring-white shadow-sm overflow-hidden`}
+                    className="w-11 h-11 rounded-full cursor-pointer relative ring-2 ring-rose-100 shadow-md overflow-hidden group-hover:ring-rose-200 transition-all duration-300"
                 >
                     <img src={post.avatar} alt={post.user} className="w-full h-full object-cover" />
                     {post.isVerified && (
@@ -189,7 +189,7 @@ const Square = () => {
                             post.tags.map((tag, i) => (
                                 <span
                                     key={i}
-                                    className="text-[10px] bg-secondary-50 text-secondary-600 px-1.5 py-0.5 rounded-full font-medium"
+                                    className="text-[10px] bg-gradient-to-r from-rose-50 to-pink-50 text-rose-500 px-2 py-0.5 rounded-full font-semibold border border-rose-100/50"
                                 >
                                     {tag}
                                 </span>
@@ -226,9 +226,9 @@ const Square = () => {
                     <img src={post.image} alt="Post content" className="w-full h-full object-cover" />
                 </div>
             )}
-            
+
             {post.type === 'pk' && (
-                <PKCard 
+                <PKCard
                     leftImage={post.leftImage}
                     rightImage={post.rightImage}
                     leftLabel={post.leftLabel}
@@ -237,7 +237,7 @@ const Square = () => {
             )}
 
             {post.type === 'compare' && (
-                <AfterBeforeSlider 
+                <AfterBeforeSlider
                     beforeImage={post.beforeImage}
                     afterImage={post.afterImage}
                 />
@@ -246,7 +246,7 @@ const Square = () => {
             {/* Tribal Connection Action */}
             {post.dollModel && (
                 <div className="mb-3">
-                    <button 
+                    <button
                         onClick={() => handleSameStyleClick(post.dollModel)}
                         className="flex items-center gap-1.5 px-3 py-1.5 bg-secondary-50 text-secondary-600 rounded-lg text-xs font-bold active:bg-secondary-100 transition-colors w-full sm:w-auto justify-center"
                     >
@@ -261,14 +261,12 @@ const Square = () => {
                 <div className="flex items-center gap-6">
                     <button
                         onClick={() => handleLike(post.id)}
-                        className={`flex items-center gap-1.5 transition-colors ${
-                            post.isLiked ? "text-rose-500" : "text-gray-500 active:text-rose-500"
-                        }`}
+                        className={`flex items-center gap-1.5 transition-all duration-200 ${post.isLiked ? "text-rose-500 scale-110" : "text-gray-400 hover:text-rose-400 active:scale-90"}`}
                     >
                         <Heart
-                            size={20}
-                            className={post.isLiked ? "fill-current" : ""}
-                            strokeWidth={post.isLiked ? 0 : 2}
+                            size={22}
+                            className={`transition-transform duration-200 ${post.isLiked ? "fill-current animate-bounce-soft" : ""}`}
+                            strokeWidth={post.isLiked ? 0 : 1.8}
                         />
                         <span className="text-sm font-medium">{post.likes}</span>
                     </button>
@@ -291,10 +289,10 @@ const Square = () => {
     );
 
     return (
-        <div className="pb-20 bg-gray-50 min-h-screen relative">
-            {/* Header */}
-            <div className="sticky top-0 z-30 bg-white/95 backdrop-blur px-4 h-12 flex items-center border-b border-gray-100 gap-3 shadow-sm">
-                <div className="flex-1 bg-gray-100 rounded-full px-3 py-1.5 flex items-center gap-2">
+        <div className="pb-20 bg-gradient-to-b from-rose-50/30 to-gray-50 min-h-screen relative">
+            {/* Header with Glassmorphism */}
+            <div className="sticky top-0 z-30 bg-white/70 backdrop-blur-xl px-4 h-14 flex items-center border-b border-white/50 gap-3 shadow-[0_4px_20px_rgba(0,0,0,0.03)]">
+                <div className="flex-1 bg-gray-100/80 rounded-full px-4 py-2 flex items-center gap-2 border border-white/80 shadow-inner">
                     <Search size={16} className="text-gray-400" />
                     <input
                         type="text"
@@ -319,18 +317,18 @@ const Square = () => {
                         今天有什么新鲜事分享？
                     </div>
                 </div>
-                
+
                 {/* Trending Topics Carousel */}
                 <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2">
-                    <div className="flex items-center gap-1 pr-2 text-rose-500 font-bold text-xs flex-shrink-0">
-                        <Flame size={14} className="fill-current" />
+                    <div className="flex items-center gap-1.5 pr-2 text-rose-500 font-bold text-xs flex-shrink-0">
+                        <Flame size={14} className="fill-current animate-pulse" />
                         热议
                     </div>
                     {TRENDING_TOPICS.map((topic) => (
                         <button
                             key={topic.id}
                             onClick={() => handleTopicClick(topic.tag)}
-                            className="flex-shrink-0 px-3 py-1 bg-gray-50 rounded-full text-xs text-gray-600 font-medium active:bg-rose-50 active:text-rose-500 transition-colors border border-gray-100"
+                            className="flex-shrink-0 px-3 py-1.5 bg-gradient-to-r from-white to-rose-50/50 rounded-full text-xs text-gray-600 font-semibold active:bg-rose-100 active:text-rose-500 transition-all duration-200 border border-rose-100/50 shadow-sm hover:shadow-md hover:-translate-y-0.5"
                         >
                             {topic.tag}
                         </button>
@@ -338,30 +336,29 @@ const Square = () => {
                 </div>
             </div>
 
-            {/* Community Activities */}
             <div className="px-3 pb-3 grid grid-cols-2 gap-3">
                 <div
                     onClick={() => push("CreatePost", { initialTags: "#今日打卡 " })}
-                    className="bg-gradient-to-br from-indigo-50 to-blue-50 rounded-xl p-3 cursor-pointer active:scale-98 transition-transform border border-indigo-100/50"
+                    className="bg-gradient-to-br from-indigo-50 via-blue-50 to-indigo-100 rounded-2xl p-4 cursor-pointer active:scale-[0.98] transition-all duration-200 border border-indigo-100/50 shadow-clay-sm hover:shadow-clay-md group"
                 >
-                    <div className="flex items-center gap-2 mb-1">
-                        <div className="bg-white p-1.5 rounded-lg shadow-sm text-indigo-500">
-                            <Camera size={16} />
+                    <div className="flex items-center gap-2 mb-2">
+                        <div className="bg-white p-2 rounded-xl shadow-sm text-indigo-500 group-hover:scale-110 transition-transform">
+                            <Camera size={18} />
                         </div>
-                        <span className="font-bold text-gray-800 text-sm">每日打卡</span>
+                        <span className="font-bold text-gray-800">每日打卡</span>
                     </div>
                     <p className="text-xs text-gray-500 pl-1">记录养娃日常 ✨</p>
                 </div>
 
                 <div
                     onClick={() => push("KnowledgeBase")}
-                    className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-3 cursor-pointer active:scale-98 transition-transform border border-amber-100/50"
+                    className="bg-gradient-to-br from-amber-50 via-orange-50 to-amber-100 rounded-2xl p-4 cursor-pointer active:scale-[0.98] transition-all duration-200 border border-amber-100/50 shadow-clay-sm hover:shadow-clay-md group"
                 >
-                    <div className="flex items-center gap-2 mb-1">
-                        <div className="bg-white p-1.5 rounded-lg shadow-sm text-amber-500">
-                            <Book size={16} />
+                    <div className="flex items-center gap-2 mb-2">
+                        <div className="bg-white p-2 rounded-xl shadow-sm text-amber-500 group-hover:scale-110 transition-transform">
+                            <Book size={18} />
                         </div>
-                        <span className="font-bold text-gray-800 text-sm">新手指南</span>
+                        <span className="font-bold text-gray-800">新手指南</span>
                     </div>
                     <p className="text-xs text-gray-500 pl-1">入坑避雷必读 📖</p>
                 </div>
@@ -374,12 +371,12 @@ const Square = () => {
                 ))}
             </div>
 
-            {/* Floating Action Button (FAB) */}
+            {/* Floating Action Button (FAB) with Glow */}
             <button
                 onClick={() => push("CreatePost")}
-                className="fixed bottom-24 right-4 w-14 h-14 bg-gradient-to-r from-rose-500 to-pink-600 text-white rounded-full shadow-lg shadow-rose-200 flex items-center justify-center active:scale-90 transition-transform z-40"
+                className="fixed bottom-24 right-4 w-14 h-14 bg-gradient-to-br from-rose-400 via-pink-500 to-rose-600 text-white rounded-full shadow-xl shadow-rose-300/50 flex items-center justify-center active:scale-90 transition-all duration-200 z-40 fab-glow"
             >
-                <Plus size={28} />
+                <Plus size={28} strokeWidth={2.5} />
             </button>
         </div>
     );
