@@ -252,13 +252,7 @@ const SecondHandMarket = () => {
                         className="bg-transparent text-sm w-full outline-none placeholder:text-gray-400 text-gray-700"
                     />
                 </div>
-                <button
-                    onClick={() => push("CreateSecondHandListing")}
-                    className="text-white font-bold text-sm bg-gradient-to-r from-primary-500 to-primary-400 px-4 py-2.5 rounded-full flex items-center gap-1.5 shadow-lg shadow-primary-200 active:scale-95 transition-transform"
-                >
-                    <Plus size={18} strokeWidth={2.5} />
-                    <span>发布</span>
-                </button>
+
             </div>
 
             {/* Banners */}

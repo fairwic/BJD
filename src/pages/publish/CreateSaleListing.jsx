@@ -89,9 +89,7 @@ const CreateSaleListing = () => {
                     <ChevronLeft size={24} className="text-gray-800" />
                 </button>
                 <span className="font-bold text-lg text-gray-800">发布闲置</span>
-                <button onClick={handlePublish} className={`font-bold text-sm px-4 py-1.5 rounded-full text-white shadow-lg shadow-rose-500/30 active:scale-95 transition-all ${theme.btn}`}>
-                    发布
-                </button>
+                <div className="w-10" /> {/* Spacer to balance title */}
             </div>
 
             <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
@@ -248,6 +246,16 @@ const CreateSaleListing = () => {
                         />
                     </div>
                 </div>
+            </div>
+
+            {/* Bottom Action Bar */}
+            <div className="p-4 bg-white border-t border-gray-100 pb-safe z-50">
+                <button 
+                    onClick={handlePublish}
+                    className={`w-full py-3.5 rounded-full font-bold text-white shadow-lg active:scale-[0.98] transition-all flex items-center justify-center gap-2 ${theme.btn} shadow-rose-500/20`}
+                >
+                    立即发布
+                </button>
             </div>
         </div>
     );
