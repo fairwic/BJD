@@ -14,12 +14,13 @@ import {
 } from "lucide-react";
 
 import { useApp } from "../context/AppContext";
+import SCRAPED_DATA from "../data/scraped_data.json";
 
 const SecondHandMarket = () => {
     const { push } = useRouter();
     const { currentUser, savePreferences } = useApp();
     const [activeCategory, setActiveCategory] = useState("all");
-    
+
     // Zone Logic
     // Simplify: User preferences now has 'zones' array. If not, fallback to single 'zone'.
     const [myZones, setMyZones] = useState(currentUser?.preferences?.zones || [currentUser?.preferences?.zone || 'guzi']);
@@ -55,12 +56,12 @@ const SecondHandMarket = () => {
     };
 
     const [sortBy, setSortBy] = useState("default"); // default, price_asc, price_desc, likes
-    
+
     // ... (Filter Logic remains the same, omitted for brevity if unchanged, but I need to be careful with REPLACE)
     // Actually, I should just replace the top part and header carefully.
 
 
-    
+
     // Advanced Filter State
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [priceRange, setPriceRange] = useState({ min: '', max: '' });
@@ -78,7 +79,7 @@ const SecondHandMarket = () => {
 
     const CATEGORIES = [
         { id: "all", label: "全部" },
-        { id: "swap", label: "✨ 交换/置换" }, 
+        { id: "swap", label: "✨ 交换/置换" },
         { id: "bjd", label: "BJD/特体" },
         { id: "commission", label: "约稿/劳务" },
         { id: "badge", label: "徽章(吧唧)" },
@@ -113,10 +114,10 @@ const SecondHandMarket = () => {
             condition: "全新",
         },
         {
-            id: 501, 
+            id: 501,
             type: "exchange",
             title: "【换】出原神散兵特典色纸 求万叶色纸/其他",
-            price: "只换不售", 
+            price: "只换不售",
             originalPrice: null,
             image: "/images/badge.png", // Using Badge image for swap item
             seller: {
@@ -196,7 +197,7 @@ const SecondHandMarket = () => {
             condition: "服务",
         },
     ];
-    
+
     // State for Merged Items
     const [allItems, setAllItems] = useState(MOCK_ITEMS);
     const [isLoading, setIsLoading] = useState(true);
@@ -235,9 +236,9 @@ const SecondHandMarket = () => {
             else if (activeCategory === "other") { if (["bjd", "service", "exchange"].includes(item.type)) return false; } // Simplified 'other' logic
             else if (item.type !== "goods") return false; // Default to goods for specific categories like 'badge', 'stand' etc (mock simplified)
         }
-        
+
         // 2. Advanced Filters
-        
+
         // Price Range
         if (priceRange.min && parseFloat(item.price) < parseFloat(priceRange.min)) return false;
         if (priceRange.max && parseFloat(item.price) > parseFloat(priceRange.max)) return false;
@@ -286,7 +287,7 @@ const SecondHandMarket = () => {
 
     return (
         <div className="pb-24 bg-gray-50 min-h-screen flex flex-col font-sans">
-             <style>{`
+            <style>{`
                 @keyframes slideUp {
                     from { opacity: 0; transform: translateY(20px); }
                     to { opacity: 1; transform: translateY(0); }
@@ -296,19 +297,19 @@ const SecondHandMarket = () => {
                     opacity: 0;
                 }
             `}</style>
-            
+
             {/* Header with Glassmorphism */}
             <div className="sticky top-0 z-30 bg-white/80 backdrop-blur-md px-4 py-3 flex flex-col gap-2 shadow-[0_2px_8px_rgba(0,0,0,0.05)] border-b border-white/50 transition-all duration-300">
                 {/* Conditional Zone Switcher (Only if multiple zones) - ABOVE Search */}
                 {myZones.length > 1 && (
-                     <div className="flex bg-gray-100 p-1 rounded-xl w-full max-w-[240px] self-center animate-slide-up" style={{ animationDuration: '0.3s' }}>
-                        <button 
+                    <div className="flex bg-gray-100 p-1 rounded-xl w-full max-w-[240px] self-center animate-slide-up" style={{ animationDuration: '0.3s' }}>
+                        <button
                             onClick={() => setActiveZone('guzi')}
                             className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all ${activeZone === 'guzi' ? 'bg-white text-rose-500 shadow-sm' : 'text-gray-400'}`}
                         >
                             谷子
                         </button>
-                        <button 
+                        <button
                             onClick={() => setActiveZone('bjd')}
                             className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all ${activeZone === 'bjd' ? 'bg-white text-purple-500 shadow-sm' : 'text-gray-400'}`}
                         >
@@ -329,7 +330,7 @@ const SecondHandMarket = () => {
                     </div>
 
                     {/* Right Side: My Boards / Discovery */}
-                    <button 
+                    <button
                         onClick={() => setIsZoneDrawerOpen(true)}
                         className="flex flex-col items-center justify-center text-gray-600 active:scale-95 transition-transform"
                     >
@@ -350,29 +351,31 @@ const SecondHandMarket = () => {
                         const allIPs = FILTER_DATA.ips;
                         // specific logic: My IPs first, then others. Dedup.
                         const displayIPs = [...new Set([...myIPs, ...allIPs])];
-                        
+
+                        return (
+                            <>
                                 {displayIPs.map(ip => {
-                                    const ipInfo = SCRAPED_DATA['Japanese IP'].find(i => i.name === ip);
+                                    const ipInfo = SCRAPED_DATA['Japanese IP']?.find(i => i.name === ip);
                                     const imgSrc = ipInfo ? ipInfo.path : `https://ui-avatars.com/api/?name=${ip}&background=${myIPs.includes(ip) ? 'e11d48' : 'random'}&color=fff&rounded=true&bold=true&size=32`;
-                                    
+
                                     return (
-                                    <button 
-                                        key={ip} 
-                                        onClick={() => {
-                                            // Toggle logic if desired, or set filter
-                                        }}
-                                        className={`flex-shrink-0 pl-1 pr-3 py-1 rounded-full text-[10px] font-bold border whitespace-nowrap transition-colors flex items-center gap-1.5 ${
-                                        myIPs.includes(ip) 
-                                        ? "bg-rose-100 text-rose-600 border-rose-200" 
-                                        : "bg-gray-50 text-gray-500 border-gray-100 bg-white"
-                                    }`}>
-                                        <img 
-                                            src={imgSrc} 
-                                            alt={ip}
-                                            className="w-5 h-5 rounded-full object-cover"
-                                        />
-                                        {ip}
-                                    </button>
+                                        <button
+                                            key={ip}
+                                            onClick={() => {
+                                                // Toggle logic if desired, or set filter
+                                            }}
+                                            className={`flex-shrink-0 pl-1 pr-3 py-1 rounded-full text-[10px] font-bold border whitespace-nowrap transition-colors flex items-center gap-1.5 ${myIPs.includes(ip)
+                                                ? "bg-rose-100 text-rose-600 border-rose-200"
+                                                : "bg-gray-50 text-gray-500 border-gray-100 bg-white"
+                                                }`}
+                                        >
+                                            <img
+                                                src={imgSrc}
+                                                alt={ip}
+                                                className="w-5 h-5 rounded-full object-cover"
+                                            />
+                                            {ip}
+                                        </button>
                                     );
                                 })}
                             </>
@@ -398,16 +401,16 @@ const SecondHandMarket = () => {
                 <div className="fixed inset-0 z-50 flex justify-end">
                     <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" onClick={() => setIsZoneDrawerOpen(false)} />
                     <div className="relative w-3/4 max-w-sm bg-white h-full shadow-2xl p-6 animate-slide-left flex flex-col">
-                         <div className="flex items-center justify-between mb-8">
+                        <div className="flex items-center justify-between mb-8">
                             <h2 className="text-xl font-serif font-bold text-gray-900">我的岛屿</h2>
                             <button onClick={() => setIsZoneDrawerOpen(false)}><X size={24} className="text-gray-400" /></button>
-                         </div>
+                        </div>
 
-                         {/* Scrollable Content */}
-                         <div className="flex-1 overflow-y-auto min-h-0 -mx-6 px-6">
-                             {/* Current Zone Info */}
-                             <div className="mb-8 p-4 rounded-2xl bg-gray-50 border border-gray-100">
-                                 <div className="flex items-center gap-3 mb-2">
+                        {/* Scrollable Content */}
+                        <div className="flex-1 overflow-y-auto min-h-0 -mx-6 px-6">
+                            {/* Current Zone Info */}
+                            <div className="mb-8 p-4 rounded-2xl bg-gray-50 border border-gray-100">
+                                <div className="flex items-center gap-3 mb-2">
                                     <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center text-2xl shadow-sm">
                                         {activeZone === 'guzi' ? '🍬' : '🩰'}
                                     </div>
@@ -415,58 +418,57 @@ const SecondHandMarket = () => {
                                         <h3 className="font-bold text-lg">{activeZone === 'guzi' ? '谷子岛' : 'BJD岛'}</h3>
                                         <p className="text-xs text-gray-400">当前所在的岛屿</p>
                                     </div>
-                                 </div>
-                             </div>
+                                </div>
+                            </div>
 
-                             {/* Interests Selection */}
-                             <div className="mb-8">
-                                 <div className="flex items-center justify-between mb-4">
+                            {/* Interests Selection */}
+                            <div className="mb-8">
+                                <div className="flex items-center justify-between mb-4">
                                     <h3 className="font-bold text-gray-900">选择你感兴趣的</h3>
                                     <span className="text-xs text-gray-400">已选 {currentUser?.preferences?.interests?.length || 0} 个</span>
-                                 </div>
-                                 <div className="flex flex-wrap gap-2">
-                                     {/* Predefined Popular IPs */}
-                                     {/* Scraped Popular IPs with Real Images */}
-                                     {SCRAPED_DATA['Japanese IP'].map(item => {
-                                         const isSelected = currentUser?.preferences?.interests?.includes(item.name);
-                                         return (
-                                             <button
-                                                 key={item.name}
-                                                 onClick={() => {
-                                                     const currentInterests = currentUser?.preferences?.interests || [];
-                                                     let newInterests;
-                                                     if (isSelected) {
-                                                         newInterests = currentInterests.filter(i => i !== item.name);
-                                                     } else {
-                                                         newInterests = [...currentInterests, item.name];
-                                                     }
-                                                     savePreferences({ ...currentUser.preferences, interests: newInterests });
-                                                 }}
-                                                 className={`px-3 py-1.5 rounded-xl text-sm font-bold transition-all flex items-center gap-2 ${
-                                                     isSelected 
-                                                     ? "bg-gray-900 text-white shadow-md transform scale-105" 
-                                                     : "bg-white border border-gray-200 text-gray-500 hover:border-gray-300"
-                                                 }`}
-                                             >
-                                                 <img src={item.path} alt={item.name} className="w-5 h-5 rounded-full object-cover" />
-                                                 <span>{item.name}</span>
-                                             </button>
-                                         );
-                                     })}
-                                     {/* Add more from config if needed later */}
-                                 </div>
-                             </div>
-                         </div>
+                                </div>
+                                <div className="flex flex-wrap gap-2">
+                                    {/* Predefined Popular IPs */}
+                                    {/* Scraped Popular IPs with Real Images */}
+                                    {SCRAPED_DATA['Japanese IP'].map(item => {
+                                        const isSelected = currentUser?.preferences?.interests?.includes(item.name);
+                                        return (
+                                            <button
+                                                key={item.name}
+                                                onClick={() => {
+                                                    const currentInterests = currentUser?.preferences?.interests || [];
+                                                    let newInterests;
+                                                    if (isSelected) {
+                                                        newInterests = currentInterests.filter(i => i !== item.name);
+                                                    } else {
+                                                        newInterests = [...currentInterests, item.name];
+                                                    }
+                                                    savePreferences({ ...currentUser.preferences, interests: newInterests });
+                                                }}
+                                                className={`px-3 py-1.5 rounded-xl text-sm font-bold transition-all flex items-center gap-2 ${isSelected
+                                                    ? "bg-gray-900 text-white shadow-md transform scale-105"
+                                                    : "bg-white border border-gray-200 text-gray-500 hover:border-gray-300"
+                                                    }`}
+                                            >
+                                                <img src={item.path} alt={item.name} className="w-5 h-5 rounded-full object-cover" />
+                                                <span>{item.name}</span>
+                                            </button>
+                                        );
+                                    })}
+                                    {/* Add more from config if needed later */}
+                                </div>
+                            </div>
+                        </div>
 
-                         {/* Switch Zone Action */}
-                         <div className="pt-6 border-t border-gray-100 mt-auto">
-                             <p className="text-xs text-gray-400 mb-3 text-center">
-                                 {myZones.includes(activeZone === 'guzi' ? 'bjd' : 'guzi') ? '切换到你的另一个岛屿' : '这也是你感兴趣的吗？'}
-                             </p>
-                             
-                             {/* Case 1: Already has both - Just Switch */}
-                             {myZones.includes(activeZone === 'guzi' ? 'bjd' : 'guzi') ? (
-                                <button 
+                        {/* Switch Zone Action */}
+                        <div className="pt-6 border-t border-gray-100 mt-auto">
+                            <p className="text-xs text-gray-400 mb-3 text-center">
+                                {myZones.includes(activeZone === 'guzi' ? 'bjd' : 'guzi') ? '切换到你的另一个岛屿' : '这也是你感兴趣的吗？'}
+                            </p>
+
+                            {/* Case 1: Already has both - Just Switch */}
+                            {myZones.includes(activeZone === 'guzi' ? 'bjd' : 'guzi') ? (
+                                <button
                                     onClick={() => {
                                         setActiveZone(activeZone === 'guzi' ? 'bjd' : 'guzi');
                                         setIsZoneDrawerOpen(false);
@@ -476,31 +478,30 @@ const SecondHandMarket = () => {
                                     <span className="text-xl">{activeZone === 'guzi' ? '🩰' : '🍬'}</span>
                                     <span className="font-bold">前往 {activeZone === 'guzi' ? 'BJD岛' : '谷子岛'}</span>
                                 </button>
-                             ) : (
-                                 /* Case 2: Doesn't have it - Add it */
-                                <button 
+                            ) : (
+                                /* Case 2: Doesn't have it - Add it */
+                                <button
                                     onClick={() => handleAddZone(activeZone === 'guzi' ? 'bjd' : 'guzi')}
-                                    className={`w-full py-3 rounded-xl flex items-center justify-center gap-3 transition-colors ${
-                                        activeZone === 'guzi' 
-                                        ? 'bg-purple-50 text-purple-600 hover:bg-purple-100' 
+                                    className={`w-full py-3 rounded-xl flex items-center justify-center gap-3 transition-colors ${activeZone === 'guzi'
+                                        ? 'bg-purple-50 text-purple-600 hover:bg-purple-100'
                                         : 'bg-rose-50 text-rose-600 hover:bg-rose-100'
-                                    }`}
+                                        }`}
                                 >
                                     <span className="text-xl">{activeZone === 'guzi' ? '🩰' : '🍬'}</span>
                                     <span className="font-bold">开启 {activeZone === 'guzi' ? 'BJD岛' : '谷子岛'}</span>
                                 </button>
-                             )}
-                         </div>
+                            )}
+                        </div>
                     </div>
                 </div>
             )}
-            
+
             {/* Banners */}
             <div className="px-4 pt-2 overflow-x-auto scrollbar-hide">
                 <div className="flex gap-3 w-max">
                     {BANNERS.map(banner => (
-                        <div 
-                            key={banner.id} 
+                        <div
+                            key={banner.id}
                             onClick={() => {
                                 // Simple logic mapping banners to filters
                                 if (banner.id === 1) setActiveCategory('bjd');
@@ -532,8 +533,8 @@ const SecondHandMarket = () => {
                             key={cat.id}
                             onClick={() => setActiveCategory(cat.id)}
                             className={`whitespace-nowrap px-4 py-1.5 rounded-full text-xs font-bold transition-all border ${activeCategory === cat.id
-                                    ? "bg-gray-900 text-white border-gray-900 shadow-md transform scale-105"
-                                    : "bg-white text-gray-500 border-gray-200 hover:border-gray-300 shadow-sm"
+                                ? "bg-gray-900 text-white border-gray-900 shadow-md transform scale-105"
+                                : "bg-white text-gray-500 border-gray-200 hover:border-gray-300 shadow-sm"
                                 }`}
                         >
                             {cat.label}
@@ -541,14 +542,14 @@ const SecondHandMarket = () => {
                     ))}
                 </div>
                 <div className="flex items-center justify-between mt-3 text-xs font-medium text-gray-500 bg-white p-2 rounded-xl shadow-sm border border-gray-100">
-                    <button 
+                    <button
                         onClick={() => setSortBy("default")}
                         className={`flex items-center gap-1 px-2 py-1 rounded transition-colors ${sortBy === 'default' ? 'text-gray-900 font-bold' : 'hover:bg-gray-100'}`}
                     >
                         <span>综合排序</span>
                         <ChevronDown size={14} />
                     </button>
-                    <button 
+                    <button
                         onClick={togglePriceSort}
                         className={`flex items-center gap-1 px-2 py-1 rounded transition-colors ${sortBy.includes('price') ? 'text-gray-900 font-bold' : 'hover:bg-gray-100'}`}
                     >
@@ -558,23 +559,22 @@ const SecondHandMarket = () => {
                             {sortBy === 'price_desc' ? <span className="text-[8px] text-gray-900">▼</span> : <span className="text-[8px] text-gray-300">▼</span>}
                         </div>
                     </button>
-                    <button 
-                         onClick={() => setIsFilterOpen(true)}
-                        className={`flex items-center gap-1 px-2 py-1 rounded transition-colors ${
-                            (priceRange.min || priceRange.max || selectedSizes.length > 0 || selectedConditions.length > 0 || selectedIPs.length > 0 || selectedBrands.length > 0)
-                            ? 'text-gray-900 font-bold bg-gray-100' 
+                    <button
+                        onClick={() => setIsFilterOpen(true)}
+                        className={`flex items-center gap-1 px-2 py-1 rounded transition-colors ${(priceRange.min || priceRange.max || selectedSizes.length > 0 || selectedConditions.length > 0 || selectedIPs.length > 0 || selectedBrands.length > 0)
+                            ? 'text-gray-900 font-bold bg-gray-100'
                             : 'hover:bg-gray-100 text-gray-700'
-                        }`}
+                            }`}
                     >
                         <span>筛选</span>
                         <Filter size={12} fill={(priceRange.min || priceRange.max || selectedSizes.length > 0 || selectedConditions.length > 0 || selectedIPs.length > 0 || selectedBrands.length > 0) ? "currentColor" : "none"} />
                     </button>
-                    <button 
-                         onClick={() => setSortBy("likes")}
+                    <button
+                        onClick={() => setSortBy("likes")}
                         className={`flex items-center gap-1 ${sortBy === 'likes' ? 'text-primary-600 font-bold bg-primary-50' : 'text-gray-500 bg-transparent'} px-2 py-1 rounded transition-colors`}
                     >
                         <Heart size={14} fill={sortBy === 'likes' ? "currentColor" : "none"} />
-                         <span>热度</span>
+                        <span>热度</span>
                     </button>
                 </div>
             </div>
@@ -582,17 +582,17 @@ const SecondHandMarket = () => {
             {/* Product Grid - Masonry-ish feel */}
             <div className="p-3 grid grid-cols-2 gap-3">
                 {isLoading ? (
-                     // Skeleton Loader
-                     [1,2,3,4].map(i => (
+                    // Skeleton Loader
+                    [1, 2, 3, 4].map(i => (
                         <div key={i} className="bg-white rounded-2xl overflow-hidden border border-white p-2 space-y-2">
-                             <div className="w-full aspect-square bg-gray-100 animate-pulse rounded-xl" />
-                             <div className="h-4 bg-gray-100 w-3/4 rounded animate-pulse" />
-                             <div className="flex justify-between">
-                                 <div className="h-3 bg-gray-100 w-1/4 rounded animate-pulse" />
-                                 <div className="h-3 bg-gray-100 w-1/4 rounded animate-pulse" />
-                             </div>
+                            <div className="w-full aspect-square bg-gray-100 animate-pulse rounded-xl" />
+                            <div className="h-4 bg-gray-100 w-3/4 rounded animate-pulse" />
+                            <div className="flex justify-between">
+                                <div className="h-3 bg-gray-100 w-1/4 rounded animate-pulse" />
+                                <div className="h-3 bg-gray-100 w-1/4 rounded animate-pulse" />
+                            </div>
                         </div>
-                     ))
+                    ))
                 ) : (
                     filteredItems.map((item, index) => (
                         <div
@@ -603,8 +603,8 @@ const SecondHandMarket = () => {
                         >
                             {/* Image Container */}
                             <div className="aspect-square relative overflow-hidden bg-gray-100">
-                                 <img 
-                                    src={item.image} 
+                                <img
+                                    src={item.image}
                                     alt={item.title}
                                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                 />
@@ -615,22 +615,21 @@ const SecondHandMarket = () => {
                                 </div>
                                 {/* Condition Tag */}
                                 <div className="absolute bottom-2 left-2 z-10">
-                                    <span className={`text-[10px] px-2 py-0.5 rounded-md backdrop-blur shadow-sm font-bold ${
-                                        item.type === "service" 
+                                    <span className={`text-[10px] px-2 py-0.5 rounded-md backdrop-blur shadow-sm font-bold ${item.type === "service"
                                         ? "bg-purple-500/90 text-white"
                                         : "bg-white/90 text-primary-600"
-                                    }`}>
+                                        }`}>
                                         {item.condition}
                                     </span>
                                 </div>
                             </div>
-    
+
                             {/* Info Content */}
                             <div className="p-3">
                                 <h3 className="text-sm font-bold text-gray-800 line-clamp-2 leading-snug mb-2 group-hover:text-primary-600 transition-colors">
                                     {item.title}
                                 </h3>
-    
+
                                 {/* Tags */}
                                 <div className="flex flex-wrap gap-1.5 mb-2.5">
                                     {item.tags.slice(0, 2).map((tag, i) => (
@@ -642,11 +641,11 @@ const SecondHandMarket = () => {
                                         </span>
                                     ))}
                                 </div>
-    
+
                                 {/* Price Row */}
                                 <div className="flex items-baseline gap-1 mb-2">
                                     {item.type === 'exchange' ? (
-                                         <span className="text-sm text-purple-600 font-bold">{item.price}</span>
+                                        <span className="text-sm text-purple-600 font-bold">{item.price}</span>
                                     ) : (
                                         <>
                                             <span className="text-xs text-rose-500 font-bold">¥</span>
@@ -657,7 +656,7 @@ const SecondHandMarket = () => {
                                         <span className="text-[10px] text-gray-300 line-through ml-1">¥{item.originalPrice}</span>
                                     )}
                                 </div>
-    
+
                                 {/* Seller Row */}
                                 <div className="flex items-center gap-2 pt-2 border-t border-gray-50">
                                     <div className={`w-5 h-5 rounded-full ${item.seller.avatar} border border-white shadow-sm shrink-0`} />
@@ -677,11 +676,11 @@ const SecondHandMarket = () => {
             {isFilterOpen && (
                 <div className="fixed inset-0 z-50 flex flex-col justify-end">
                     {/* Backdrop */}
-                    <div 
+                    <div
                         className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity"
                         onClick={() => setIsFilterOpen(false)}
                     />
-                    
+
                     {/* Drawer Content */}
                     <div className="relative bg-white rounded-t-3xl p-6 pb-8 animate-slide-up shadow-2xl h-[70vh] flex flex-col">
                         <div className="flex items-center justify-between mb-6">
@@ -696,20 +695,20 @@ const SecondHandMarket = () => {
                             <div className="space-y-3">
                                 <h4 className="text-sm font-bold text-gray-900">价格区间</h4>
                                 <div className="flex items-center gap-3">
-                                    <input 
-                                        type="number" 
-                                        placeholder="最低价" 
+                                    <input
+                                        type="number"
+                                        placeholder="最低价"
                                         className="flex-1 bg-gray-50 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-primary-100 transition-all text-center"
                                         value={priceRange.min}
-                                        onChange={(e) => setPriceRange({...priceRange, min: e.target.value})}
+                                        onChange={(e) => setPriceRange({ ...priceRange, min: e.target.value })}
                                     />
                                     <span className="text-gray-300">-</span>
-                                    <input 
-                                        type="number" 
-                                        placeholder="最高价" 
+                                    <input
+                                        type="number"
+                                        placeholder="最高价"
                                         className="flex-1 bg-gray-50 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-primary-100 transition-all text-center"
                                         value={priceRange.max}
-                                        onChange={(e) => setPriceRange({...priceRange, max: e.target.value})}
+                                        onChange={(e) => setPriceRange({ ...priceRange, max: e.target.value })}
                                     />
                                 </div>
                             </div>
@@ -722,15 +721,14 @@ const SecondHandMarket = () => {
                                         <button
                                             key={ip}
                                             onClick={() => {
-                                                setSelectedIPs(prev => 
+                                                setSelectedIPs(prev =>
                                                     prev.includes(ip) ? prev.filter(i => i !== ip) : [...prev, ip]
                                                 );
                                             }}
-                                            className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
-                                                selectedIPs.includes(ip)
+                                            className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${selectedIPs.includes(ip)
                                                 ? "bg-blue-600 text-white shadow-md transform scale-105"
                                                 : "bg-blue-50 text-blue-600 hover:bg-blue-100"
-                                            }`}
+                                                }`}
                                         >
                                             {ip}
                                         </button>
@@ -746,15 +744,14 @@ const SecondHandMarket = () => {
                                         <button
                                             key={brand}
                                             onClick={() => {
-                                                setSelectedBrands(prev => 
+                                                setSelectedBrands(prev =>
                                                     prev.includes(brand) ? prev.filter(b => b !== brand) : [...prev, brand]
                                                 );
                                             }}
-                                            className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
-                                                selectedBrands.includes(brand)
+                                            className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${selectedBrands.includes(brand)
                                                 ? "bg-purple-600 text-white shadow-md transform scale-105"
                                                 : "bg-purple-50 text-purple-600 hover:bg-purple-100"
-                                            }`}
+                                                }`}
                                         >
                                             {brand}
                                         </button>
@@ -770,15 +767,14 @@ const SecondHandMarket = () => {
                                         <button
                                             key={size}
                                             onClick={() => {
-                                                setSelectedSizes(prev => 
+                                                setSelectedSizes(prev =>
                                                     prev.includes(size) ? prev.filter(s => s !== size) : [...prev, size]
                                                 );
                                             }}
-                                            className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
-                                                selectedSizes.includes(size)
+                                            className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${selectedSizes.includes(size)
                                                 ? "bg-gray-900 text-white shadow-md transform scale-105"
                                                 : "bg-gray-50 text-gray-500 hover:bg-gray-100"
-                                            }`}
+                                                }`}
                                         >
                                             {size}
                                         </button>
@@ -794,15 +790,14 @@ const SecondHandMarket = () => {
                                         <button
                                             key={cond}
                                             onClick={() => {
-                                                setSelectedConditions(prev => 
+                                                setSelectedConditions(prev =>
                                                     prev.includes(cond) ? prev.filter(c => c !== cond) : [...prev, cond]
                                                 );
                                             }}
-                                            className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
-                                                selectedConditions.includes(cond)
+                                            className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${selectedConditions.includes(cond)
                                                 ? "bg-gray-900 text-white shadow-md transform scale-105"
                                                 : "bg-gray-50 text-gray-500 hover:bg-gray-100"
-                                            }`}
+                                                }`}
                                         >
                                             {cond}
                                         </button>
@@ -820,12 +815,12 @@ const SecondHandMarket = () => {
                                     setSelectedConditions([]);
                                     setSelectedIPs([]);
                                     setSelectedBrands([]);
-                                }} 
+                                }}
                                 className="flex-1 py-3 rounded-full font-bold text-gray-500 hover:bg-gray-50 transition-colors"
                             >
                                 重置
                             </button>
-                            <button 
+                            <button
                                 onClick={() => setIsFilterOpen(false)}
                                 className="flex-[2] py-3 rounded-full bg-gray-900 text-white font-bold shadow-lg shadow-gray-200 active:scale-95 transition-transform"
                             >
