@@ -3,7 +3,7 @@
  * 用于前端开发和测试，模拟后端API响应
  */
 
-import { USERS, ROLES, ORDER_STATUS, MOCK_ORDERS, MOCK_GROUP_BUYS } from './mock';
+import { USERS, ROLES, ORDER_STATUS, MOCK_ORDERS, MOCK_GROUP_BUYS, BARTER_STATUS, MOCK_BARTERS } from './mock';
 
 // ==================== 通用响应格式 ====================
 
@@ -799,31 +799,28 @@ export const socialAPI = {
   // 获取关注列表
   getFollowingList: (userId, params) => {
     return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(createSuccessResponse({
-          total: 56,
-          list: [
-            {
-              id: 'l1',
-              name: '知名团长A',
-              avatar: 'bg-yellow-200',
-              role: 'leader',
-              bio: '专注三分/四分娃衣团购',
-              followers: 1250
-            },
-            {
-              id: 'u2',
-              name: '养娃大户',
-              avatar: 'bg-red-200',
-              role: 'user',
-              bio: '入坑三年的BJD玩家',
-              followers: 342
-            }
-          ]
-        }));
-      }, 500);
-    });
-  },
+        setTimeout(() => {
+          resolve(createSuccessResponse({
+            total: 2,
+            list: [
+              {
+                id: 'l1',
+                name: '知名团长A',
+                avatar: 'bg-yellow-200',
+                followers: 1000
+              },
+              {
+                id: 'm1',
+                name: '爱丽丝的衣橱',
+                avatar: 'bg-purple-200',
+                followers: 5000
+              }
+            ]
+          }));
+        }, 500);
+      });
+  }
+,
 
   // 获取粉丝列表
   getFollowerList: (userId, params) => {
@@ -836,6 +833,159 @@ export const socialAPI = {
       }, 500);
     });
   }
+};
+
+// ==================== 以物换物模块 ====================
+
+export const barterAPI = {
+    // 发起换物提议
+    createProposal: (data) => {
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                const newBarter = {
+                    id: `b${Date.now()}`,
+                    initiatorId: data.initiatorId,
+                    targetUserId: data.targetUserId,
+                    initiatorProduct: data.initiatorProduct,
+                    targetProduct: data.targetProduct,
+                    cashTopUp: data.cashTopUp || 0,
+                    status: BARTER_STATUS.PROPOSED,
+                    createTime: new Date().toISOString(),
+                    depositAmount: Math.max(data.initiatorProduct.price, data.targetProduct.price) * 1.2, 
+                    serviceType: data.serviceType || 'direct', // 'direct' or 'platform'
+                    initiatorDepositPaid: false,
+                    targetDepositPaid: false,
+                    initiatorTracking: '',
+                    targetTracking: '',
+                    initiatorShipVideo: null,
+                    targetShipVideo: null,
+                    initiatorReceiveVideo: null,
+                    targetReceiveVideo: null
+                };
+                MOCK_BARTERS.push(newBarter);
+                resolve(createSuccessResponse(newBarter, '换物提议已发送'));
+            }, 800);
+        });
+    },
+
+    // 接受提议
+    acceptProposal: (barterId) => {
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                const barter = MOCK_BARTERS.find(b => b.id === barterId);
+                if (barter) {
+                    barter.status = BARTER_STATUS.ACCEPTED;
+                }
+                resolve(createSuccessResponse(null, '已接受提议，请双方支付押金'));
+            }, 600);
+        });
+    },
+
+    // 支付押金
+    payDeposit: (barterId, userId) => {
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                const barter = MOCK_BARTERS.find(b => b.id === barterId);
+                if (!barter) {
+                     resolve(createErrorResponse(404, 'Barter not found'));
+                     return;
+                }
+
+                if (userId === barter.initiatorId) {
+                    barter.initiatorDepositPaid = true;
+                } else if (userId === barter.targetUserId) {
+                    barter.targetDepositPaid = true;
+                }
+
+                // Check if both paid
+                if (barter.initiatorDepositPaid && barter.targetDepositPaid) {
+                    barter.status = BARTER_STATUS.AWAITING_SHIPMENT;
+                }
+
+                resolve(createSuccessResponse({
+                    status: barter.status,
+                    initiatorDepositPaid: barter.initiatorDepositPaid,
+                    targetDepositPaid: barter.targetDepositPaid
+                }, '押金支付成功'));
+            }, 1000);
+        });
+    },
+
+    // 提交运单号 (+ 存证视频)
+    submitTracking: (barterId, userId, trackingNumber, videoFile) => {
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                const barter = MOCK_BARTERS.find(b => b.id === barterId);
+                 if (!barter) {
+                     resolve(createErrorResponse(404, 'Barter not found'));
+                     return;
+                }
+
+                if (userId === barter.initiatorId) {
+                    barter.initiatorTracking = trackingNumber;
+                    if (videoFile) barter.initiatorShipVideo = 'mock_video_url.mp4';
+                } else if (userId === barter.targetUserId) {
+                    barter.targetTracking = trackingNumber;
+                    if (videoFile) barter.targetShipVideo = 'mock_video_url.mp4';
+                }
+                
+                // If at least one shipped
+                if (barter.initiatorTracking || barter.targetTracking) {
+                     barter.status = BARTER_STATUS.SHIPPED;
+                }
+                
+                // [V2.0] If Platform mode, and both shipped, update status to IN_PLATFORM
+                if (barter.serviceType === 'platform' && barter.initiatorTracking && barter.targetTracking) {
+                    barter.status = BARTER_STATUS.IN_PLATFORM;
+                }
+
+                resolve(createSuccessResponse(null, '运单号提交成功'));
+            }, 500);
+        });
+    },
+
+    // 确认收货 (+ 开箱视频)
+    confirmReceipt: (barterId, userId, videoFile) => {
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                 const barter = MOCK_BARTERS.find(b => b.id === barterId);
+                 if (!barter) {
+                     resolve(createErrorResponse(404, 'Barter not found'));
+                     return;
+                }
+                
+                if (userId === barter.initiatorId) {
+                    if (videoFile) barter.initiatorReceiveVideo = 'mock_unbox.mp4';
+                } else {
+                    if (videoFile) barter.targetReceiveVideo = 'mock_unbox.mp4';
+                }
+
+                // Dual Confirmation Check
+                const isCompleted = barter.initiatorReceiveVideo && barter.targetReceiveVideo;
+                
+                if (isCompleted) {
+                    barter.status = BARTER_STATUS.COMPLETED;
+                    resolve(createSuccessResponse({ isCompleted: true }, '双方已确认收货，交易完成'));
+                } else {
+                     resolve(createSuccessResponse({ isCompleted: false }, '您已确认收货，等待对方确认'));
+                }
+            }, 800);
+        });
+    },
+    
+    // 获取换物详情
+    getBarterDetail: (barterId) => {
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                const barter = MOCK_BARTERS.find(b => b.id === barterId);
+                 if (!barter) {
+                     resolve(createErrorResponse(404, 'Barter not found'));
+                     return;
+                }
+                resolve(createSuccessResponse(barter));
+            }, 500);
+        });
+    }
 };
 
 // ==================== 通知模块 ====================
@@ -931,6 +1081,7 @@ export default {
   transfer: transferAPI,
   contract: contractAPI,
   social: socialAPI,
+  barter: barterAPI,
   notification: notificationAPI
 };
 

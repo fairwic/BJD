@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { useApp } from "../context/AppContext";
 import { useRouter } from "../router/RouteStack";
 import UserSwitcher from "../components/UserSwitcher";
+import { MOCK_BARTERS } from "../data/mock";
 import {
     ArrowRightLeft,
     Settings,
@@ -22,11 +23,17 @@ import {
     MapPin,
     CheckCircle2,
     User,
+    X,
+    RefreshCw
 } from "lucide-react";
 
 const UserProfile = () => {
-    const { currentUser, orders } = useApp();
+    const { currentUser, orders, login, users } = useApp();
     const { push } = useRouter();
+    const [showUserMenu, setShowUserMenu] = useState(false);
+    const myBarters = MOCK_BARTERS.filter(b => b.initiatorId === currentUser.id || b.targetUserId === currentUser.id);
+
+
 
     return (
         <div className="pb-20 bg-gray-50 min-h-screen">
@@ -116,6 +123,50 @@ const UserProfile = () => {
                     </div>
                 </div>
             </div>
+
+            {/* Active Barters Card */}
+            {myBarters.length > 0 && (
+                <div className="mx-4 mt-4 bg-white rounded-2xl p-4 shadow-sm shadow-blue-50/50">
+                    <div className="flex items-center justify-between mb-3">
+                        <h3 className="font-bold text-gray-800 flex items-center gap-2">
+                            <RefreshCw size={16} className="text-accent" />
+                            我的交换
+                        </h3>
+                        <span className="text-xs text-gray-400 cursor-pointer">全部记录</span>
+                    </div>
+                    <div className="space-y-3">
+                        {myBarters.map(barter => {
+                             const isInit = barter.initiatorId === currentUser.id;
+                             const partnerName = isInit ? '对方' : '发起人'; // Simplify for now
+                             return (
+                                <div 
+                                    key={barter.id} 
+                                    onClick={() => push('BarterOrderDetail', { id: barter.id })}
+                                    className="flex items-center gap-3 bg-gray-50 p-3 rounded-xl active:scale-[0.99] transition-transform"
+                                >
+                                    <div className="w-12 h-12 bg-white rounded-lg border border-gray-100 flex items-center justify-center shrink-0">
+                                        <RefreshCw size={20} className="text-gray-300" />
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <div className="flex justify-between items-center mb-1">
+                                            <span className="font-bold text-sm text-gray-800">
+                                                {barter.serviceType === 'platform' ? '平台验货' : '互保直寄'}
+                                            </span>
+                                            <span className="text-[10px] bg-white border border-rose-100 text-rose-500 px-1.5 py-0.5 rounded-full">
+                                                {barter.status}
+                                            </span>
+                                        </div>
+                                        <p className="text-xs text-gray-400 truncate">
+                                            {isInit ? `您发起 vs ${partnerName}` : `${partnerName} 发起 vs 您`}
+                                        </p>
+                                    </div>
+                                    <ChevronRight size={16} className="text-gray-300" />
+                                </div>
+                             );
+                        })}
+                    </div>
+                </div>
+            )}
 
             {/* Verification Card */}
             <div className="px-4 mt-3">
@@ -250,6 +301,45 @@ const UserProfile = () => {
                     className="w-full py-3 text-secondary-500 bg-white rounded-xl text-sm font-bold"
                 >
                     退出登录
+                </button>
+            </div>
+            {/* Temporary User Switcher Float Button & Menu */}
+            <div className="fixed bottom-24 right-4 z-50 flex flex-col items-end gap-2">
+                {showUserMenu && (
+                    <div className="bg-white rounded-xl shadow-xl border border-gray-100 p-2 w-48 animate-in slide-in-from-bottom-2 fade-in duration-200 mb-2">
+                        <div className="text-xs font-bold text-gray-400 px-2 py-1 mb-1">切换用户</div>
+                        {users.map(u => (
+                            <button
+                                key={u.id}
+                                onClick={() => {
+                                    login(u.id);
+                                    setShowUserMenu(false);
+                                }}
+                                className={`w-full flex items-center gap-2 p-2 rounded-lg text-left transition-colors ${
+                                    currentUser.id === u.id ? 'bg-rose-50 text-rose-600' : 'hover:bg-gray-50 text-gray-700'
+                                }`}
+                            >
+                                <div className={`w-6 h-6 rounded-full ${u.avatar || 'bg-gray-200'} border border-gray-100`} />
+                                <div className="flex-1 min-w-0">
+                                    <div className="text-xs font-bold truncate">{u.name}</div>
+                                    <div className="text-[10px] text-gray-400 flex items-center gap-1">
+                                        {u.role === 'leader' && <span className="text-yellow-500">团长</span>}
+                                        {u.role === 'merchant' && <span className="text-purple-500">商家</span>}
+                                        {u.role === 'user' && <span>用户</span>}
+                                        <span>· 信用{u.creditScore}</span>
+                                    </div>
+                                </div>
+                                {currentUser.id === u.id && <CheckCircle2 size={12} />}
+                            </button>
+                        ))}
+                    </div>
+                )}
+                <button
+                    onClick={() => setShowUserMenu(!showUserMenu)}
+                    className="bg-gray-900 text-white p-3 rounded-full shadow-lg flex items-center gap-2 text-xs font-bold active:scale-95 transition-transform"
+                >
+                    <ArrowRightLeft size={16} />
+                    <span>{currentUser.name}</span>
                 </button>
             </div>
         </div>

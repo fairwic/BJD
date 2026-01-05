@@ -57,11 +57,18 @@ import CreateBarterRequest from "./pages/CreateBarterRequest";
 import MyCollections from "./pages/MyCollections";
 import MyPosts from "./pages/MyPosts";
 import MyListings from "./pages/MyListings";
+import BarterInitiate from "./pages/BarterInitiate";
+import BarterOrderDetail from "./pages/BarterOrderDetail";
+import CreateSaleListing from "./pages/publish/CreateSaleListing";
+import CreateBuyListing from "./pages/publish/CreateBuyListing";
+import CreateBarterListing from "./pages/publish/CreateBarterListing";
+import CreateCommissionListing from "./pages/publish/CreateCommissionListing";
 
 // Extracted Components
 import UserProfile from "./pages/UserProfile";
 import Square from "./pages/Square";
 import LeaderDashboard from "./pages/LeaderDashboard";
+import PublishMenu from "./components/PublishMenu";
 import Messages from "./pages/Messages";
 import TabBar from "./components/TabBar";
 
@@ -69,6 +76,7 @@ const MainApp = () => {
   const { currentRoute, replace } = useRouter();
   const { currentUser, notifications } = useApp();
   const [activeTab, setActiveTab] = useState("shop");
+  const [showPublishMenu, setShowPublishMenu] = useState(false);
 
   // Redirect to Login if no user (initial load)
   useEffect(() => {
@@ -188,6 +196,20 @@ const MainApp = () => {
         return <MyPosts />;
       case "MyListings":
         return <MyListings />;
+      case "BarterInitiate":
+        return <BarterInitiate />;
+      case "BarterOrderDetail":
+        return <BarterOrderDetail />;
+      
+      // Publish Flow Routes
+      case "CreateSaleListing":
+        return <CreateSaleListing />;
+      case "CreateBuyListing":
+        return <CreateBuyListing />;
+      case "CreateBarterListing":
+        return <CreateBarterListing />;
+      case "CreateCommissionListing":
+        return <CreateCommissionListing />;
 
       case "Home":
       default:
@@ -202,11 +224,12 @@ const MainApp = () => {
               {activeTab === "square" && <Square />}
               {activeTab === "messages" && <Messages />}
             </div>
-            <TabBar
-              activeTab={activeTab}
-              setActiveTab={setActiveTab}
-              role={currentUser?.role || ROLES.USER}
-            />
+              <TabBar
+                activeTab={activeTab}
+                setActiveTab={setActiveTab}
+                onPublish={() => setShowPublishMenu(true)}
+                role={currentUser?.role || ROLES.USER}
+              />
           </div>
         );
     }
@@ -215,6 +238,11 @@ const MainApp = () => {
   return (
     <div className="max-w-md mx-auto h-screen bg-gray-50 shadow-2xl overflow-hidden relative font-sans text-gray-900 flex flex-col">
       {renderScreen()}
+
+      {/* Publish Menu Overlay */}
+      {showPublishMenu && (
+          <PublishMenu onClose={() => setShowPublishMenu(false)} />
+      )}
 
       {/* Notifications Toast */}
       <div className="fixed top-4 left-0 right-0 z-50 flex flex-col items-center gap-2 pointer-events-none">

@@ -8,42 +8,13 @@ import {
     ArrowRight,
     Filter,
 } from "lucide-react";
+import { MOCK_BARTER_ITEMS } from "../data/mock";
 
 const BarterSquare = () => {
     const { push } = useRouter();
 
-    const MOCK_BARTERS = [
-        {
-            id: 501,
-            user: "吃土求回血",
-            avatar: "bg-orange-200",
-            have: { name: "原神 散兵 模玩熊特典 色纸", tag: "全新" },
-            want: { name: "万叶 同款色纸", tag: "无伤" },
-            distance: "2.3km",
-            time: "15分钟前",
-            image: "bg-blue-100",
-        },
-        {
-            id: 502,
-            user: "全员推",
-            avatar: "bg-indigo-300",
-            have: { name: "光夜 查理苏 婚卡", tag: "仅拆" },
-            want: { name: "萧逸 婚卡", tag: "任意" },
-            distance: "500m",
-            time: "1小时前",
-            image: "bg-yellow-100",
-        },
-        {
-            id: 503,
-            user: "退坑出",
-            avatar: "bg-green-200",
-            have: { name: "FGO 玛修 手办", tag: "盒损" },
-            want: { name: "明日方舟 阿米娅", tag: "全新" },
-            distance: "5.1km",
-            time: "3小时前",
-            image: "bg-purple-100",
-        },
-    ];
+    // Use shared mock data directly
+    const barters = MOCK_BARTER_ITEMS;
 
     return (
         <div className="pb-24 bg-gray-50 min-h-screen flex flex-col font-sans">
@@ -95,7 +66,7 @@ const BarterSquare = () => {
 
             {/* List */}
             <div className="px-4 space-y-4">
-                {MOCK_BARTERS.map((item) => (
+                {barters.map((item) => (
                     <div
                         key={item.id}
                         onClick={() => push("ProductDetail", { id: item.id, type: "barter" })}
@@ -106,11 +77,11 @@ const BarterSquare = () => {
 
                         {/* Header: User */}
                         <div className="flex items-center gap-3 mb-4 relative z-10">
-                            <div className={`w-10 h-10 rounded-full ${item.avatar} border-2 border-white shadow-sm`} />
+                            <div className={`w-10 h-10 rounded-full ${item.user.avatar} border-2 border-white shadow-sm`} />
                             <div className="flex-1">
                                 <div className="flex items-center justify-between">
                                     <span className="text-sm font-bold text-gray-800">
-                                        {item.user}
+                                        {item.user.name}
                                     </span>
                                     <span className="text-[10px] text-gray-400 bg-gray-50 px-2 py-0.5 rounded-full">{item.time}</span>
                                 </div>
@@ -125,7 +96,12 @@ const BarterSquare = () => {
                         <div className="relative z-10 bg-gray-50/50 rounded-2xl p-3 border border-gray-100">
                             <div className="flex items-stretch gap-3">
                                 {/* Have Side (Image) */}
-                                <div className={`w-24 h-24 rounded-xl shrink-0 ${item.image} shadow-sm relative overflow-hidden group`}>
+                                <div className={`w-24 h-24 rounded-xl shrink-0 bg-gray-200 shadow-sm relative overflow-hidden group`}>
+                                     {item.image?.startsWith('http') ? (
+                                        <img src={item.image} alt="" className="w-full h-full object-cover" />
+                                    ) : (
+                                        <div className={`w-full h-full ${item.image}`} />
+                                    )}
                                     <div className="absolute top-0 left-0 bg-blue-500 text-white text-[10px] font-bold px-2 py-1 rounded-br-lg shadow-sm z-10">
                                         持有
                                     </div>
@@ -134,8 +110,8 @@ const BarterSquare = () => {
                                 {/* Exchange Logic */}
                                 <div className="flex-1 flex flex-col justify-center gap-3 min-w-0">
                                     <div>
-                                        <h4 className="font-bold text-sm text-gray-800 truncate mb-1">{item.have.name}</h4>
-                                        <span className="text-[10px] bg-white border border-gray-200 text-gray-500 px-1.5 py-0.5 rounded">{item.have.tag}</span>
+                                        <h4 className="font-bold text-sm text-gray-800 truncate mb-1">{item.title}</h4>
+                                        <span className="text-[10px] bg-white border border-gray-200 text-gray-500 px-1.5 py-0.5 rounded">{item.tags?.[0] || 'Good'}</span>
                                     </div>
 
                                     {/* Divider with Icon */}
@@ -147,7 +123,7 @@ const BarterSquare = () => {
 
                                     <div className="flex items-center gap-2">
                                         <span className="bg-rose-100 text-rose-600 text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0">求换</span>
-                                        <span className="text-sm text-gray-700 font-medium truncate">{item.want.name}</span>
+                                        <span className="text-sm text-gray-700 font-medium truncate">{item.want}</span>
                                     </div>
                                 </div>
                             </div>

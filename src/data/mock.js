@@ -6,10 +6,11 @@ export const ROLES = {
 };
 
 export const USERS = [
-    { id: 'u1', name: '是兔兔呀', role: ROLES.USER, avatar: 'bg-rose-200', balance: 5000 },
-    { id: 'u2', name: '吃土少女B', role: ROLES.USER, avatar: 'bg-blue-200', balance: 200 },
-    { id: 'l1', name: '知名团长A', role: ROLES.LEADER, avatar: 'bg-yellow-200', balance: 10000 },
-    { id: 'm1', name: '爱丽丝的衣橱', role: ROLES.MERCHANT, avatar: 'bg-purple-200', balance: 50000 },
+    { id: 'u1', name: '是兔兔呀', role: ROLES.USER, avatar: 'bg-rose-200', balance: 5000, creditScore: 750, isRealName: true },
+    { id: 'u2', name: '吃土少女B', role: ROLES.USER, avatar: 'bg-blue-200', balance: 200, creditScore: 680, isRealName: true },
+    { id: 'u3', name: '诚信极差用户', role: ROLES.USER, avatar: 'bg-gray-400', balance: 0, creditScore: 450, isRealName: false },
+    { id: 'l1', name: '知名团长A', role: ROLES.LEADER, avatar: 'bg-yellow-200', balance: 10000, creditScore: 800, isRealName: true },
+    { id: 'm1', name: '爱丽丝的衣橱', role: ROLES.MERCHANT, avatar: 'bg-purple-200', balance: 50000, creditScore: 900, isRealName: true },
 ];
 
 export const CATEGORY_CONFIG = {
@@ -173,6 +174,220 @@ export const ORDER_STATUS = {
     COMPLETED: 'completed',           // 已完成
     TRANSFERRED: 'transferred',       // 已转单
 };
+
+export const BARTER_STATUS = {
+    PROPOSED: 'proposed',           // 初始提议
+    ACCEPTED: 'accepted',           // 对方接受，待双方付押金
+    AWAITING_SHIPMENT: 'awaiting_shipment', // 押金已付，待发货
+    SHIPPED: 'shipped',             // 已发货 (一方或双方)
+    IN_PLATFORM: 'in_platform',     // [V2.0] 商品已到平台，验货中
+    PLATFORM_PASSED: 'platform_passed', // [V2.0] 验货通过，平台代发货
+    INSPECTION: 'inspection',       // 已收货，验货中
+    COMPLETED: 'completed',         // 交易完成，退还押金
+    DISPUTE: 'dispute',             // 争议中
+};
+
+
+
+export const MOCK_BARTER_ITEMS = [
+    {
+        id: 501,
+        title: "原神 散兵 模玩熊特典 色纸",
+        want: "万叶 同款色纸",
+        price: 45, // Estimated value
+        image: "https://img.kwcdn.com/product/open/b9aed2e34c41492885b740fd8b520bb1-goods.jpeg",
+        user: { id: 'u3', name: "吃土求回血", avatar: "bg-orange-200", creditScore: 650 },
+        description: "想换万叶的！只换不售！全新未拆，默认初伤。",
+        tags: ["全新", "可补差价"],
+        distance: "2.3km",
+        time: "15分钟前",
+        type: 'barter'
+    },
+    {
+        id: 502,
+        title: "光夜 查理苏 婚卡",
+        want: "萧逸 婚卡",
+        price: 30,
+        image: "https://img.kwcdn.com/product/open/d965e0cf5b4942b283b90a888cd2595c-goods.jpeg",
+        user: { id: 'u4', name: "全员推", avatar: "bg-indigo-300", creditScore: 700 },
+        description: "仅拆摆，无瑕疵。出坑回血，求换萧逸同款。",
+        tags: ["仅拆"],
+        distance: "500m",
+        time: "1小时前",
+        type: 'barter'
+    },
+    {
+        id: 503,
+        title: "FGO 玛修 手办",
+        want: "明日方舟 阿米娅",
+        price: 200,
+        image: "https://img.kwcdn.com/product/fancy/c2f4da76-873a-442c-9841-b0113827dfe2.jpg",
+        user: { id: 'u5', name: "退坑出", avatar: "bg-green-200", creditScore: 580 }, // Low credit
+        description: "盒损，本体无伤。也就是盒子压到了，里面都没拆过。",
+        tags: ["盒损"],
+        distance: "5.1km",
+        time: "3小时前",
+        type: 'barter'
+    }
+];
+
+export const MOCK_BARTERS = [
+    {
+        id: 'b1',
+        initiatorId: 'u1',
+        targetUserId: 'u2',
+        initiatorProduct: {
+            id: 2,
+            title: '12.6英寸1/6比例BJD/MJD可动人偶 - 12关节球窝关节可动玩偶',
+            image: 'https://img.kwcdn.com/product/open/d965e0cf5b4942b283b90a888cd2595c-goods.jpeg?imageView2/2/w/500/q/70/format/avif',
+            price: 148
+        },
+        targetProduct: {
+             id: 3,
+             title: '节日装饰手办玩偶 - 关节可活动，无需电源，适合家居装饰',
+             image: 'https://img.kwcdn.com/product/fancy/c2f4da76-873a-442c-9841-b0113827dfe2.jpg?imageView2/2/w/500/q/70/format/avif',
+             price: 95
+        },
+        cashTopUp: 0, 
+        status: BARTER_STATUS.ACCEPTED,
+        createTime: '2023-11-01',
+        depositAmount: 200, 
+        serviceType: 'direct', 
+        initiatorDepositPaid: false,
+        targetDepositPaid: false,
+        initiatorTracking: '',
+        targetTracking: '',
+        initiatorShipVideo: null,
+        targetShipVideo: null,
+        initiatorReceiveVideo: null,
+        targetReceiveVideo: null,
+        platformInspectionReport: null
+    },
+    // Case 2: PROPOSED (u1 proposes to u3)
+    {
+        id: 'b_proposed',
+        initiatorId: 'u1',
+        targetUserId: 'u3',
+        initiatorProduct: {
+            id: 2,
+            title: '12.6英寸1/6比例BJD/MJD可动人偶',
+            image: 'https://img.kwcdn.com/product/open/d965e0cf5b4942b283b90a888cd2595c-goods.jpeg',
+            price: 148
+        },
+        targetProduct: {
+             id: 501,
+             title: '原神 散兵 模玩熊特典 色纸',
+             image: 'https://img.kwcdn.com/product/open/b9aed2e34c41492885b740fd8b520bb1-goods.jpeg',
+             price: 45
+        },
+        cashTopUp: 50, 
+        status: BARTER_STATUS.PROPOSED,
+        createTime: '2023-11-05',
+        depositAmount: 180, 
+        serviceType: 'direct', 
+        initiatorDepositPaid: false,
+        targetDepositPaid: false,
+        initiatorTracking: '',
+        targetTracking: '',
+        initiatorShipVideo: null,
+        targetShipVideo: null,
+        initiatorReceiveVideo: null,
+        targetReceiveVideo: null
+    },
+    // Case 3: AWAITING_SHIPMENT (u1 & u2 both paid deposit)
+    {
+        id: 'b_ship',
+        initiatorId: 'u1',
+        targetUserId: 'u2',
+        initiatorProduct: {
+            id: 2,
+            title: '测试商品A',
+            image: 'bg-red-200',
+            price: 100
+        },
+        targetProduct: {
+             id: 3,
+             title: '测试商品B',
+             image: 'bg-blue-200',
+             price: 100
+        },
+        cashTopUp: 0, 
+        status: BARTER_STATUS.AWAITING_SHIPMENT,
+        createTime: '2023-11-02',
+        depositAmount: 120, 
+        serviceType: 'direct', 
+        initiatorDepositPaid: true,
+        targetDepositPaid: true,
+        initiatorTracking: '',
+        targetTracking: '',
+        initiatorShipVideo: null,
+        targetShipVideo: null,
+        initiatorReceiveVideo: null,
+        targetReceiveVideo: null
+    },
+    // Case 4: SHIPPED (u1 shipped, u2 pending)
+    {
+        id: 'b_shipped_half',
+        initiatorId: 'u1',
+        targetUserId: 'u2',
+        initiatorProduct: {
+            id: 2,
+            title: '已发货商品A',
+            image: 'bg-green-200',
+            price: 200
+        },
+        targetProduct: {
+             id: 3,
+             title: '待发货商品B',
+             image: 'bg-yellow-200',
+             price: 200
+        },
+        cashTopUp: 0, 
+        status: BARTER_STATUS.SHIPPED, // Or keeping logic that updates on event
+        createTime: '2023-11-03',
+        depositAmount: 240, 
+        serviceType: 'direct', 
+        initiatorDepositPaid: true,
+        targetDepositPaid: true,
+        initiatorTracking: 'SF123456789',
+        targetTracking: '',
+        initiatorShipVideo: 'mock.mp4',
+        targetShipVideo: null,
+        initiatorReceiveVideo: null,
+        targetReceiveVideo: null
+    },
+    // Case 5: COMPLETED 
+    {
+        id: 'b_completed',
+        initiatorId: 'u1',
+        targetUserId: 'u2',
+        initiatorProduct: {
+            id: 2,
+            title: '完结商品A',
+            image: 'bg-gray-200',
+            price: 50
+        },
+        targetProduct: {
+             id: 3,
+             title: '完结商品B',
+             image: 'bg-gray-300',
+             price: 50
+        },
+        cashTopUp: 0, 
+        status: BARTER_STATUS.COMPLETED,
+        createTime: '2023-10-20',
+        depositAmount: 60, 
+        serviceType: 'direct', 
+        initiatorDepositPaid: true,
+        targetDepositPaid: true,
+        initiatorTracking: 'SF001',
+        targetTracking: 'SF002',
+        initiatorShipVideo: 'mock.mp4',
+        targetShipVideo: 'mock.mp4',
+        initiatorReceiveVideo: 'mock.mp4',
+        targetReceiveVideo: 'mock.mp4'
+    }
+];
 
 export const MOCK_ORDERS = [
     {
